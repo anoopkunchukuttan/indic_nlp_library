@@ -79,11 +79,17 @@ class NormalizerI(object):
         #    print text[mobj.start()-10:mobj.end()+10].replace('\n', ' ').replace(NormalizerI.ZERO_WIDTH_NON_JOINER,'').encode('utf-8')
         #print hex(ord(text[mobj.end():mobj.end()+1]))
 
+    def correct_visarga(self,text,visarga_char,char_range):
+        text=re.sub(ur'([\u0900-\u097f]):',u'\\1\u0903',text)
+        
+
 
 class DevanagariNormalizer(NormalizerI): 
     """
     Normalizer for the Devanagari script. In addition to basic normalization by the super class, 
     - Replaces the composite characters containing nuktas by their decomposed form 
+    - replace pipe character '|' by poorna virama character
+    - replace colon ':' by visarga if the colon follows a charcter in this script 
     
     """
 
@@ -112,7 +118,13 @@ class DevanagariNormalizer(NormalizerI):
 
         if self.remove_nuktas:
             text=text.replace(DevanagariNormalizer.NUKTA,'')
-            
+
+        # replace pipe character for poorna virama 
+        text=text.replace(u'\u007c',u'\u0964')
+
+        # correct visarge 
+        text=re.sub(ur'([\u0900-\u097f]):',u'\\1\u0903',text)
+
         return text
 
     def get_char_stats(self,text):
@@ -160,6 +172,8 @@ class GurmukhiNormalizer(NormalizerI):
     - Replaces the composite characters containing nuktas by their decomposed form 
     - Replace the reserved character for poorna virama (if used) with the 
     recommended generic Indic scripts poorna virama 
+    - replace pipe character '|' by poorna virama character
+    - replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     NUKTA=u'\u0A3C' 
@@ -188,6 +202,12 @@ class GurmukhiNormalizer(NormalizerI):
         text=text.replace(u'\u0a64',u'\u0964')
         text=text.replace(u'\u0a65',u'\u0965')
 
+        ## replace pipe character for poorna virama 
+        #text=text.replace(u'\u007c',u'\u0964')
+
+        # correct visarge 
+        text=re.sub(ur'([\u0a00-\u0a7f]):',u'\\1\u0a03',text)
+
         return text
 
 
@@ -196,6 +216,7 @@ class GujaratiNormalizer(NormalizerI):
     Normalizer for the Gujarati script. In addition to basic normalization by the super class, 
     - Replace the reserved character for poorna virama (if used) with the 
     recommended generic Indic scripts poorna virama 
+    - replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     NUKTA=u'\u0ABC' 
@@ -218,6 +239,9 @@ class GujaratiNormalizer(NormalizerI):
         text=text.replace(u'\u0ae4',u'\u0964')
         text=text.replace(u'\u0ae5',u'\u0965')
 
+        # correct visarge 
+        text=re.sub(ur'([\u0a80-\u0aff]):',u'\\1\u0a83',text)
+
         return text
 
 
@@ -229,6 +253,8 @@ class OriyaNormalizer(NormalizerI):
     recommended generic Indic scripts poorna virama 
     - Canonicalize two part dependent vowels
     - Replace 'va' with 'ba'
+    - replace pipe character '|' by poorna virama character
+    - replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     NUKTA=u'\u0B3C' 
@@ -254,6 +280,9 @@ class OriyaNormalizer(NormalizerI):
         text=text.replace(u'\u0b64',u'\u0964')
         text=text.replace(u'\u0b65',u'\u0965')
 
+        # replace pipe character for poorna virama 
+        text=text.replace(u'\u007c',u'\u0964')
+
         # replace va with ba 
         text=text.replace(u'\u0b35',u'\u0b2c')
 
@@ -267,6 +296,9 @@ class OriyaNormalizer(NormalizerI):
         # additional consonant - not clear how to handle this
         # ignore
 
+        # correct visarge 
+        text=re.sub(ur'([\u0b00-\u0b7f]):',u'\\1\u0b03',text)
+
         return text
 
 
@@ -277,6 +309,8 @@ class BengaliNormalizer(NormalizerI):
     - Replace the reserved character for poorna virama (if used) with the 
     recommended generic Indic scripts poorna virama 
     - Canonicalize two part dependent vowels
+    - replace pipe character '|' by poorna virama character
+    - replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     NUKTA=u'\u09BC' 
@@ -303,9 +337,15 @@ class BengaliNormalizer(NormalizerI):
         text=text.replace(u'\u09e4',u'\u0964')
         text=text.replace(u'\u09e5',u'\u0965')
 
+        # replace pipe character for poorna virama 
+        text=text.replace(u'\u007c',u'\u0964')
+
         # two part dependent vowels
         text=text.replace(u'\u09c7\u09be',u'\u09cb')
         text=text.replace(u'\u09c7\u0bd7',u'\u0bcc')
+
+        # correct visarge 
+        text=re.sub(ur'([\u0980-\u09ff]):',u'\\1\u0983',text)
 
         return text
 
@@ -316,6 +356,7 @@ class TamilNormalizer(NormalizerI):
     - Replace the reserved character for poorna virama (if used) with the 
     recommended generic Indic scripts poorna virama 
     - canonicalize two-part dependent vowel signs
+    - replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     def normalize(self,text): 
@@ -334,6 +375,9 @@ class TamilNormalizer(NormalizerI):
         text=text.replace(u'\u0bc7\u0bbe',u'\u0bcb')
         text=text.replace(u'\u0bc6\u0bd7',u'\u0bcc')
 
+        # correct visarge 
+        text=re.sub(ur'([\u0b80-\u0bff]):',u'\\1\u0b83',text)
+
         return text
 
 
@@ -343,6 +387,7 @@ class TeluguNormalizer(NormalizerI):
     - Replace the reserved character for poorna virama (if used) with the 
     recommended generic Indic scripts poorna virama 
     - canonicalize two-part dependent vowel signs
+    - replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     def __init__(self,remove_nuktas=False):
@@ -361,6 +406,9 @@ class TeluguNormalizer(NormalizerI):
         # dependent vowels
         text=text.replace(u'\u0c46\u0c56',u'\u0c48')
 
+        # correct visarge 
+        text=re.sub(ur'([\u0c00-\u0c7f]):',u'\\1\u0c03',text)
+
         return text
 
     def get_char_stats(self,text):
@@ -372,6 +420,7 @@ class KannadaNormalizer(NormalizerI):
     - Replace the reserved character for poorna virama (if used) with the 
     recommended generic Indic scripts poorna virama 
     - canonicalize two-part dependent vowel signs
+    - replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     def normalize(self,text): 
@@ -391,6 +440,9 @@ class KannadaNormalizer(NormalizerI):
         text=text.replace(u'\u0cc6\u0cc2',u'\u0cca')
         text=text.replace(u'\u0cca\u0cd5',u'\u0ccb')
 
+        # correct visarge 
+        text=re.sub(ur'([\u0c80-\u0cff]):',u'\\1\u0c83',text)
+
         return text
 
 
@@ -400,9 +452,19 @@ class MalayalamNormalizer(NormalizerI):
     - Replace the reserved character for poorna virama (if used) with the 
     recommended generic Indic scripts poorna virama 
     - canonicalize two-part dependent vowel signs
+    - Change from old encoding of chillus (till Unicode 5.0) to new encoding
+    - replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     def normalize(self,text): 
+
+        # Change from old encoding of chillus (till Unicode 5.0) to new encoding
+        text=text.replace(u'\u0d23\u0d4d\u200d',u'\u0d7a')
+        text=text.replace(u'\u0d28\u0d4d\u200d',u'\u0d7b')
+        text=text.replace(u'\u0d30\u0d4d\u200d',u'\u0d7c')
+        text=text.replace(u'\u0d32\u0d4d\u200d',u'\u0d7d')
+        text=text.replace(u'\u0d33\u0d4d\u200d',u'\u0d7e')
+        text=text.replace(u'\u0d15\u0d4d\u200d',u'\u0d7f')
 
         # common normalization for Indic scripts 
         text=super(MalayalamNormalizer,self).normalize(text)
@@ -419,6 +481,9 @@ class MalayalamNormalizer(NormalizerI):
         # au forms
         text=text.replace(u'\u0d46\u0d57',u'\u0d57')
         text=text.replace(u'\u0d57',u'\u0d4c')
+
+        # correct visarge 
+        text=re.sub(ur'([\u0d00-\u0d7f]):',u'\\1\u0d03',text)
 
         return text
 

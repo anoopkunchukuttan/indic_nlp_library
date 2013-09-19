@@ -12,6 +12,10 @@ Text written in Indic scripts display a lot of quirky behaviour on account of va
     (1) Non-spacing characters like ZWJ/ZWNL
     (2) Multiple representations of Nukta based characters 
     (3) Multiple representations of two part dependent vowel signs
+    (4) Typing inconsistencies: e.g. use of pipe (|) for poorna virama
+
+You can check the documentation for each normalizer in the file 
+'src/normalize/indic_normalize.py' to know the script specific normalizations.    
 
 Commandline Usage
 -----------------
