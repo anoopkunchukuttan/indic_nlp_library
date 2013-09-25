@@ -5,6 +5,7 @@ The goal of this project is to build Python based libraries for common text proc
 
 The library provides the following functionalities: 
 - Text Normalization: 
+- Transliteration: 
 
 Text Normalization
 ===================
@@ -36,6 +37,27 @@ e.g.
     factory=IndicNormalizerFactory()
     normalizer=factory.get_normalizer("hi",remove_nuktas)
     print normalizer.normalize(input_text)
+
+Unicode based Transliteration 
+=============================
+Transliterate from one Indic script to another. This is a simple script which exploits the fact that Unicode points of various Indic scripts are at corresponding offsets from the base codepoint for that script. The following scripts are supported:
+Devanagari(Hindi,Marathi,Sanskrit,Konkani,Nepali), Bengali, Oriya, Gujarati, Gurumukhi (Punjabi), Tamil, Telugu, Kannada, Malayalam
+
+Commandline Usage
+-----------------
+python src/normalize/indic_normalize.py <infile> <outfile> <language1> <language2>
+    
+    <language1>,<language2>: 2-letter ISO 639-1 language code. 
+                Codes for some language not covered in the standard
+                kK: Konkani
+                bD: Bodo
+                mP: Manipuri
+
+API Usage
+----------
+e.g.
+    input_text=u"\u0929 \u0928\u093c"
+    print UnicodeIndicTransliterator.transliterate(input_text,"hi","pa")
 
 Author
 ------
