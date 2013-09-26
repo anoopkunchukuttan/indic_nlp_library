@@ -203,7 +203,7 @@ class GurmukhiNormalizer(NormalizerI):
         text=text.replace(u'\u0a65',u'\u0965')
 
         ## replace pipe character for poorna virama 
-        #text=text.replace(u'\u007c',u'\u0964')
+        text=text.replace(u'\u007c',u'\u0964')
 
         # correct visarge 
         text=re.sub(ur'([\u0a00-\u0a7f]):',u'\\1\u0a03',text)
