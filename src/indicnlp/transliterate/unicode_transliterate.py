@@ -34,7 +34,12 @@ SCRIPT_RANGES={
                  'kn':[0x0c80,0x0cff] ,  
                  'ml':[0x0d00,0x0d7f] ,  
                  'hi':[0x0900,0x097f] ,  
+                 'mr':[0x0900,0x097f] ,   
+                 'kK':[0x0900,0x097f] ,   
+                 'sa':[0x0900,0x097f] ,   
+                 'ne':[0x0900,0x097f] ,   
                  'bn':[0x0980,0x09ff] ,  
+                 'as':[0x0980,0x09ff] ,  
               }
 
 COORDINATED_RANGE_START_INCLUSIVE=0
