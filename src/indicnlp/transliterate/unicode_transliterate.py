@@ -55,14 +55,17 @@ class UnicodeIndicTransliterator(object):
 
     @staticmethod
     def transliterate(text,lang1_code,lang2_code):
-        trans_lit_text=[]
-        for c in text: 
-            newc=c
-            offset=ord(c)-SCRIPT_RANGES[lang1_code][0]
-            if offset >=COORDINATED_RANGE_START_INCLUSIVE and offset <= COORDINATED_RANGE_END_INCLUSIVE:
-                newc=unichr(SCRIPT_RANGES[lang2_code][0]+offset)
-            trans_lit_text.append(newc)        
-        return string.join(trans_lit_text,sep='')
+        if SCRIPT_RANGES.has_key(lang1_code) and SCRIPT_RANGES.has_key(lang2_code):
+            trans_lit_text=[]
+            for c in text: 
+                newc=c
+                offset=ord(c)-SCRIPT_RANGES[lang1_code][0]
+                if offset >=COORDINATED_RANGE_START_INCLUSIVE and offset <= COORDINATED_RANGE_END_INCLUSIVE:
+                    newc=unichr(SCRIPT_RANGES[lang2_code][0]+offset)
+                trans_lit_text.append(newc)        
+            return string.join(trans_lit_text,sep='')
+        else:
+            return text
 
 if __name__ == '__main__': 
 
