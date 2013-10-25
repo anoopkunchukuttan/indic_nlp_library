@@ -20,7 +20,7 @@ You can check the documentation for each normalizer in the file
 
 Commandline Usage
 -----------------
-python src/normalize/indic_normalize.py <infile> <outfile> <language> [<replace_nukta>]
+python src/indic_nlp/normalize/indic_normalize.py <infile> <outfile> <language> [<replace_nukta>]
     
     <language>: 2-letter ISO 639-1 language code. 
                 Codes for some language not covered in the standard
@@ -45,7 +45,7 @@ Devanagari(Hindi,Marathi,Sanskrit,Konkani,Nepali), Bengali, Oriya, Gujarati, Gur
 
 Commandline Usage
 -----------------
-python src/normalize/indic_normalize.py <infile> <outfile> <language1> <language2>
+python src/indic_nlp/transliterate/unicode_transliterate.py <infile> <outfile> <language1> <language2>
     
     <language1>,<language2>: 2-letter ISO 639-1 language code. 
                 Codes for some language not covered in the standard
