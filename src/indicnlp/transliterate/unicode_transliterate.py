@@ -70,7 +70,7 @@ class UnicodeIndicTransliterator(object):
 if __name__ == '__main__': 
 
     if len(sys.argv)<4:
-        print "Usage: python unicode_transliterate.py <infile> <outfile> <src_language> <tgt_language"
+        print "Usage: python unicode_transliterate.py <infile> <outfile> <src_language> <tgt_language>"
         sys.exit(1)
 
     src_language=sys.argv[3]
