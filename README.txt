@@ -6,6 +6,7 @@ The goal of this project is to build Python based libraries for common text proc
 The library provides the following functionalities: 
 - Text Normalization: 
 - Transliteration: 
+- Tokenization
 
 Text Normalization
 ===================
@@ -32,6 +33,7 @@ python src/indic_nlp/normalize/indic_normalize.py <infile> <outfile> <language> 
 API Usage
 ----------
 e.g.
+    from indicnlp.normalize.indic_normalize import IndicNormalizerFactory
     input_text=u"\u0929 \u0928\u093c"
     remove_nuktas=False
     factory=IndicNormalizerFactory()
@@ -56,16 +58,43 @@ python src/indic_nlp/transliterate/unicode_transliterate.py <infile> <outfile> <
 API Usage
 ----------
 e.g.
+    from indicnlp.transliterate.unicode_transliterate import IndicNormalizerFactory
     input_text=u"\u0929 \u0928\u093c"
     print UnicodeIndicTransliterator.transliterate(input_text,"hi","pa")
+
+Tokenization 
+===================
+
+
+Commandline Usage
+-----------------
+python src/indicnlp/tokenize/indic_tokenize.py <infile> <outfile> <language> 
+    
+    <language>: 2-letter ISO 639-1 language code. 
+                Codes for some language not covered in the standard
+                kK: Konkani
+                bD: Bodo
+                mP: Manipuri
+
+API Usage
+----------
+    A trivial tokenizer which just tokenizes on the punctuation boundaries. This also includes punctuations for the Indian language scripts
+      - the purna virama and the deergha virama
+    returns a list of tokens   
+
+e.g.
+    from indicnlp.tokenize import indic_tokenize  
+    indic_string=u'\u0905\u0928\u0942\u092a,\u0905\u0928\u0942\u092a?\u0964 '
+    trivial_tokenize(indic_string)
 
 Author
 ------
 Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
-Version: 0.1
+Version: 0.2
 ------------
 
 Revision Log
 ------------
-0.1 : Initial version. Supports text normalization.
+0.2 : 13 Jun 2014: Supports transliteration between Indian languages and tokenization of Indian languages 
+0.1 : 12 Mar 2014: Initial version. Supports text normalization.

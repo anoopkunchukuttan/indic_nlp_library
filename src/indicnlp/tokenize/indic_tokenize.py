@@ -28,7 +28,7 @@ triv_tokenizer_pat=re.compile(ur'(['+string.punctuation+ur'\u0964\u0965'+ur'])')
 
 def trivial_tokenize(s): 
     """
-    A trivial tokenizer which just tokenizes on the punctuation boundaries. This also includes puntuations for the Indian language scripts
+    A trivial tokenizer which just tokenizes on the punctuation boundaries. This also includes punctuations for the Indian language scripts
       - the purna virama and the deergha virama
     returns a list of tokens   
     """
