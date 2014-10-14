@@ -105,6 +105,7 @@ The analyzer can recognize inflectional and derivational morphemes.
 
 ###API Usage
 e.g.
+
     # -*- coding: utf-8 -*-
 
     from indicnlp.morph import unsupervised_morph 
