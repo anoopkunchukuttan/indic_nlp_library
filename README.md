@@ -11,7 +11,8 @@ The library provides the following functionalities:
 
 ##Text Normalization
 
-Text written in Indic scripts display a lot of quirky behaviour on account of varying input methods, multiple representations for the same character, etc. There is a need to canonicalize the representation of text so that NLP applications can handle the data in a consistent manner. The canonicalization primarily handles the following issues: 
+Text written in Indic scripts display a lot of quirky behaviour on account of varying input methods, multiple representations for the same character, etc. 
+There is a need to canonicalize the representation of text so that NLP applications can handle the data in a consistent manner. The canonicalization primarily handles the following issues: 
 
     - Non-spacing characters like ZWJ/ZWNL
     - Multiple representations of Nukta based characters 
@@ -20,6 +21,10 @@ Text written in Indic scripts display a lot of quirky behaviour on account of va
 
 You can check the documentation for each normalizer in the file 
 `src/normalize/indic_normalize.py` to know the script specific normalizations.    
+
+The following scripts are supported:
+
+_Devanagari(Hindi,Marathi,Sanskrit,Konkani,Nepali), Bengali, Oriya, Gujarati, Gurumukhi (Punjabi), Tamil, Telugu, Kannada, Malayalam_
 
 ###Commandline Usage
 
@@ -45,7 +50,8 @@ e.g.
 
 ##Unicode based Transliteration 
 
-Transliterate from one Indic script to another. This is a simple script which exploits the fact that Unicode points of various Indic scripts are at corresponding offsets from the base codepoint for that script. The following scripts are supported:
+Transliterate from one Indic script to another. This is a simple script which exploits the fact that Unicode points of various Indic scripts are at
+corresponding offsets from the base codepoint for that script. The following scripts are supported:
 
 _Devanagari(Hindi,Marathi,Sanskrit,Konkani,Nepali), Bengali, Oriya, Gujarati, Gurumukhi (Punjabi), Tamil, Telugu, Kannada, Malayalam_
 
@@ -69,7 +75,7 @@ e.g.
 
 ##Tokenization 
 
-A trivial tokenizer which just tokenizes on the punctuation boundaries. This also includes punctuations for the Indian language scripts (the purna virama and the deergha virama). It returns a list of tokens   
+A trivial tokenizer which just tokenizes on the punctuation boundaries. This also includes punctuations for the Indian language scripts (the purna virama and the deergha virama). It returns a list of tokens.   
 
 ###Commandline Usage
     python src/indicnlp/tokenize/indic_tokenize.py <infile> <outfile> <language> 
@@ -91,6 +97,12 @@ e.g.
 
 Unsupervised morphological analysers for various Indian language. Given a word, the analyzer returns the componenent morphemes. 
 The analyzer can recognize inflectional and derivational morphemes. 
+
+The following languages are supported:
+
+_Marathi, Bengali, Tamil, Telugu_
+
+Support for more languages will be added soon.
 
 ###Commandline Usage
     python src/indicnlp/morph/unsupervised_morph.py <infile> <outfile> <language> <resource_directory>
