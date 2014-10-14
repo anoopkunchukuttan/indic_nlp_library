@@ -1,12 +1,13 @@
 #Indic NLP Library
 
-The goal of this project is to build Python based libraries for common text processing and Natural Language Processing in Indian languages. Indian languages share a lot of similarity in terms of script, phonolofy, language syntax, etc. and this library is an attempt to provide a general solution to very commonly required toolsets for Indian language text. 
+The goal of this project is to build Python based libraries for common text processing and Natural Language Processing in Indian languages. Indian languages share a lot of similarity in terms of script, phonology, language syntax, etc. and this library is an attempt to provide a general solution to very commonly required toolsets for Indian language text. 
 
 The library provides the following functionalities: 
 
 - Text Normalization
 - Transliteration
 - Tokenization
+- Morphological Analysis
 
 ##Text Normalization
 
@@ -86,6 +87,37 @@ e.g.
     indic_string=u'\u0905\u0928\u0942\u092a,\u0905\u0928\u0942\u092a?\u0964 '
     trivial_tokenize(indic_string)
 
+##Morphological Analysis
+
+Unsupervised morphological analysers for various Indian language. Given a word, the analyzer returns the componenent morphemes. 
+The analyzer can recognize inflectional and derivational morphemes. 
+
+###Commandline Usage
+    python src/indicnlp/morph/unsupervised_morph.py <infile> <outfile> <language> <resource_directory>
+    
+    <language>: 2-letter ISO 639-1 language code. 
+                Codes for some language not covered in the standard
+                kK: Konkani
+                bD: Bodo
+                mP: Manipuri
+
+    <resource_directory>: Path to directory containg Indic NLP library resources. The resources directory can be found in the base directory of the project named 'resources'                
+
+###API Usage
+e.g.
+    # -*- coding: utf-8 -*-
+
+    from indicnlp.morph import unsupervised_morph 
+    from indicnlp import common
+
+    common.INDIC_RESOURCES_PATH="resources"
+
+    analyzer=unsupervised_morph.UnsupervisedMorphAnalyzer('mr')
+
+    indic_string=u'आपल्या हिरड्यांच्या आणि दातांच्यामध्ये जीवाणू असतात ."
+
+    analyzes_tokens=analyzer.morph_analyze_document(indic_string.split(' '))
+
 ##Author
 Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
@@ -93,6 +125,7 @@ Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
 ##Revision Log
 0.2 : 13 Jun 2014: Supports transliteration between Indian languages and tokenization of Indian languages 
+
 0.1 : 12 Mar 2014: Initial version. Supports text normalization.
 
 ##LICENSE

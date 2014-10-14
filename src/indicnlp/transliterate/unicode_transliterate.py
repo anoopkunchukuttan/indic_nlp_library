@@ -1,5 +1,3 @@
-import string
-
 # Copyright Anoop Kunchukuttan 2013 - present
 #
 # This file is part of Indic NLP Library.
@@ -25,25 +23,7 @@ import string
 
 import sys, codecs, string, itertools, re
 
-SCRIPT_RANGES={
-                 'pa':[0x0a00,0x0a7f] ,  
-                 'gu':[0x0a80,0x0aff] ,  
-                 'or':[0x0b00,0x0b7f] ,  
-                 'ta':[0x0b80,0x0bff] ,  
-                 'te':[0x0c00,0x0c7f] ,  
-                 'kn':[0x0c80,0x0cff] ,  
-                 'ml':[0x0d00,0x0d7f] ,  
-                 'hi':[0x0900,0x097f] ,  
-                 'mr':[0x0900,0x097f] ,   
-                 'kK':[0x0900,0x097f] ,   
-                 'sa':[0x0900,0x097f] ,   
-                 'ne':[0x0900,0x097f] ,   
-                 'bn':[0x0980,0x09ff] ,  
-                 'as':[0x0980,0x09ff] ,  
-              }
-
-COORDINATED_RANGE_START_INCLUSIVE=0
-COORDINATED_RANGE_END_INCLUSIVE=0x6f
+from indicnlp import langinfo 
 
 class UnicodeIndicTransliterator(object):
     """
@@ -55,13 +35,13 @@ class UnicodeIndicTransliterator(object):
 
     @staticmethod
     def transliterate(text,lang1_code,lang2_code):
-        if SCRIPT_RANGES.has_key(lang1_code) and SCRIPT_RANGES.has_key(lang2_code):
+        if langinfo.SCRIPT_RANGES.has_key(lang1_code) and langinfo.SCRIPT_RANGES.has_key(lang2_code):
             trans_lit_text=[]
             for c in text: 
                 newc=c
-                offset=ord(c)-SCRIPT_RANGES[lang1_code][0]
-                if offset >=COORDINATED_RANGE_START_INCLUSIVE and offset <= COORDINATED_RANGE_END_INCLUSIVE:
-                    newc=unichr(SCRIPT_RANGES[lang2_code][0]+offset)
+                offset=ord(c)-langinfo.SCRIPT_RANGES[lang1_code][0]
+                if offset >=langinfo.COORDINATED_RANGE_START_INCLUSIVE and offset <= langinfo.COORDINATED_RANGE_END_INCLUSIVE:
+                    newc=unichr(langinfo.SCRIPT_RANGES[lang2_code][0]+offset)
                 trans_lit_text.append(newc)        
             return string.join(trans_lit_text,sep='')
         else:
