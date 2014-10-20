@@ -9,6 +9,8 @@ The library provides the following functionalities:
 - Tokenization
 - Morphological Analysis
 
+The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some moduled. You can download them [here](https://github.com/anoopkunchukuttan/indic_nlp_library_resources).
+
 ##Text Normalization
 
 Text written in Indic scripts display a lot of quirky behaviour on account of varying input methods, multiple representations for the same character, etc. 
@@ -113,7 +115,7 @@ Support for more languages will be added soon.
                 bD: Bodo
                 mP: Manipuri
 
-    <resource_directory>: Path to directory containg Indic NLP library resources. The resources directory can be found in the base directory of the project named 'resources'                
+    <resource_directory>: Path to directory containg Indic NLP library resources. 
 
 ###API Usage
 e.g.
