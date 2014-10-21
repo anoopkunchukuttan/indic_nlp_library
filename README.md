@@ -11,6 +11,11 @@ The library provides the following functionalities:
 
 The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some modules. You can download from the [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources) project.
 
+## Pre-requisites
+
+- Python 2.7+
+- [Morfessor 2.0 Python Library](http://www.cis.hut.fi/projects/morpho/morfessor2.shtml)
+
 ##Text Normalization
 
 Text written in Indic scripts display a lot of quirky behaviour on account of varying input methods, multiple representations for the same character, etc. 
@@ -139,6 +144,8 @@ Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 ##Version: 0.2
 
 ##Revision Log
+0.3 : 21 Oct 2014: Supports morph-analysis between Indian languages
+
 0.2 : 13 Jun 2014: Supports transliteration between Indian languages and tokenization of Indian languages 
 
 0.1 : 12 Mar 2014: Initial version. Supports text normalization.
