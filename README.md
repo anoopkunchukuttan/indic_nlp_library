@@ -9,7 +9,7 @@ The library provides the following functionalities:
 - Tokenization
 - Morphological Analysis
 
-The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some moduled. You can download them [here](https://github.com/anoopkunchukuttan/indic_nlp_library_resources).
+The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some modules. You can download from the [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources) project.
 
 ##Text Normalization
 
@@ -102,7 +102,7 @@ The analyzer can recognize inflectional and derivational morphemes.
 
 The following languages are supported:
 
-_Marathi, Bengali, Tamil, Telugu_
+_Hindi, Punjabi, Marathi, Konkani, Gujarati, Bengali, Kannada, Tamil, Telugu, Malayalam_
 
 Support for more languages will be added soon.
 
