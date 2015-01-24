@@ -43,8 +43,9 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
     Unsupervised Morphological analyser built using Morfessor 2.0
     """
 
-    def __init__(self,lang): 
+    def __init__(self,lang,add_marker=False): 
         self.lang=lang
+        self.add_marker=add_marker
 
         io = morfessor.MorfessorIO()
         self._morfessor_model=io.read_any_model(common.INDIC_RESOURCES_PATH+'/morph/morfessor/{}.model'.format(lang))
@@ -69,7 +70,10 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
         @param word: string input word 
         """
         val=self._morfessor_model.viterbi_segment(word)
-        return val[0] 
+        m_list=val[0]
+        if add_marker:
+            m_list= [ u'{}_S_'.format(m) if i>0 else u'{}_R_'.format(m)  for i,m in enumerate(m_list)]
+        return m_list
     
     def morph_analyze_document(self,tokens):
         """
@@ -86,6 +90,8 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
                 morphs=self.morph_analyze(token)
                 out_tokens.extend(morphs)
             else:
+                if add_marker:
+                    token=u'{}_E_'.format(token)
                 out_tokens.append(token)
         return out_tokens    
 
@@ -93,18 +99,25 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
 if __name__ == '__main__': 
 
     if len(sys.argv)<4:
-        print "Usage: python unsupervised_morph.py <infile> <outfile> <language> <indic_resources_path>"
+        print "Usage: python unsupervised_morph.py <infile> <outfile> <language> <indic_resources_path> [<add_marker>]"
         sys.exit(1)
 
     language=sys.argv[3]
     common.INDIC_RESOURCES_PATH=sys.argv[4]
 
-    analyzer=UnsupervisedMorphAnalyzer(language)
+    add_marker=False
+
+    if len(sys.argv)==6:
+        add_marker=bool(sys.argv[5])
+
+    analyzer=UnsupervisedMorphAnalyzer(language,add_marker)
 
     with codecs.open(sys.argv[1],'r','utf-8') as ifile:
         with codecs.open(sys.argv[2],'w','utf-8') as ofile:
             for line in ifile.readlines():
+                line=line.strip()
                 tokens=indic_tokenize.trivial_tokenize(line)
                 morph_tokens=analyzer.morph_analyze_document(tokens)
                 ofile.write(string.join(morph_tokens,sep=' '))
+                ofile.write('\n')
 
