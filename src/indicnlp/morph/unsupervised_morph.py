@@ -78,7 +78,7 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
         else:
             if self.add_marker:
                 word=u'{}_E_'.format(word)
-            mlist=[word]
+            m_list=[word]
         return m_list 
 
         ### Older implementation
