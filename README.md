@@ -98,7 +98,7 @@ e.g.
 
     from indicnlp.tokenize import indic_tokenize  
     indic_string=u'\u0905\u0928\u0942\u092a,\u0905\u0928\u0942\u092a?\u0964 '
-    trivial_tokenize(indic_string)
+    indic_tokenize.trivial_tokenize(indic_string)
 
 ##Morphological Analysis
 
