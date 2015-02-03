@@ -24,6 +24,7 @@ SCRIPT_RANGES={
                  'te':[0x0c00,0x0c7f] ,  
                  'kn':[0x0c80,0x0cff] ,  
                  'ml':[0x0d00,0x0d7f] ,  
+                 'si':[0x0d80,0x0dff] ,  
                  'hi':[0x0900,0x097f] ,  
                  'mr':[0x0900,0x097f] ,   
                  'kK':[0x0900,0x097f] ,   
@@ -38,3 +39,11 @@ COORDINATED_RANGE_END_INCLUSIVE=0x6f
 
 NUMERIC_OFFSET_START=0x66
 NUMERIC_OFFSET_END=0x6f
+
+URDU_RANGES=[
+                [0x0600,0x06ff], 
+                [0x0750,0x077f], 
+                [0xfb50,0xfdff], 
+                [0xfe70,0xfeff], 
+            ]
+
