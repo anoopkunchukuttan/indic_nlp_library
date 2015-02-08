@@ -42,6 +42,11 @@ class UnicodeIndicTransliterator(object):
                 newc=c
                 offset=ord(c)-langinfo.SCRIPT_RANGES[lang1_code][0]
                 if offset >=langinfo.COORDINATED_RANGE_START_INCLUSIVE and offset <= langinfo.COORDINATED_RANGE_END_INCLUSIVE:
+                    # handle missing unaspirated and voiced plosives in Tamil script 
+                    # replace by unvoiced, unaspirated plosives
+                    if lang2_code=='ta' and offset>=0x15 and offset<=0x2E and (offset-0x15)%5!=0:
+                        subst_char=(offset-0x15)/5
+                        offset=0x15+5*subst_char
                     newc=unichr(langinfo.SCRIPT_RANGES[lang2_code][0]+offset)
                 trans_lit_text.append(newc)        
             return string.join(trans_lit_text,sep='')
