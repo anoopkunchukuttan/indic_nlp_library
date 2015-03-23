@@ -25,6 +25,9 @@ import sys, codecs, string, itertools, re
 
 from indicnlp import langinfo 
 from indicnlp.transliterate import itrans_transliterator
+from indicnlp.transliterate.sinhala_transliterator import SinhalaDevanagariTransliterator  as sdt
+
+
 
 class UnicodeIndicTransliterator(object):
     """
@@ -37,6 +40,18 @@ class UnicodeIndicTransliterator(object):
     @staticmethod
     def transliterate(text,lang1_code,lang2_code):
         if langinfo.SCRIPT_RANGES.has_key(lang1_code) and langinfo.SCRIPT_RANGES.has_key(lang2_code):
+            
+            # if Sinhala is source, do a mapping to Devanagari first 
+            if lang1_code=='si': 
+                text=sdt.sinhala_to_devanagari(text)
+                lang1_code='hi'
+
+            # if Sinhala is target, make Devanagiri the intermediate target
+            org_lang2_code=''
+            if lang2_code=='si': 
+                lang2_code='hi'
+                org_lang2_code='si'
+
             trans_lit_text=[]
             for c in text: 
                 newc=c
@@ -49,6 +64,11 @@ class UnicodeIndicTransliterator(object):
                         offset=0x15+5*subst_char
                     newc=unichr(langinfo.SCRIPT_RANGES[lang2_code][0]+offset)
                 trans_lit_text.append(newc)        
+
+            # if Sinhala is source, do a mapping to Devanagari first 
+            if org_lang2_code=='si': 
+                return sdt.devanagari_to_sinhala(string.join(trans_lit_text,sep=''))
+
             return string.join(trans_lit_text,sep='')
         else:
             return text
