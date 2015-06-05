@@ -38,6 +38,29 @@ class UnicodeIndicTransliterator(object):
     """
 
     @staticmethod
+    def _correct_tamil_mapping(offset): 
+        # handle missing unaspirated and voiced plosives in Tamil script 
+        # replace by unvoiced, unaspirated plosives
+
+        # for first 4 consonant rows of varnamala
+        # exception: ja has a mapping in Tamil  
+        if offset>=0x15 and offset<=0x28 and \
+                offset!=0x1c and \
+                not ( (offset-0x15)%5==0 or (offset-0x15)%5==4 )  :
+            subst_char=(offset-0x15)/5
+            offset=0x15+5*subst_char
+
+        # for 5th consonant row of varnamala                         
+        if offset in [ 0x2b, 0x2c, 0x2d]:
+            offset=0x2a
+
+        # 'sh' becomes 'Sh'
+        if offset==0x36:
+            offset=0x37
+
+        return offset             
+
+    @staticmethod
     def transliterate(text,lang1_code,lang2_code):
         if langinfo.SCRIPT_RANGES.has_key(lang1_code) and langinfo.SCRIPT_RANGES.has_key(lang2_code):
             
@@ -57,12 +80,11 @@ class UnicodeIndicTransliterator(object):
                 newc=c
                 offset=ord(c)-langinfo.SCRIPT_RANGES[lang1_code][0]
                 if offset >=langinfo.COORDINATED_RANGE_START_INCLUSIVE and offset <= langinfo.COORDINATED_RANGE_END_INCLUSIVE:
-                    # handle missing unaspirated and voiced plosives in Tamil script 
-                    # replace by unvoiced, unaspirated plosives
-                    if lang2_code=='ta' and offset>=0x15 and offset<=0x2E and (offset-0x15)%5!=0:
-                        subst_char=(offset-0x15)/5
-                        offset=0x15+5*subst_char
+                    if lang2_code=='ta': 
+                        # tamil exceptions 
+                        offset=UnicodeIndicTransliterator._correct_tamil_mapping(offset)
                     newc=unichr(langinfo.SCRIPT_RANGES[lang2_code][0]+offset)
+
                 trans_lit_text.append(newc)        
 
             # if Sinhala is source, do a mapping to Devanagari first 
