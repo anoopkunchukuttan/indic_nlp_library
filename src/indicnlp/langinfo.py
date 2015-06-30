@@ -48,3 +48,18 @@ URDU_RANGES=[
                 [0xfe70,0xfeff], 
             ]
 
+def is_indiclang_char(c,lang): 
+    """
+    Applicable to Brahmi derived Indic scripts 
+    """
+    return (c>=SCRIPT_RANGES[lang][0] and c<=SCRIPT_RANGES[lang][1])
+    
+def get_offset(c,lang): 
+    return ord(c)-langinfo.SCRIPT_RANGES[lang]
+
+def in_coordinated_range(c_offset,lang): 
+    """
+    Applicable to Brahmi derived Indic scripts 
+    """
+    return  (c_offset>=COORDINATED_RANGE_START_INCLUSIVE and c_offset<=COORDINATED_RANGE_END_INCLUSIVE) 
+       
