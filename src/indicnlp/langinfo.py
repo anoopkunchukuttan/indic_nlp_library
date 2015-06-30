@@ -48,6 +48,11 @@ URDU_RANGES=[
                 [0xfe70,0xfeff], 
             ]
 
+RUPEE_SIGN=0x20b9
+
+DANDA=0x0964
+DOUBLE_DANDA=0x0965
+
 def is_indiclang_char(c,lang): 
     """
     Applicable to Brahmi derived Indic scripts 
