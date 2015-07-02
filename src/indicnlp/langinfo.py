@@ -53,16 +53,26 @@ RUPEE_SIGN=0x20b9
 DANDA=0x0964
 DOUBLE_DANDA=0x0965
 
+def get_offset(c,lang): 
+    """
+    Applicable to Brahmi derived Indic scripts 
+    """
+    return ord(c)-SCRIPT_RANGES[lang][0]
+
+def offset_to_char(c,lang): 
+    """
+    Applicable to Brahmi derived Indic scripts 
+    """
+    return unichr(c+SCRIPT_RANGES[lang][0])
+
 def is_indiclang_char(c,lang): 
     """
     Applicable to Brahmi derived Indic scripts 
     """
-    return (c>=SCRIPT_RANGES[lang][0] and c<=SCRIPT_RANGES[lang][1])
-    
-def get_offset(c,lang): 
-    return ord(c)-langinfo.SCRIPT_RANGES[lang]
+    o=get_offset(c,lang)
+    return (o>=0 and o<=0x7f)
 
-def in_coordinated_range(c_offset,lang): 
+def in_coordinated_range(c_offset): 
     """
     Applicable to Brahmi derived Indic scripts 
     """
