@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Indic NLP Library : Resources and tools for Indian language Natural Language Processing">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Indic NLP Library</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/anoopkunchukuttan/indic_nlp_library">View on GitHub</a>
+
+          <h1 id="project_title">Indic NLP Library</h1>
+          <h2 id="project_tagline">Resources and tools for Indian language Natural Language Processing</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/anoopkunchukuttan/indic_nlp_library/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/anoopkunchukuttan/indic_nlp_library/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="indic-nlp-library" class="anchor" href="#indic-nlp-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Indic NLP Library</h1>
+
+<p>The goal of this project is to build Python based libraries for common text processing and Natural Language Processing in Indian languages. Indian languages share a lot of similarity in terms of script, phonology, language syntax, etc. and this library is an attempt to provide a general solution to very commonly required toolsets for Indian language text. </p>
+
+<p>The library provides the following functionalities: </p>
+
+<ul>
+<li>Text Normalization</li>
+<li>Transliteration</li>
+<li>Tokenization</li>
+<li>Morphological Analysis</li>
+</ul>
+
+<p>The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some modules. You can download from the <a href="https://github.com/anoopkunchukuttan/indic_nlp_resources">Indic NLP Resources</a> project.</p>
+
+<h2>
+<a id="pre-requisites" class="anchor" href="#pre-requisites" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pre-requisites</h2>
+
+<ul>
+<li>Python 2.7+</li>
+<li><a href="http://www.cis.hut.fi/projects/morpho/morfessor2.shtml">Morfessor 2.0 Python Library</a></li>
+</ul>
+
+<h2>
+<a id="text-normalization" class="anchor" href="#text-normalization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Text Normalization</h2>
+
+<p>Text written in Indic scripts display a lot of quirky behaviour on account of varying input methods, multiple representations for the same character, etc. 
+There is a need to canonicalize the representation of text so that NLP applications can handle the data in a consistent manner. The canonicalization primarily handles the following issues: </p>
+
+<pre><code>- Non-spacing characters like ZWJ/ZWNL
+- Multiple representations of Nukta based characters 
+- Multiple representations of two part dependent vowel signs
+- Typing inconsistencies: e.g. use of pipe (|) for poorna virama
+</code></pre>
+
+<p>You can check the documentation for each normalizer in the file 
+<code>src/normalize/indic_normalize.py</code> to know the script specific normalizations.    </p>
+
+<p>The following scripts are supported:</p>
+
+<p><em>Devanagari(Hindi,Marathi,Sanskrit,Konkani,Nepali), Bengali, Oriya, Gujarati, Gurumukhi (Punjabi), Tamil, Telugu, Kannada, Malayalam</em></p>
+
+<h3>
+<a id="commandline-usage" class="anchor" href="#commandline-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Commandline Usage</h3>
+
+<pre><code>python src/indic_nlp/normalize/indic_normalize.py &lt;infile&gt; &lt;outfile&gt; &lt;language&gt; [&lt;replace_nukta&gt;]
+
+&lt;language&gt;: 2-letter ISO 639-1 language code. 
+            Codes for some language not covered in the standard
+            kK: Konkani
+            bD: Bodo
+            mP: Manipuri
+&lt;replace_nukta&gt;: True/False. Default: False                
+</code></pre>
+
+<h3>
+<a id="api-usage" class="anchor" href="#api-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Usage</h3>
+
+<p>e.g.</p>
+
+<pre><code>from indicnlp.normalize.indic_normalize import IndicNormalizerFactory
+input_text=u"\u0929 \u0928\u093c"
+remove_nuktas=False
+factory=IndicNormalizerFactory()
+normalizer=factory.get_normalizer("hi",remove_nuktas)
+print normalizer.normalize(input_text)
+</code></pre>
+
+<h2>
+<a id="unicode-based-transliteration" class="anchor" href="#unicode-based-transliteration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Unicode based Transliteration</h2>
+
+<p>Transliterate from one Indic script to another. This is a simple script which exploits the fact that Unicode points of various Indic scripts are at
+corresponding offsets from the base codepoint for that script. The following scripts are supported:</p>
+
+<p><em>Devanagari(Hindi,Marathi,Sanskrit,Konkani,Nepali), Bengali, Oriya, Gujarati, Gurumukhi (Punjabi), Tamil, Telugu, Kannada, Malayalam</em></p>
+
+<h3>
+<a id="commandline-usage-1" class="anchor" href="#commandline-usage-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Commandline Usage</h3>
+
+<pre><code>python src/indic_nlp/transliterate/unicode_transliterate.py &lt;infile&gt; &lt;outfile&gt; &lt;language1&gt; &lt;language2&gt;
+
+&lt;language1&gt;,&lt;language2&gt;: 2-letter ISO 639-1 language code. 
+            Codes for some language not covered in the standard
+            kK: Konkani
+            bD: Bodo
+            mP: Manipuri
+</code></pre>
+
+<h3>
+<a id="api-usage-1" class="anchor" href="#api-usage-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Usage</h3>
+
+<p>e.g.</p>
+
+<pre><code>from indicnlp.transliterate.unicode_transliterate import IndicNormalizerFactory
+input_text=u"\u0929 \u0928\u093c"
+print UnicodeIndicTransliterator.transliterate(input_text,"hi","pa")
+</code></pre>
+
+<h2>
+<a id="tokenization" class="anchor" href="#tokenization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tokenization</h2>
+
+<p>A trivial tokenizer which just tokenizes on the punctuation boundaries. This also includes punctuations for the Indian language scripts (the purna virama and the deergha virama). It returns a list of tokens.   </p>
+
+<h3>
+<a id="commandline-usage-2" class="anchor" href="#commandline-usage-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Commandline Usage</h3>
+
+<pre><code>python src/indicnlp/tokenize/indic_tokenize.py &lt;infile&gt; &lt;outfile&gt; &lt;language&gt; 
+
+&lt;language&gt;: 2-letter ISO 639-1 language code. 
+            Codes for some language not covered in the standard
+            kK: Konkani
+            bD: Bodo
+            mP: Manipuri
+</code></pre>
+
+<h3>
+<a id="api-usage-2" class="anchor" href="#api-usage-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Usage</h3>
+
+<p>e.g.</p>
+
+<pre><code>from indicnlp.tokenize import indic_tokenize  
+indic_string=u'\u0905\u0928\u0942\u092a,\u0905\u0928\u0942\u092a?\u0964 '
+indic_tokenize.trivial_tokenize(indic_string)
+</code></pre>
+
+<h2>
+<a id="morphological-analysis" class="anchor" href="#morphological-analysis" aria-hidden="true"><span class="octicon octicon-link"></span></a>Morphological Analysis</h2>
+
+<p>Unsupervised morphological analysers for various Indian language. Given a word, the analyzer returns the componenent morphemes. 
+The analyzer can recognize inflectional and derivational morphemes. </p>
+
+<p>The following languages are supported:</p>
+
+<p><em>Hindi, Punjabi, Marathi, Konkani, Gujarati, Bengali, Kannada, Tamil, Telugu, Malayalam</em></p>
+
+<p>Support for more languages will be added soon.</p>
+
+<h3>
+<a id="commandline-usage-3" class="anchor" href="#commandline-usage-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Commandline Usage</h3>
+
+<pre><code>python src/indicnlp/morph/unsupervised_morph.py &lt;infile&gt; &lt;outfile&gt; &lt;language&gt; &lt;resource_directory&gt;
+
+&lt;language&gt;: 2-letter ISO 639-1 language code. 
+            Codes for some language not covered in the standard
+            kK: Konkani
+            bD: Bodo
+            mP: Manipuri
+
+&lt;resource_directory&gt;: Path to directory containg Indic NLP library resources. 
+</code></pre>
+
+<h3>
+<a id="api-usage-3" class="anchor" href="#api-usage-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Usage</h3>
+
+<p>e.g.</p>
+
+<pre><code># -*- coding: utf-8 -*-
+
+from indicnlp.morph import unsupervised_morph 
+from indicnlp import common
+
+common.INDIC_RESOURCES_PATH="resources"
+
+analyzer=unsupervised_morph.UnsupervisedMorphAnalyzer('mr')
+
+indic_string=u'आपल्या हिरड्यांच्या आणि दातांच्यामध्ये जीवाणू असतात ."
+
+analyzes_tokens=analyzer.morph_analyze_document(indic_string.split(' '))
+</code></pre>
+
+<h2>
+<a id="author" class="anchor" href="#author" aria-hidden="true"><span class="octicon octicon-link"></span></a>Author</h2>
+
+<p>Anoop Kunchukuttan ( <a href="mailto:anoop.kunchukuttan@gmail.com">anoop.kunchukuttan@gmail.com</a> )</p>
+
+<h2>
+<a id="version-02" class="anchor" href="#version-02" aria-hidden="true"><span class="octicon octicon-link"></span></a>Version: 0.2</h2>
+
+<h2>
+<a id="revision-log" class="anchor" href="#revision-log" aria-hidden="true"><span class="octicon octicon-link"></span></a>Revision Log</h2>
+
+<p>0.3 : 21 Oct 2014: Supports morph-analysis between Indian languages</p>
+
+<p>0.2 : 13 Jun 2014: Supports transliteration between Indian languages and tokenization of Indian languages </p>
+
+<p>0.1 : 12 Mar 2014: Initial version. Supports text normalization.</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>LICENSE</h2>
+
+<p>Copyright Anoop Kunchukuttan 2013 - present</p>
+
+<p>Indic NLP Library is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.</p>
+
+<p>Indic NLP Library is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+GNU General Public License for more details. </p>
+
+<p>You should have received a copy of the GNU General Public License 
+along with Indic NLP Library.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Indic NLP Library maintained by <a href="https://github.com/anoopkunchukuttan">anoopkunchukuttan</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
