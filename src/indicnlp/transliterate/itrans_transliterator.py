@@ -735,8 +735,12 @@ ITRANS = { \
     'uu': 0x90A,
     'RRi': 0x90B,
     'R^i': 0x90B,
+    'RRI': 0x960,
+    'R^I': 0x960,
     'LLi': 0x90C,
     'L^i': 0x90C,
+    'LLI': 0x961,
+    'L^I': 0x961,
     '.e': 0x90E,   # added by Anoop # extension 
     'e': 0x90F,
     'ai': 0x910,
