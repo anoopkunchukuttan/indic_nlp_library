@@ -469,8 +469,8 @@ class DevanagariCharacter (TLCharacter):
         - so need to hard code the ranges
     """
     _vowelOffset = 0x93E - 0x906
-    _depVowelRange = range(0x93E, 0x94D)
-    _vowelRange = range(0x904, 0x915)
+    _depVowelRange = range(0x93E, 0x94D) + [0x962,0x963]
+    _vowelRange = range(0x904, 0x915) + [0x960,0x961]
     _VIRAMA = unichr(0x94D)
     _LETTER_A = unichr(0x905)
     """ Unicode calls agravaha a letter. Not for our purposes:
@@ -491,18 +491,35 @@ class DevanagariCharacter (TLCharacter):
                       vowels, not as separate characters.
         
         """
+        TLCharacter.__init__(self, unicodeHexValue, block)
+
         self.isVowel = False
         if unicodeHexValue in DevanagariCharacter._vowelRange:
             self.isVowel = True
+
         self._dependentVowel = None
+        if unicodeHexValue==0x960: 
+            ## dependency vowel sign for vocalic RR is set only when processing the vowel, since the maatra precedes the vowel in the Unicode chart
+            self._setDependentVowel(0x944)
+
         if unicodeHexValue in DevanagariCharacter._depVowelRange:
-            # We are a dependent vowel. 
-            # Find the corresponding normal vowel.
-            vowel = block[unichr(unicodeHexValue - DevanagariCharacter._vowelOffset)]
-            vowel._setDependentVowel(unicodeHexValue)
+            vowel=None
+            if  unicodeHexValue == 0x962: 
+                vowel=block[unichr(0x90C)]
+            elif  unicodeHexValue == 0x963: 
+                vowel=block[unichr(0x961)]
+            elif unicodeHexValue == 0x944:
+                ## dependency vowel sign for vocalic RR is set only when processing the vowel, since the maatra precedes the vowel in the Unicode chart
+                ## That step's cpde is above, with documentation 
+                pass 
+            else:                 
+                vowel=block[unichr(unicodeHexValue - DevanagariCharacter._vowelOffset)]
+            if vowel is not None:                 
+                # The check condition is for 0x944, processing deferred for later
+                vowel._setDependentVowel(unicodeHexValue)
             raise ValueError # don't create dependent vowels as separate instances
             
-        TLCharacter.__init__(self, unicodeHexValue, block)
+        #TLCharacter.__init__(self, unicodeHexValue, block)
 
         self.isConsonant = False
         if self.isVowel == False \
@@ -735,12 +752,12 @@ ITRANS = { \
     'uu': 0x90A,
     'RRi': 0x90B,
     'R^i': 0x90B,
-    'RRI': 0x960,
-    'R^I': 0x960,
+    'RRI': 0x960, # added by Anoop # extension 
+    'R^I': 0x960,# added by Anoop # extension 
     'LLi': 0x90C,
     'L^i': 0x90C,
-    'LLI': 0x961,
-    'L^I': 0x961,
+    'LLI': 0x961,# added by Anoop # extension 
+    'L^I': 0x961,# added by Anoop # extension 
     '.e': 0x90E,   # added by Anoop # extension 
     'e': 0x90F,
     'ai': 0x910,
