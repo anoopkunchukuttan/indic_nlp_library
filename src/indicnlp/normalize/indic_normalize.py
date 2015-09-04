@@ -491,7 +491,7 @@ class MalayalamNormalizer(NormalizerI):
 class IndicNormalizerFactory(object):
     def get_normalizer(self,language,remove_nuktas=False):
         normalizer=None
-        if language in ['hi','mr','sa','kK','ne']:
+        if language in ['hi','mr','sa','kK','ne','sd']:
             normalizer=DevanagariNormalizer(remove_nuktas)
         elif language in ['pa']:
             normalizer=GurmukhiNormalizer(remove_nuktas)

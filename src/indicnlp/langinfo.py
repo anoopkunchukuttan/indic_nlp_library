@@ -16,6 +16,9 @@
 #        along with Indic NLP Library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+## language codes 
+LC_TA='ta'
+
 SCRIPT_RANGES={
                  'pa':[0x0a00,0x0a7f] ,  
                  'gu':[0x0a80,0x0aff] ,  
