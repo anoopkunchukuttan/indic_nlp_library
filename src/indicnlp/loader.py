@@ -14,24 +14,15 @@
 # 
 #        You should have received a copy of the GNU General Public License
 #        along with Indic NLP Library.  If not, see <http://www.gnu.org/licenses/>.
-#
 
-import os
+from indicnlp import common
+from indicnlp.script import indic_scripts
 
-INDIC_RESOURCES_PATH=''
+def load():
 
-def init(): 
-    global INDIC_RESOURCES_PATH 
-    INDIC_RESOURCES_PATH=os.environ['INDIC_RESOURCES_PATH']
+    ### Order of intialization may matter 
 
-def get_resources_path(): 
-    return INDIC_RESOURCES_PATH
+    # Common has to be loaded first to get access to resources 
+    common.init()
 
-class IndicNlpException(Exception):
-
-    def __init__(self, msg):
-        self.msg = msg 
-
-    def __str__(self):
-        return repr(self.msg)
-
+    indic_scripts.init()
