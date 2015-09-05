@@ -20,13 +20,17 @@ The data resources required by the Indic NLP Library are hosted in a different r
 - [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources)
 
 ## Configuration
-Add the project to the Python Path: 
+- Add the project to the Python Path: 
 
     export PYTHONPATH=$PYTHONPATH:<project_base>/src
 
+- Export the path to the _Indic NLP Resources_ directory
+
+    export INDIC_RESOURCES_PATH=<path to Indic NLP resource> 
+
 ## Usage 
 
-- Python AP
+- Python API
 - Commandline Interface
 
 You can find documentation on the [website](http://anoopkunchukuttan.github.io/indic_nlp_library)
