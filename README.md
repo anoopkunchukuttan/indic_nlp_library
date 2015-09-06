@@ -39,7 +39,7 @@ for examples
 
 ## Website
 
-    http://anoopkunchukuttan.github.io/indic_nlp_library
+http://anoopkunchukuttan.github.io/indic_nlp_library 
 
 ##Author
 Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
