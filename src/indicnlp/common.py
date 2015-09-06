@@ -20,12 +20,25 @@ import os
 
 INDIC_RESOURCES_PATH=''
 
-def init(): 
+def init():
     global INDIC_RESOURCES_PATH 
-    INDIC_RESOURCES_PATH=os.environ['INDIC_RESOURCES_PATH']
+    try: 
+        if INDIC_RESOURCES_PATH=='':
+            INDIC_RESOURCES_PATH=os.environ['INDIC_RESOURCES_PATH']
+    except Exception as e: 
+        raise IndicNlpException('Indic Resources Path not set')
+
+    if INDIC_RESOURCES_PATH=='': 
+        raise IndicNlpException('Indic Resources Path not set')
+
+
 
 def get_resources_path(): 
     return INDIC_RESOURCES_PATH
+
+def set_resources_path(resources_path): 
+    global INDIC_RESOURCES_PATH 
+    INDIC_RESOURCES_PATH=resources_path
 
 class IndicNlpException(Exception):
 
