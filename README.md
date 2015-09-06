@@ -1,15 +1,18 @@
 #Indic NLP Library
 
-The goal of this project is to build Python based libraries for common text processing and Natural Language Processing in Indian languages. Indian languages share a lot of similarity in terms of script, phonology, language syntax, etc. and this library is an attempt to provide a general solution to very commonly required toolsets for Indian language text. 
+The goal of the Indic NLP Library is to build Python based libraries for common text processing and Natural Language Processing in Indian languages. Indian languages share a lot of similarity in terms of script, phonology, language syntax, etc. and this library is an attempt to provide a general solution to very commonly required toolsets for Indian language text.
 
-The library provides the following functionalities: 
+The library provides the following functionalities:
 
 - Text Normalization
-- Query Script Information
-- Script Conversion
-- Transliteration
+- Script Information
 - Tokenization
 - Word Segmentation
+- Script Conversion
+- Romanization
+- Indicization
+- Transliteration
+- Translation
 
 The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some modules. You can download from the [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources) project.
 
@@ -22,18 +25,17 @@ The data resources required by the Indic NLP Library are hosted in a different r
 ## Configuration
 - Add the project to the Python Path: 
 
-    export PYTHONPATH=$PYTHONPATH:<project_base>/src
+    export PYTHONPATH=$PYTHONPATH:\<project base directory\>/src
 
 - Export the path to the _Indic NLP Resources_ directory
 
-    export INDIC_RESOURCES_PATH=<path to Indic NLP resource> 
+    export INDIC_RESOURCES_PATH=\<path to Indic NLP resources\> 
 
 ## Usage 
 
-- Python API
-- Commandline Interface
-
-You can find documentation on the [website](http://anoopkunchukuttan.github.io/indic_nlp_library)
+- Python API: Check [this IPython Notebook](http://nbviewer.ipython.org/url/anoopkunchukuttan.github.io/indic_nlp_library/doc/indic_nlp_examples.ipynb) 
+for examples
+- Commandline Interface: The commandline interface is documented on the [project website](http://anoopkunchukuttan.github.io/indic_nlp_library)
 
 ## Website
 
@@ -42,7 +44,7 @@ You can find documentation on the [website](http://anoopkunchukuttan.github.io/i
 ##Author
 Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
-##Version: 0.2
+##Version: 0.3
 
 ##Revision Log
 0.3 : 21 Oct 2014: Supports morph-analysis between Indian languages
