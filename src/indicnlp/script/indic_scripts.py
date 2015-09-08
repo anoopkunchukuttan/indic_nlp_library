@@ -110,8 +110,7 @@ def in_coordinated_range_offset(c_offset):
     """ 
     Applicable to Brahmi derived Indic scripts 
     """
-    return  (c_offset>=li.COORDINATED_RANGE_START_INCLUSIVE and c_offset<=li.COORDINATED_RANGE_END_INCLUSIVE) \
-            or ord(c)==li.DANDA or ord(c)==li.DOUBLE_DANDA
+    return  (c_offset>=li.COORDINATED_RANGE_START_INCLUSIVE and c_offset<=li.COORDINATED_RANGE_END_INCLUSIVE) 
 
 def in_coordinated_range(c,lang):
     if not is_supported_language(lang): 
