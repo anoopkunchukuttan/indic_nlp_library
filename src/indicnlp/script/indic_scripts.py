@@ -42,6 +42,9 @@ TAMIL_PHONETIC_VECTORS=None
 """ Start offset for the phonetic feature vector in the phonetic data vector """
 PHONETIC_VECTOR_START_OFFSET=6
 
+""" Length of phonetic vector """
+PHONETIC_VECTOR_LENGTH=29
+
 ####
 # Indexes into the Phonetic Vector 
 ####
@@ -55,6 +58,13 @@ PVIDX_BT_S=PVIDX_BT_VOWEL
 PVIDX_BT_E=PVIDX_BT_MISC+1
 
 PVIDX_VSTAT_DEP=12
+
+#####
+# Unicode information about characters 
+#####
+
+SCRIPT_OFFSET_START=0
+SCRIPT_OFFSET_RANGE=0x80
 
 def init():
     """
@@ -93,13 +103,15 @@ def is_indiclang_char(c,lang):
     if not is_supported_language(lang): 
         raise IndicNlpException('Language {}  not supported'.format(lang))
     o=get_offset(c,lang)
-    return (o>=0 and o<=0x7f) or ord(c)==li.DANDA or ord(c)==li.DOUBLE_DANDA
+    return (o>=SCRIPT_OFFSET_START and o<SCRIPT_OFFSET_RANGE) \
+            or ord(c)==li.DANDA or ord(c)==li.DOUBLE_DANDA
 
 def in_coordinated_range_offset(c_offset): 
-    """
+    """ 
     Applicable to Brahmi derived Indic scripts 
     """
-    return  (c_offset>=li.COORDINATED_RANGE_START_INCLUSIVE and c_offset<=li.COORDINATED_RANGE_END_INCLUSIVE) 
+    return  (c_offset>=li.COORDINATED_RANGE_START_INCLUSIVE and c_offset<=li.COORDINATED_RANGE_END_INCLUSIVE) \
+            or ord(c)==li.DANDA or ord(c)==li.DOUBLE_DANDA
 
 def in_coordinated_range(c,lang):
     if not is_supported_language(lang): 
@@ -114,26 +126,27 @@ def get_phonetic_info(lang):
    
     return (phonetic_data, phonetic_vectors)
 
+def invalid_vector():
+    ##  TODO: check if np datatype is correct?
+    return np.array([0]*len(PHONETIC_VECTOR_LENGTH))
+
 def get_phonetic_feature_vector(c,lang):
 
     offset=get_offset(c,lang) 
 
     if not in_coordinated_range_offset(offset): 
-        raise IndicNlpException(u'Character not in co-ordinated script range: {}'.format(c))
+        return invalid_vector()
 
     phonetic_data, phonetic_vectors= get_phonetic_info(lang)
 
     if phonetic_data.ix[offset,'Valid Vector Representation']==0: 
-        raise IndicNlpException(u'Character does not have a phonetic vector representation: {}'.format(c))
+        return invalid_vector()
         
     return phonetic_vectors[offset]
 
 ### Unary operations on vectors 
 def is_valid(v): 
-    """
-    at least one of the basic type bits must be 1
-    """
-    return sum(v[PVIDX_BT_S:PVIDX_BT_E])>0 
+    return np.sum(v)>0
 
 def is_vowel(v): 
     return True if v[PVIDX_BT_VOWEL]==1 else False
@@ -155,30 +168,6 @@ def is_dependent_vowel(v):
 
 ### Binary operations on phonetic vectors
 
-def get_phonetic_similarity_v(v1,v2,base=5.0): 
-
-    dotprod=float(np.dot( v1, v2 ))
-    return np.power(base,dotprod) 
-
-    #dotprod=float(np.dot( v1, v2 ))
-    #cos_sim=dotprod/(np.sqrt(np.dot(v1,v1))*np.sqrt(np.dot(v2,v2)))
-    #return cos_sim
-
 def or_vectors(v1,v2): 
     return np.array([ 1 if (b1+b2)>=1 else 0 for b1,b2 in zip(v1,v2) ])
-
-def add_vectors(v1,v2): 
-
-    if is_consonant(v1) and is_halant(v2): 
-        v1[PVIDX_BT_HALANT]=1
-        return v1
-    elif is_consonant(v1) and is_nukta(v2): 
-        v1[PVIDX_BT_NUKTA]=1
-        return v1
-    elif is_consonant(v1) and is_dependent_vowel(v2): 
-        return or_vectors(v1,v2)
-    elif is_anusvaar(v1) and is_consonant(v2): 
-        return or_vectors(v1,v2)
-    else: 
-        return [0]*len(v1)
 
