@@ -39,11 +39,11 @@ ALL_PHONETIC_VECTORS=None
 """ Phonetic vector for Tamil """
 TAMIL_PHONETIC_VECTORS=None
 
+""" Length of phonetic vector """
+PHONETIC_VECTOR_LENGTH=-1
+
 """ Start offset for the phonetic feature vector in the phonetic data vector """
 PHONETIC_VECTOR_START_OFFSET=6
-
-""" Length of phonetic vector """
-PHONETIC_VECTOR_LENGTH=29
 
 ####
 # Indexes into the Phonetic Vector 
@@ -71,13 +71,15 @@ def init():
     To be called by library loader, do not call it in your program 
     """
 
-    global ALL_PHONETIC_DATA, ALL_PHONETIC_VECTORS, TAMIL_PHONETIC_DATA, TAMIL_PHONETIC_VECTORS 
+    global ALL_PHONETIC_DATA, ALL_PHONETIC_VECTORS, TAMIL_PHONETIC_DATA, TAMIL_PHONETIC_VECTORS, PHONETIC_VECTOR_LENGTH, PHONETIC_VECTOR_START_OFFSET
 
     ALL_PHONETIC_DATA=pd.read_csv(common.get_resources_path()+'/script/all_script_phonetic_data.csv',encoding='utf-8')    
     TAMIL_PHONETIC_DATA=pd.read_csv(common.get_resources_path()+'/script/tamil_script_phonetic_data.csv',encoding='utf-8')    
 
     ALL_PHONETIC_VECTORS= ALL_PHONETIC_DATA.ix[:,PHONETIC_VECTOR_START_OFFSET:].as_matrix()
     TAMIL_PHONETIC_VECTORS=TAMIL_PHONETIC_DATA.ix[:,PHONETIC_VECTOR_START_OFFSET:].as_matrix()
+
+    PHONETIC_VECTOR_LENGTH=ALL_PHONETIC_VECTORS.shape[1]
 
 def is_supported_language(lang): 
     return lang in li.SCRIPT_RANGES.keys()
@@ -127,7 +129,7 @@ def get_phonetic_info(lang):
 
 def invalid_vector():
     ##  TODO: check if np datatype is correct?
-    return np.array([0]*len(PHONETIC_VECTOR_LENGTH))
+    return np.array([0]*PHONETIC_VECTOR_LENGTH)
 
 def get_phonetic_feature_vector(c,lang):
 
@@ -140,7 +142,7 @@ def get_phonetic_feature_vector(c,lang):
 
     if phonetic_data.ix[offset,'Valid Vector Representation']==0: 
         return invalid_vector()
-        
+
     return phonetic_vectors[offset]
 
 ### Unary operations on vectors 
