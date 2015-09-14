@@ -172,3 +172,5 @@ def is_dependent_vowel(v):
 def or_vectors(v1,v2): 
     return np.array([ 1 if (b1+b2)>=1 else 0 for b1,b2 in zip(v1,v2) ])
 
+def xor_vectors(v1,v2): 
+    return np.array([ 1 if b1!=b2 else 0 for b1,b2 in zip(v1,v2) ])
