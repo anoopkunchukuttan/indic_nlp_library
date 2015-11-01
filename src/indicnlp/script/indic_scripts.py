@@ -45,6 +45,23 @@ PHONETIC_VECTOR_LENGTH=-1
 """ Start offset for the phonetic feature vector in the phonetic data vector """
 PHONETIC_VECTOR_START_OFFSET=6
 
+### 
+# Bit vector ranges for various properties 
+###
+
+PV_PROP_RANGES={
+        'basic_type': [0,6],
+        'vowel_length': [6,8],
+        'vowel_strength': [8,11],
+        'vowel_status': [11,13],
+        'consonant_type': [13,18],
+        'articulation_place': [18,23],
+        'aspiration': [23,25],
+        'voicing': [25,27],
+        'nasalization': [27,29],
+        }
+
+
 ####
 # Indexes into the Phonetic Vector 
 ####
@@ -145,6 +162,8 @@ def get_phonetic_feature_vector(c,lang):
 
     return phonetic_vectors[offset]
 
+
+
 ### Unary operations on vectors 
 def is_valid(v): 
     return np.sum(v)>0
@@ -174,3 +193,20 @@ def or_vectors(v1,v2):
 
 def xor_vectors(v1,v2): 
     return np.array([ 1 if b1!=b2 else 0 for b1,b2 in zip(v1,v2) ])
+
+### Getting properties from phonetic vectors 
+
+def get_property_vector(v,prop_name): 
+    return v[PV_PROP_RANGES[prop_name][0]:PV_PROP_RANGES[prop_name][1]]
+
+def get_property_value(v,prop_name): 
+    factor_bits=get_property_vector(v,prop_name).tolist()
+    
+    v=0
+    c=1
+    for b in factor_bits[::-1]: 
+        v+=(c*b)
+        c=c*2.0
+
+    return int(v)
+
