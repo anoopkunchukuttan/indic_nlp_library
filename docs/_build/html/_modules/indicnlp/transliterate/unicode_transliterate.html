@@ -1,0 +1,244 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>indicnlp.transliterate.unicode_transliterate &mdash; Indic NLP Library 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Indic NLP Library 0.2 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Indic NLP Library 0.2 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for indicnlp.transliterate.unicode_transliterate</h1><div class="highlight"><pre>
+<span class="c"># Copyright Anoop Kunchukuttan 2013 - present</span>
+<span class="c">#</span>
+<span class="c"># This file is part of Indic NLP Library.</span>
+<span class="c"># </span>
+<span class="c"># Indic NLP Library is free software: you can redistribute it and/or modify</span>
+<span class="c"># it under the terms of the GNU General Public License as published by</span>
+<span class="c"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c"># (at your option) any later version.</span>
+<span class="c"># </span>
+<span class="c"># Indic NLP Library is distributed in the hope that it will be useful,</span>
+<span class="c">#        but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c">#        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c">#        GNU General Public License for more details.</span>
+<span class="c"># </span>
+<span class="c">#        You should have received a copy of the GNU General Public License</span>
+<span class="c">#        along with Indic NLP Library.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c">#</span>
+
+<span class="c">#Program for text written in one Indic script to another based on Unicode mappings. </span>
+<span class="c">#</span>
+<span class="c"># @author Anoop Kunchukuttan </span>
+<span class="c">#</span>
+
+<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">codecs</span><span class="o">,</span> <span class="nn">string</span><span class="o">,</span> <span class="nn">itertools</span><span class="o">,</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">indicnlp</span> <span class="kn">import</span> <span class="n">langinfo</span> 
+<span class="kn">from</span> <span class="nn">indicnlp.transliterate</span> <span class="kn">import</span> <span class="n">itrans_transliterator</span>
+<span class="kn">from</span> <span class="nn">indicnlp.transliterate.sinhala_transliterator</span> <span class="kn">import</span> <span class="n">SinhalaDevanagariTransliterator</span>  <span class="k">as</span> <span class="n">sdt</span>
+
+
+
+<div class="viewcode-block" id="UnicodeIndicTransliterator"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.unicode_transliterate.UnicodeIndicTransliterator">[docs]</a><span class="k">class</span> <span class="nc">UnicodeIndicTransliterator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for transliterator of Indian languages. </span>
+
+<span class="sd">    Script pair specific transliterators should derive from this class and override the transliterate() method. </span>
+<span class="sd">    They can call the super class &#39;transliterate()&#39; method to avail of the common transliteration</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_correct_tamil_mapping</span><span class="p">(</span><span class="n">offset</span><span class="p">):</span> 
+        <span class="c"># handle missing unaspirated and voiced plosives in Tamil script </span>
+        <span class="c"># replace by unvoiced, unaspirated plosives</span>
+
+        <span class="c"># for first 4 consonant rows of varnamala</span>
+        <span class="c"># exception: ja has a mapping in Tamil  </span>
+        <span class="k">if</span> <span class="n">offset</span><span class="o">&gt;=</span><span class="mh">0x15</span> <span class="ow">and</span> <span class="n">offset</span><span class="o">&lt;=</span><span class="mh">0x28</span> <span class="ow">and</span> \
+                <span class="n">offset</span><span class="o">!=</span><span class="mh">0x1c</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span> <span class="p">(</span><span class="n">offset</span><span class="o">-</span><span class="mh">0x15</span><span class="p">)</span><span class="o">%</span><span class="mi">5</span><span class="o">==</span><span class="mi">0</span> <span class="ow">or</span> <span class="p">(</span><span class="n">offset</span><span class="o">-</span><span class="mh">0x15</span><span class="p">)</span><span class="o">%</span><span class="mi">5</span><span class="o">==</span><span class="mi">4</span> <span class="p">)</span>  <span class="p">:</span>
+            <span class="n">subst_char</span><span class="o">=</span><span class="p">(</span><span class="n">offset</span><span class="o">-</span><span class="mh">0x15</span><span class="p">)</span><span class="o">/</span><span class="mi">5</span>
+            <span class="n">offset</span><span class="o">=</span><span class="mh">0x15</span><span class="o">+</span><span class="mi">5</span><span class="o">*</span><span class="n">subst_char</span>
+
+        <span class="c"># for 5th consonant row of varnamala                         </span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="ow">in</span> <span class="p">[</span> <span class="mh">0x2b</span><span class="p">,</span> <span class="mh">0x2c</span><span class="p">,</span> <span class="mh">0x2d</span><span class="p">]:</span>
+            <span class="n">offset</span><span class="o">=</span><span class="mh">0x2a</span>
+
+        <span class="c"># &#39;sh&#39; becomes &#39;Sh&#39;</span>
+        <span class="k">if</span> <span class="n">offset</span><span class="o">==</span><span class="mh">0x36</span><span class="p">:</span>
+            <span class="n">offset</span><span class="o">=</span><span class="mh">0x37</span>
+
+        <span class="k">return</span> <span class="n">offset</span>             
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="UnicodeIndicTransliterator.transliterate"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.unicode_transliterate.UnicodeIndicTransliterator.transliterate">[docs]</a>    <span class="k">def</span> <span class="nf">transliterate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="n">lang1_code</span><span class="p">,</span><span class="n">lang2_code</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">langinfo</span><span class="o">.</span><span class="n">SCRIPT_RANGES</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">lang1_code</span><span class="p">)</span> <span class="ow">and</span> <span class="n">langinfo</span><span class="o">.</span><span class="n">SCRIPT_RANGES</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">lang2_code</span><span class="p">):</span>
+            
+            <span class="c"># if Sinhala is source, do a mapping to Devanagari first </span>
+            <span class="k">if</span> <span class="n">lang1_code</span><span class="o">==</span><span class="s">&#39;si&#39;</span><span class="p">:</span> 
+                <span class="n">text</span><span class="o">=</span><span class="n">sdt</span><span class="o">.</span><span class="n">sinhala_to_devanagari</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                <span class="n">lang1_code</span><span class="o">=</span><span class="s">&#39;hi&#39;</span>
+
+            <span class="c"># if Sinhala is target, make Devanagiri the intermediate target</span>
+            <span class="n">org_lang2_code</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">lang2_code</span><span class="o">==</span><span class="s">&#39;si&#39;</span><span class="p">:</span> 
+                <span class="n">lang2_code</span><span class="o">=</span><span class="s">&#39;hi&#39;</span>
+                <span class="n">org_lang2_code</span><span class="o">=</span><span class="s">&#39;si&#39;</span>
+
+            <span class="n">trans_lit_text</span><span class="o">=</span><span class="p">[]</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span> 
+                <span class="n">newc</span><span class="o">=</span><span class="n">c</span>
+                <span class="n">offset</span><span class="o">=</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">-</span><span class="n">langinfo</span><span class="o">.</span><span class="n">SCRIPT_RANGES</span><span class="p">[</span><span class="n">lang1_code</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">offset</span> <span class="o">&gt;=</span><span class="n">langinfo</span><span class="o">.</span><span class="n">COORDINATED_RANGE_START_INCLUSIVE</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&lt;=</span> <span class="n">langinfo</span><span class="o">.</span><span class="n">COORDINATED_RANGE_END_INCLUSIVE</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">lang2_code</span><span class="o">==</span><span class="s">&#39;ta&#39;</span><span class="p">:</span> 
+                        <span class="c"># tamil exceptions </span>
+                        <span class="n">offset</span><span class="o">=</span><span class="n">UnicodeIndicTransliterator</span><span class="o">.</span><span class="n">_correct_tamil_mapping</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+                    <span class="n">newc</span><span class="o">=</span><span class="nb">unichr</span><span class="p">(</span><span class="n">langinfo</span><span class="o">.</span><span class="n">SCRIPT_RANGES</span><span class="p">[</span><span class="n">lang2_code</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">offset</span><span class="p">)</span>
+
+                <span class="n">trans_lit_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newc</span><span class="p">)</span>        
+
+            <span class="c"># if Sinhala is source, do a mapping to Devanagari first </span>
+            <span class="k">if</span> <span class="n">org_lang2_code</span><span class="o">==</span><span class="s">&#39;si&#39;</span><span class="p">:</span> 
+                <span class="k">return</span> <span class="n">sdt</span><span class="o">.</span><span class="n">devanagari_to_sinhala</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trans_lit_text</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="n">string</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trans_lit_text</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">text</span>
+</div></div>
+<div class="viewcode-block" id="ItransTransliterator"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.unicode_transliterate.ItransTransliterator">[docs]</a><span class="k">class</span> <span class="nc">ItransTransliterator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transliterator between Indian scripts and ITRANS</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ItransTransliterator.to_itrans"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.unicode_transliterate.ItransTransliterator.to_itrans">[docs]</a>    <span class="k">def</span> <span class="nf">to_itrans</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="n">lang_code</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">langinfo</span><span class="o">.</span><span class="n">SCRIPT_RANGES</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">lang_code</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">lang_code</span><span class="o">==</span><span class="s">&#39;ml&#39;</span><span class="p">:</span> 
+                <span class="c"># Change from chillus characters to corresponding consonant+halant</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">u&#39;</span><span class="se">\u0d7a</span><span class="s">&#39;</span><span class="p">,</span><span class="s">u&#39;</span><span class="se">\u0d23\u0d4d</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">u&#39;</span><span class="se">\u0d7b</span><span class="s">&#39;</span><span class="p">,</span><span class="s">u&#39;</span><span class="se">\u0d28\u0d4d</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">u&#39;</span><span class="se">\u0d7c</span><span class="s">&#39;</span><span class="p">,</span><span class="s">u&#39;</span><span class="se">\u0d30\u0d4d</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">u&#39;</span><span class="se">\u0d7d</span><span class="s">&#39;</span><span class="p">,</span><span class="s">u&#39;</span><span class="se">\u0d32\u0d4d</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">u&#39;</span><span class="se">\u0d7e</span><span class="s">&#39;</span><span class="p">,</span><span class="s">u&#39;</span><span class="se">\u0d33\u0d4d</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">u&#39;</span><span class="se">\u0d7f</span><span class="s">&#39;</span><span class="p">,</span><span class="s">u&#39;</span><span class="se">\u0d15\u0d4d</span><span class="s">&#39;</span><span class="p">)</span>
+
+            <span class="n">devnag</span><span class="o">=</span><span class="n">UnicodeIndicTransliterator</span><span class="o">.</span><span class="n">transliterate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="n">lang_code</span><span class="p">,</span><span class="s">&#39;hi&#39;</span><span class="p">)</span>
+            
+            <span class="n">itrans</span><span class="o">=</span><span class="n">itrans_transliterator</span><span class="o">.</span><span class="n">transliterate</span><span class="p">(</span><span class="n">devnag</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">),</span> <span class="s">&#39;devanagari&#39;</span><span class="p">,</span><span class="s">&#39;itrans&#39;</span><span class="p">,</span>
+                                 <span class="p">{</span><span class="s">&#39;outputASCIIEncoded&#39;</span> <span class="p">:</span> <span class="bp">False</span><span class="p">,</span> <span class="s">&#39;handleUnrecognised&#39;</span><span class="p">:</span> <span class="n">itrans_transliterator</span><span class="o">.</span><span class="n">UNRECOGNISED_ECHO</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">itrans</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">text</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ItransTransliterator.from_itrans"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.unicode_transliterate.ItransTransliterator.from_itrans">[docs]</a>    <span class="k">def</span> <span class="nf">from_itrans</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="n">lang_code</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">langinfo</span><span class="o">.</span><span class="n">SCRIPT_RANGES</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">lang_code</span><span class="p">):</span> 
+            <span class="n">devnag_text</span><span class="o">=</span><span class="n">itrans_transliterator</span><span class="o">.</span><span class="n">transliterate</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">),</span> <span class="s">&#39;itrans&#39;</span><span class="p">,</span> <span class="s">&#39;devanagari&#39;</span><span class="p">,</span>
+                                 <span class="p">{</span><span class="s">&#39;outputASCIIEncoded&#39;</span> <span class="p">:</span> <span class="bp">False</span><span class="p">,</span> <span class="s">&#39;handleUnrecognised&#39;</span><span class="p">:</span> <span class="n">itrans_transliterator</span><span class="o">.</span><span class="n">UNRECOGNISED_ECHO</span><span class="p">})</span>
+
+            <span class="n">lang_text</span><span class="o">=</span><span class="n">UnicodeIndicTransliterator</span><span class="o">.</span><span class="n">transliterate</span><span class="p">(</span><span class="n">devnag_text</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">),</span><span class="s">&#39;hi&#39;</span><span class="p">,</span><span class="n">lang_code</span><span class="p">)</span>
+            
+            <span class="k">return</span> <span class="n">lang_text</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">text</span>
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span> 
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">4</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Usage: python unicode_transliterate.py &lt;infile&gt; &lt;outfile&gt; &lt;src_language&gt; &lt;tgt_language&gt;&quot;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">src_language</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">tgt_language</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+    <span class="c"># Do normalization </span>
+    <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s">&#39;r&#39;</span><span class="p">,</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ifile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ofile</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ifile</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+                <span class="n">transliterated_line</span><span class="o">=</span><span class="n">UnicodeIndicTransliterator</span><span class="o">.</span><span class="n">transliterate</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="n">src_language</span><span class="p">,</span><span class="n">tgt_language</span><span class="p">)</span>
+                <span class="n">ofile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">transliterated_line</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Indic NLP Library 0.2 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Anoop Kunchukuttan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

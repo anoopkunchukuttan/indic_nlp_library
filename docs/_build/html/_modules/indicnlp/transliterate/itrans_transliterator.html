@@ -1,0 +1,1130 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>indicnlp.transliterate.itrans_transliterator &mdash; Indic NLP Library 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Indic NLP Library 0.2 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Indic NLP Library 0.2 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for indicnlp.transliterate.itrans_transliterator</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; Transliterate texts between unicode and standard transliteration schemes.</span>
+
+<span class="sd">Transliterate texts between non-latin scripts and commonly-used latin</span>
+<span class="sd">transliteration schemes. Uses standard Unicode character blocks -- </span>
+<span class="sd">e.g. DEVANAGARI U+0900 ... U+097F -- and transliteration schemes -- </span>
+<span class="sd">e.g. the IAST convention for transliteration of Sanskrit to latin-with-dots.</span>
+
+<span class="sd">The following character blocks and transliteration schemes are included:</span>
+
+<span class="sd">DEVANAGARI</span>
+<span class="sd">    IAST</span>
+<span class="sd">    ITRANS -- http://www.aczoom.com/itrans/#itransencoding (Sanskrit only)</span>
+<span class="sd">    Harvard Kyoto</span>
+<span class="sd">    </span>
+<span class="sd">CYRILLIC</span>
+<span class="sd">    ISO 9:1995 (Russian only)</span>
+<span class="sd">    </span>
+<span class="sd">New character blocks and transliteration schemes can be added by creating</span>
+<span class="sd">new CharacterBlock and TransliterationScheme objects.</span>
+
+<span class="sd">COMMAND LINE USAGE</span>
+<span class="sd">----------------------------</span>
+
+<span class="sd">python transliterator.py text inputFormat outputFormat</span>
+
+<span class="sd">... writes the transliterated text to stdout</span>
+
+<span class="sd">text -- the text to be transliterated OR the name of a file containing the text</span>
+<span class="sd">inputFormat -- the name of the character block or transliteration scheme that</span>
+<span class="sd">               the text is to be transliterated FROM, e.g. &#39;CYRILLIC&#39;, &#39;IAST&#39;.</span>
+<span class="sd">               Not case-sensitive</span>
+<span class="sd">outputFormat -- the name of the character block or transliteration scheme that</span>
+<span class="sd">               the text is to be transliterated TO, e.g. &#39;CYRILLIC&#39;, &#39;IAST&#39;.</span>
+<span class="sd">               Not case-sensitive</span>
+<span class="sd">               </span>
+<span class="sd">USAGE</span>
+<span class="sd">--------</span>
+<span class="sd">Transliterate a text:</span>
+
+<span class="sd">&gt;&gt;&gt; import transliterator</span>
+<span class="sd">&gt;&gt;&gt; transliterator.transliterate(&#39;yogazcittavRttinirodhaH&#39;, &#39;harvardkyoto&#39;,</span>
+<span class="sd">...     &#39;devanagari&#39;, {&#39;outputASCIIEncoded&#39; : True})</span>
+<span class="sd">&#39;&amp;#x92f;&amp;#x94b;&amp;#x917;&amp;#x936;&amp;#x94d;&amp;#x91a;&amp;#x93f;&amp;#x924;&amp;#x94d;&amp;#x924;&amp;#x935;&amp;#x943;&amp;#x924;&amp;#x94d;&amp;#x924;&amp;#x93f;&amp;#x928;&amp;#x93f;&amp;#x930;&amp;#x94b;&amp;#x927;&amp;#x903;&#39;</span>
+
+<span class="sd">Create a new CharacterBlock and TransliterationScheme:</span>
+
+<span class="sd">&gt;&gt;&gt; import transliterator</span>
+<span class="sd">&gt;&gt;&gt; cb = transliterator.CharacterBlock(&#39;NEWBLOCK&#39;, range(0x901, 0x9FF))</span>
+<span class="sd">&gt;&gt;&gt; scheme = transliterator.TransliterationScheme(cb.name, &#39;NEWSCHEME&#39;,</span>
+<span class="sd">...                          {&#39;ab&#39;: 0x901, &#39;cd&#39;: 0x902})</span>
+<span class="sd">&gt;&gt;&gt; transliterator.transliterate(&#39;abcd&#39;, scheme, cb, {&#39;outputASCIIEncoded&#39; : True})</span>
+<span class="sd">&#39;&amp;#x901;&amp;#x902;&#39;</span>
+
+<span class="sd">COPYRIGHT AND DISCLAIMER</span>
+<span class="sd">------------------------------------</span>
+<span class="sd">Transliterator is:</span>
+
+<span class="sd">version 0.1 software  - use at your own risk.</span>
+
+<span class="sd">The IAST, ITRANS and Harvard-Kyoto transliteration schemes have been</span>
+<span class="sd">tested for classical Sanskrit, not for any other language.</span>
+
+<span class="sd">The Cyrillic alphabet and ISO 9:1995 transliteration (for Russian only)</span>
+<span class="sd">are included but have been even more lightly tested than Devanagari.</span>
+
+<span class="sd">Copyright (c) 2005 by Alan Little</span>
+
+<span class="sd">By obtaining, using, and/or copying this software and/or its</span>
+<span class="sd">associated documentation, you agree that you have read, understood,</span>
+<span class="sd">and will comply with the following terms and conditions:</span>
+
+<span class="sd">Permission to use, copy, modify, and distribute this software and</span>
+<span class="sd">its associated documentation for any purpose and without fee is</span>
+<span class="sd">hereby granted, provided that the above copyright notice appears in</span>
+<span class="sd">all copies, and that both that copyright notice and this permission</span>
+<span class="sd">notice appear in supporting documentation, and that the name of </span>
+<span class="sd">the author not be used in advertising or publicity pertaining to </span>
+<span class="sd">distribution of the software without specific, written prior permission.</span>
+
+<span class="sd">THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, </span>
+<span class="sd">INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  </span>
+<span class="sd">IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR </span>
+<span class="sd">CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM </span>
+<span class="sd">LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, </span>
+<span class="sd">NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION </span>
+<span class="sd">WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="sd">       </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot; TO DO</span>
+
+<span class="sd">cyrillic: GOST &amp; something ASCII-only &amp; sensible</span>
+<span class="sd">punctuation &amp;/ numerals:</span>
+<span class="sd">    HK</span>
+<span class="sd">    check Itrans punctuation</span>
+<span class="sd"> implicit conversion to unicode if no to format specified</span>
+<span class="sd"> URLs for the input text</span>
+<span class="sd"> </span>
+<span class="sd">Bugs</span>
+<span class="sd">is there a problem with implicit A before visarga?</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.1&#39;</span>
+
+<span class="kn">import</span> <span class="nn">unicodedata</span>
+<span class="kn">from</span> <span class="nn">sets</span> <span class="kn">import</span> <span class="n">Set</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">characterBlocks</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_names</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c"># handle unrecognised characters</span>
+
+<span class="n">UNRECOGNISED_FAIL</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">UNRECOGNISED_ECHO</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">UNRECOGNISED_SUBSTITUTE</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c"># default options</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="viewcode-block" id="resetOptions"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.resetOptions">[docs]</a><span class="k">def</span> <span class="nf">resetOptions</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Reset options to their default values. &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">options</span>
+    <span class="n">defaultOptions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;inputEncoding&#39;</span> <span class="p">:</span> <span class="s">&#39;utf-8&#39;</span><span class="p">,</span>  <span class="c"># default input encoding for strings</span>
+        <span class="s">&#39;outputEncoding&#39;</span> <span class="p">:</span> <span class="s">&#39;utf-8&#39;</span><span class="p">,</span> <span class="c"># default output encoding</span>
+        <span class="s">&#39;substituteChar&#39;</span> <span class="p">:</span> <span class="s">&#39;?&#39;</span><span class="p">,</span> <span class="c"># use to substitute unrecognised characters</span>
+        <span class="s">&#39;handleUnrecognised&#39;</span> <span class="p">:</span> <span class="n">UNRECOGNISED_FAIL</span><span class="p">,</span>   <span class="c"># unrecognised characters:</span>
+                                                    <span class="c"># fail, echo or substitute</span>
+        <span class="s">&#39;outputASCIIEncoded&#39;</span> <span class="p">:</span> <span class="bp">False</span><span class="p">,</span>   <span class="c"># HTML-encoded ASCII output?                                                </span>
+    <span class="p">}</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">defaultOptions</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+<span class="n">resetOptions</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_unrecognised</span><span class="p">(</span><span class="nb">chr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Handle unrecognised characters. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s">&#39;handleUnrecognised&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">UNRECOGNISED_ECHO</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">chr</span>
+    <span class="k">elif</span> <span class="n">options</span><span class="p">[</span><span class="s">&#39;handleUnrecognised&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">UNRECOGNISED_SUBSTITUTE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">options</span><span class="p">[</span><span class="s">&#39;substituteChar&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="nb">chr</span>
+ 
+<div class="viewcode-block" id="TLCharacter"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.TLCharacter">[docs]</a><span class="k">class</span> <span class="nc">TLCharacter</span> <span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Class representing a Unicode character with its equivalents.</span>
+<span class="sd">    </span>
+<span class="sd">    Public attributes:</span>
+<span class="sd">    unicodeHexValue -- the numeric value of the Unicode code point.</span>
+<span class="sd">    unichr -- the character value of the Unicode code point.</span>
+<span class="sd">    name -- the name of the Unicode code point.</span>
+<span class="sd">    equivalents -- a dict containing the character&#39;s equivalents in </span>
+<span class="sd">                   various transliteration schemes, in the format:</span>
+<span class="sd">                   {&#39;Scheme A&#39;: &#39;A&#39;, &#39;Scheme B&#39;: &#39;aah&#39;, }</span>
+<span class="sd">                   where keys are TransliterationScheme names,</span>
+<span class="sd">                   values are transliterated equivalents of the </span>
+<span class="sd">                   character.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unicodeHexValue</span><span class="p">,</span> <span class="n">block</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set up a unicode character.</span>
+<span class="sd">        </span>
+<span class="sd">        Arguments:</span>
+<span class="sd">        unicodeHexValue -- an integer that should correspond to a </span>
+<span class="sd">                           Unicode code point.</span>
+<span class="sd">        block -- the CharacterBlock this character belongs to.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">        ValueError -- if unicodeHexValue is not a valid code point.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">unicodeHexValue</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">unicodeHexValue</span> <span class="o">&gt;</span> <span class="mh">0x10FFFF</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&quot;numeric value outside Unicode range&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unicodeHexValue</span> <span class="o">=</span> <span class="n">unicodeHexValue</span>
+        <span class="sd">&quot;&quot;&quot; Use name check to filter out unused characters.</span>
+<span class="sd">              unicodedata.name() raises ValueError for these</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unichr</span> <span class="o">=</span> <span class="nb">unichr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unicodeHexValue</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unichr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equivalents</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_block</span> <span class="o">=</span> <span class="n">block</span>
+        
+<div class="viewcode-block" id="TLCharacter.addEquivalent"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.TLCharacter.addEquivalent">[docs]</a>    <span class="k">def</span> <span class="nf">addEquivalent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equivName</span><span class="p">,</span> <span class="n">equivalent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add an equivalent for the character.</span>
+<span class="sd">        </span>
+<span class="sd">        Arguments:</span>
+<span class="sd">        equivName -- the name of a TransliterationScheme</span>
+<span class="sd">        equivalent -- string/unicode equivalent in the named</span>
+<span class="sd">                      TransliterationScheme for this code point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equivalents</span><span class="p">[</span><span class="n">equivName</span><span class="p">]</span> <span class="o">=</span> <span class="n">equivalent</span>
+     </div></div>
+<div class="viewcode-block" id="CharacterBlock"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.CharacterBlock">[docs]</a><span class="k">class</span> <span class="nc">CharacterBlock</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Dictionary-like representation of a set of unicode characters.</span>
+<span class="sd">    </span>
+<span class="sd">    For our purposes, a character block corresponds to an alphabet/script</span>
+<span class="sd">    that we want to be able to transliterate to or from, e.g. Cyrillic,</span>
+<span class="sd">    Devanagari.</span>
+<span class="sd">    </span>
+<span class="sd">    Keys are unicode characters.</span>
+<span class="sd">    Values are TLCharacter instances.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">charRange</span><span class="p">,</span> <span class="n">charClass</span><span class="o">=</span><span class="n">TLCharacter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set up a character block corresponding to a range of code points.</span>
+<span class="sd">       </span>
+<span class="sd">        Keyword arguments:</span>
+<span class="sd">        name -- a string containing the name of the character block.</span>
+<span class="sd">                (should normally use a standard Unicode character block name)</span>
+<span class="sd">        range -- a list of code points. Reserved code points are ignored.</span>
+<span class="sd">        charClass -- the class to be used to create the characters.</span>
+<span class="sd">                     Should be a subclass of TLCharacter.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="sd">&quot;&quot;&quot; Ensure that any character sequence dependencies will be ok.</span>
+<span class="sd">        </span>
+<span class="sd">        e.g. set up Devanagari standalone vowels before dependents.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">charRange</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">charRange</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tlchar</span> <span class="o">=</span> <span class="n">charClass</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">tlchar</span><span class="o">.</span><span class="n">unichr</span><span class="p">]</span> <span class="o">=</span> <span class="n">tlchar</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span> <span class="c"># Unicode reserved code points.</span>
+                <span class="c"># not an error</span>
+                <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_longestEntry</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transliterationSchemes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">characterBlocks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span> <span class="o">=</span> <span class="bp">self</span>
+        
+    <span class="k">def</span> <span class="nf">_transliterate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transliterate the text to the target transliteration scheme.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span> 
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">equivalents</span><span class="p">[</span><span class="n">outFormat</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_unrecognised</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span>
+        
+    <span class="k">def</span> <span class="nf">_preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Make our signature compatible with TransliterationScheme. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">text</span>
+
+    <span class="k">def</span> <span class="nf">_getNextChar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">startPos</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">text</span><span class="p">[</span><span class="n">startPos</span><span class="p">]</span>
+
+    </div>
+<div class="viewcode-block" id="TransliterationScheme"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.TransliterationScheme">[docs]</a><span class="k">class</span> <span class="nc">TransliterationScheme</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Dictionary-like representation of a transliteration scheme.</span>
+<span class="sd">    </span>
+<span class="sd">    e.g. the Harvard-Kyoto, IAST or ITRANS schemes for</span>
+<span class="sd">    transliterating Devanagari to or from the latin alphabet.</span>
+<span class="sd">    </span>
+<span class="sd">    Keys are unicode strings representing the letter-equivalents used</span>
+<span class="sd">    in the transliteration scheme.</span>
+<span class="sd">    Values are TLCharacter instances.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blockName</span><span class="p">,</span> <span class="n">schemeName</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">swapTable</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set up a transliteration scheme.</span>
+<span class="sd">        </span>
+<span class="sd">        Keyword arguments:</span>
+<span class="sd">        blockName -- a string containg the name of the character block this </span>
+<span class="sd">                     transliteration scheme is used for, </span>
+<span class="sd">                     e.g. &#39;CYRILLIC&#39;, &#39;DEVANAGARI&#39;.</span>
+<span class="sd">        schemeName -- the name of the transliteration scheme. </span>
+<span class="sd">                      Must be unique.</span>
+<span class="sd">        data -- a dict containing the data for the transliteration scheme. </span>
+<span class="sd">                Keys are transliterated Unicode characters or strings.</span>
+<span class="sd">                Values are integers corresponding to Unicode code points.</span>
+<span class="sd">                For examples, see the data for the built-in transliteration</span>
+<span class="sd">                schemes.</span>
+<span class="sd">        swapTable -- a dict (default None) containing any non-standard</span>
+<span class="sd">                     letter combinations used in the transliteration scheme</span>
+<span class="sd">                     that we want to pre-process away before transliterating.</span>
+<span class="sd">                     See the ITRANS data for examples.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">        KeyError: unknown block name.</span>
+<span class="sd">        TypeError: swapTable is not a dict</span>
+<span class="sd">                </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">characterBlocks</span><span class="p">[</span><span class="n">blockName</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">schemeName</span>
+        <span class="k">for</span> <span class="n">equiv</span><span class="p">,</span> <span class="n">unicodeHexValue</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">equiv</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="p">[</span><span class="nb">unichr</span><span class="p">(</span><span class="n">unicodeHexValue</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">equiv</span><span class="p">]</span><span class="o">.</span><span class="n">addEquivalent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">equiv</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_longestEntry</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_longestEntry</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parseTree</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parsedata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parsedata</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setupParseTree</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parseTree</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">swapTable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">swapTable</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">TypeError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">swapTable</span> <span class="o">=</span> <span class="n">swapTable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">transliterationSchemes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span> <span class="o">=</span> <span class="bp">self</span>
+    
+    <span class="k">def</span> <span class="nf">_setupParseTree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rowFrom</span><span class="p">,</span> <span class="n">rowTo</span><span class="p">,</span> <span class="n">colIndex</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Build the search tree for multi-character encodings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">colIndex</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_longestEntry</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">prevchar</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">rowIndex</span> <span class="o">=</span> <span class="n">rowFrom</span>
+        <span class="k">while</span> <span class="n">rowIndex</span> <span class="o">&lt;=</span> <span class="n">rowTo</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">colIndex</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parsedata</span><span class="p">[</span><span class="n">rowIndex</span><span class="p">]):</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parsedata</span><span class="p">[</span><span class="n">rowIndex</span><span class="p">][</span><span class="n">colIndex</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">prevchar</span><span class="p">:</span>
+                    <span class="n">tree</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">if</span>  <span class="n">prevchar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_setupParseTree</span><span class="p">(</span><span class="n">rowFrom</span><span class="p">,</span> <span class="n">rowIndex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">colIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tree</span><span class="p">[</span><span class="n">prevchar</span><span class="p">])</span>
+                    <span class="n">rowFrom</span> <span class="o">=</span> <span class="n">rowIndex</span>
+                    <span class="n">prevchar</span> <span class="o">=</span> <span class="n">c</span>
+                <span class="k">if</span> <span class="n">rowIndex</span> <span class="o">==</span> <span class="n">rowTo</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_setupParseTree</span><span class="p">(</span><span class="n">rowFrom</span><span class="p">,</span> <span class="n">rowIndex</span><span class="p">,</span> <span class="n">colIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tree</span><span class="p">[</span><span class="n">prevchar</span><span class="p">])</span>
+            <span class="n">rowIndex</span> <span class="o">=</span> <span class="n">rowIndex</span> <span class="o">+</span> <span class="mi">1</span>
+                
+    <span class="k">def</span> <span class="nf">__getNextChar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">startPos</span><span class="p">,</span> <span class="n">tree</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">startPos</span>
+        <span class="n">matched</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">[</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]]:</span>
+                    <span class="n">matched</span> <span class="o">=</span> <span class="n">matched</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getNextChar</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tree</span><span class="p">[</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="c"># Ignore. The lookup for the equivalent character later on will handle it.</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">matched</span>
+    
+    <span class="k">def</span> <span class="nf">_getNextChar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">startPos</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_longestEntry</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">text</span><span class="p">[</span><span class="n">startPos</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getNextChar</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">startPos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parseTree</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">text</span><span class="p">[</span><span class="n">startPos</span><span class="p">]</span>
+            
+    <span class="k">def</span> <span class="nf">_preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">swapTable</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">swapTable</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">swapTable</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">text</span>
+        
+            
+    <span class="k">def</span> <span class="nf">_transliterate</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transliterate the text to Unicode.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span> 
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="nb">chr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getNextChar</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="nb">chr</span><span class="p">]</span><span class="o">.</span><span class="n">unichr</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_unrecognised</span><span class="p">(</span><span class="nb">chr</span><span class="p">))</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="nb">chr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    </div>
+<div class="viewcode-block" id="transliterate"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.transliterate">[docs]</a><span class="k">def</span> <span class="nf">transliterate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">inFormat</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">,</span> <span class="n">requestOptions</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot; Transliterate a text.</span>
+<span class="sd">    </span>
+<span class="sd">    Keyword arguments:</span>
+<span class="sd">    text -- a unicode string containing the text to be transliterated</span>
+<span class="sd">    inFormat -- the &quot;from&quot; CharacterBlock or TransliterationScheme, or its name</span>
+<span class="sd">    outFormat -- the target CharacterBlock or TransliterationScheme, or its name</span>
+<span class="sd">    requestOptions -- optional dict containing option settings that override the</span>
+<span class="sd">                      defaults for this request.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns a unicode object containing the text transliterated into the</span>
+<span class="sd">    target character set.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">    ValueError -- unrecognised input or output format.</span>
+<span class="sd">    KeyError -- a character in text is not a member of inFormat, or has no</span>
+<span class="sd">    corresponding character defined in outFormat.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">asciiEncode</span><span class="p">(</span><span class="nb">chr</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="nb">chr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;&amp;#x</span><span class="si">%x</span><span class="s">;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">chr</span>
+      
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">requestOptions</span><span class="p">)</span>
+    
+        <span class="sd">&quot;&quot;&quot; Ensure we have the correct encoding for input text. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s">&#39;inputEncoding&#39;</span><span class="p">])</span>
+            
+        <span class="sd">&quot;&quot;&quot; Look up input &amp; output format names. &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">findFormat</span><span class="p">(</span><span class="n">fmt</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">fmt</span> <span class="o">=</span> <span class="n">_names</span><span class="p">[</span><span class="n">fmt</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&#39;unrecognised format &#39;</span> <span class="o">+</span> <span class="n">fmt</span>
+            <span class="k">return</span> <span class="n">fmt</span>
+        <span class="n">inFormat</span> <span class="o">=</span> <span class="n">findFormat</span><span class="p">(</span><span class="n">inFormat</span><span class="p">)</span>
+        <span class="n">outFormat</span> <span class="o">=</span> <span class="n">findFormat</span><span class="p">(</span><span class="n">outFormat</span><span class="p">)</span>
+        
+        <span class="sd">&quot;&quot;&quot; Perform sanity checks. &quot;&quot;&quot;</span>
+    
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span> 
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="s">&quot;The text must be a string or a unicode object&quot;</span>
+        
+        <span class="k">def</span> <span class="nf">getBlock</span><span class="p">(</span><span class="n">format</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="n">CharacterBlock</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">format</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">format</span><span class="o">.</span><span class="n">block</span>
+        <span class="n">inBlock</span> <span class="o">=</span> <span class="n">getBlock</span><span class="p">(</span><span class="n">inFormat</span><span class="p">)</span>
+        <span class="n">outBlock</span> <span class="o">=</span> <span class="n">getBlock</span><span class="p">(</span><span class="n">outFormat</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inBlock</span> <span class="ow">is</span> <span class="n">outBlock</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&quot;incompatible input and output formats&quot;</span>
+            
+        <span class="k">if</span> <span class="n">inFormat</span> <span class="ow">is</span> <span class="n">outFormat</span><span class="p">:</span>
+            <span class="c"># They&#39;re trying to trick us. Just do a quick sanity check &amp; bounce it back.</span>
+            <span class="k">if</span> <span class="n">inFormat</span><span class="o">.</span><span class="n">_longestEntry</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="p">[</span><span class="n">inFormat</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">Set</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="o">.</span><span class="n">isspace</span><span class="p">()]</span> 
+                <span class="c"># -&gt; KeyError for extraneous chars.</span>
+                <span class="k">return</span> <span class="n">text</span>
+            
+        <span class="sd">&quot;&quot;&quot; At last we&#39;re happy. Do it. &quot;&quot;&quot;</span>
+            
+        <span class="n">result</span> <span class="o">=</span> <span class="n">inFormat</span><span class="o">.</span><span class="n">_transliterate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">[</span><span class="s">&#39;outputASCIIEncoded&#39;</span><span class="p">]:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">asciiEncode</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s">u&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">options</span><span class="p">[</span><span class="s">&#39;outputEncoding&#39;</span><span class="p">])</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">resetOptions</span><span class="p">()</span>
+    
+            </div>
+<span class="sd">&quot;&quot;&quot; DEVANAGARI PROCESSING</span>
+
+<span class="sd">    Specialised classes &amp; functions to handle Devanagari.</span>
+<span class="sd">    </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="DevanagariCharacter"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.DevanagariCharacter">[docs]</a><span class="k">class</span> <span class="nc">DevanagariCharacter</span> <span class="p">(</span><span class="n">TLCharacter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Special processing for Devanagari characters. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Devanaagarii characters need to know if they are vowels or not.</span>
+<span class="sd">        Unicode Data doesn&#39;t help with this - category &#39;Mn&#39; is not unique to dependent vowels</span>
+<span class="sd">        - so need to hard code the ranges</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_vowelOffset</span> <span class="o">=</span> <span class="mh">0x93E</span> <span class="o">-</span> <span class="mh">0x906</span>
+    <span class="n">_depVowelRange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mh">0x93E</span><span class="p">,</span> <span class="mh">0x94D</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mh">0x962</span><span class="p">,</span><span class="mh">0x963</span><span class="p">]</span>
+    <span class="n">_vowelRange</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mh">0x904</span><span class="p">,</span> <span class="mh">0x915</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mh">0x960</span><span class="p">,</span><span class="mh">0x961</span><span class="p">]</span>
+    <span class="n">_VIRAMA</span> <span class="o">=</span> <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x94D</span><span class="p">)</span>
+    <span class="n">_LETTER_A</span> <span class="o">=</span> <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x905</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot; Unicode calls agravaha a letter. Not for our purposes:</span>
+<span class="sd">        we need to not treat it as one for handling virama &amp; implicit &#39;a&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_AGRAVAHA</span> <span class="o">=</span> <span class="mh">0x93D</span>
+    <span class="n">_OM</span> <span class="o">=</span> <span class="mh">0x950</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unicodeHexValue</span><span class="p">,</span> <span class="n">block</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create an object representing a Devanagari character.</span>
+<span class="sd">        </span>
+<span class="sd">        Extends TLCharacter.__init__ to distinguish Devanagari standalone</span>
+<span class="sd">        vowels, dependent vowels and consonants.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises </span>
+<span class="sd">        ValueError -- for characters in the Devanagari dependent vowel range.</span>
+<span class="sd">                      We want these as variants of the corresponding standalone </span>
+<span class="sd">                      vowels, not as separate characters.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">TLCharacter</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unicodeHexValue</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">isVowel</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">unicodeHexValue</span> <span class="ow">in</span> <span class="n">DevanagariCharacter</span><span class="o">.</span><span class="n">_vowelRange</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">isVowel</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dependentVowel</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">unicodeHexValue</span><span class="o">==</span><span class="mh">0x960</span><span class="p">:</span> 
+            <span class="c">## dependency vowel sign for vocalic RR is set only when processing the vowel, since the maatra precedes the vowel in the Unicode chart</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setDependentVowel</span><span class="p">(</span><span class="mh">0x944</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">unicodeHexValue</span> <span class="ow">in</span> <span class="n">DevanagariCharacter</span><span class="o">.</span><span class="n">_depVowelRange</span><span class="p">:</span>
+            <span class="n">vowel</span><span class="o">=</span><span class="bp">None</span>
+            <span class="k">if</span>  <span class="n">unicodeHexValue</span> <span class="o">==</span> <span class="mh">0x962</span><span class="p">:</span> 
+                <span class="n">vowel</span><span class="o">=</span><span class="n">block</span><span class="p">[</span><span class="nb">unichr</span><span class="p">(</span><span class="mh">0x90C</span><span class="p">)]</span>
+            <span class="k">elif</span>  <span class="n">unicodeHexValue</span> <span class="o">==</span> <span class="mh">0x963</span><span class="p">:</span> 
+                <span class="n">vowel</span><span class="o">=</span><span class="n">block</span><span class="p">[</span><span class="nb">unichr</span><span class="p">(</span><span class="mh">0x961</span><span class="p">)]</span>
+            <span class="k">elif</span> <span class="n">unicodeHexValue</span> <span class="o">==</span> <span class="mh">0x944</span><span class="p">:</span>
+                <span class="c">## dependency vowel sign for vocalic RR is set only when processing the vowel, since the maatra precedes the vowel in the Unicode chart</span>
+                <span class="c">## That step&#39;s cpde is above, with documentation </span>
+                <span class="k">pass</span> 
+            <span class="k">else</span><span class="p">:</span>                 
+                <span class="n">vowel</span><span class="o">=</span><span class="n">block</span><span class="p">[</span><span class="nb">unichr</span><span class="p">(</span><span class="n">unicodeHexValue</span> <span class="o">-</span> <span class="n">DevanagariCharacter</span><span class="o">.</span><span class="n">_vowelOffset</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">vowel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>                 
+                <span class="c"># The check condition is for 0x944, processing deferred for later</span>
+                <span class="n">vowel</span><span class="o">.</span><span class="n">_setDependentVowel</span><span class="p">(</span><span class="n">unicodeHexValue</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span> <span class="c"># don&#39;t create dependent vowels as separate instances</span>
+            
+        <span class="c">#TLCharacter.__init__(self, unicodeHexValue, block)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">isConsonant</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isVowel</span> <span class="o">==</span> <span class="bp">False</span> \
+        <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">unichr</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> \
+        <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">unicodeHexValue</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">DevanagariCharacter</span><span class="o">.</span><span class="n">_AGRAVAHA</span><span class="p">,</span>
+                                                           <span class="n">DevanagariCharacter</span><span class="o">.</span><span class="n">_OM</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">isConsonant</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">_setDependentVowel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unicodeHexValue</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">unicodeHexValue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isVowel</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dependentVowel</span> <span class="o">=</span> <span class="nb">unichr</span><span class="p">(</span><span class="n">unicodeHexValue</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="p">[</span><span class="nb">unichr</span><span class="p">(</span><span class="n">unicodeHexValue</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span>
+            </div>
+<span class="k">class</span> <span class="nc">_Devanagari</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Holder class for the Devanagari transliteration algorithm. &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">_transliterate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transliterate a devanagari text into the target format.</span>
+<span class="sd">        </span>
+<span class="sd">        Transliterating a character to or from Devanagari is not a simple </span>
+<span class="sd">        lookup: it depends on the preceding and following characters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">getResult</span><span class="p">():</span> 
+            <span class="k">if</span> <span class="n">curMatch</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curMatch</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">if</span> <span class="n">prevMatch</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">prev</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">prevMatch</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="n">nextMatch</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="nb">next</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">nextMatch</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">next</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">equiv</span> <span class="o">=</span> <span class="n">outFormat</span><span class="o">.</span><span class="n">_equivalent</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">curMatch</span><span class="p">],</span> 
+                                                            <span class="n">prev</span><span class="p">,</span> <span class="c">#self.get(prevMatch, None), </span>
+                                                            <span class="nb">next</span><span class="p">,</span> <span class="c">#self.get(nextMatch, None),</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">_implicitA</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">equiv</span> <span class="o">=</span> <span class="n">_unrecognised</span><span class="p">(</span><span class="n">curMatch</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">equiv</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                
+        <span class="k">def</span> <span class="nf">incr</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_longestEntry</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            
+            
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">prevMatch</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">nextMatch</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">curMatch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getNextChar</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">curMatch</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">nextMatch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getNextChar</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">getResult</span><span class="p">()</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">nextMatch</span><span class="p">)</span>
+            <span class="n">prevMatch</span> <span class="o">=</span> <span class="n">curMatch</span>
+            <span class="n">curMatch</span> <span class="o">=</span> <span class="n">nextMatch</span>
+            <span class="n">nextMatch</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">getResult</span><span class="p">()</span> 
+        <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="DevanagariCharacterBlock"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.DevanagariCharacterBlock">[docs]</a><span class="k">class</span> <span class="nc">DevanagariCharacterBlock</span><span class="p">(</span><span class="n">CharacterBlock</span><span class="p">,</span> <span class="n">_Devanagari</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Class representing the Devanagari Unicode character block.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">charRange</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set up the Devanagari character block.</span>
+<span class="sd">        </span>
+<span class="sd">        Extends CharacterBlock.__init__ by specifiying that the characters</span>
+<span class="sd">        created should be instances of DevanagariCharacter.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">CharacterBlock</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">charRange</span><span class="p">,</span> <span class="n">DevanagariCharacter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_implicitA</span> <span class="o">=</span> <span class="bp">True</span> <span class="c"># generate implicit As when transliterating </span>
+                                <span class="c"># *FROM* this scheme</span>
+        
+    <span class="k">def</span> <span class="nf">_transliterate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Need to specify which superclass _transliterate() to call. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_Devanagari</span><span class="o">.</span><span class="n">_transliterate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_equivalent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">char</span><span class="p">,</span> <span class="n">prev</span><span class="p">,</span> <span class="nb">next</span><span class="p">,</span> <span class="n">implicitA</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transliterate a Latin character equivalent to Devanagari.</span>
+<span class="sd">        </span>
+<span class="sd">        Add VIRAMA for ligatures.</span>
+<span class="sd">        Convert standalone to dependent vowels.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">isVowel</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">char</span><span class="o">.</span><span class="n">unichr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">isConsonant</span> \
+            <span class="ow">and</span> <span class="p">((</span><span class="nb">next</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">next</span><span class="o">.</span><span class="n">isConsonant</span><span class="p">)</span> \
+            <span class="ow">or</span> <span class="nb">next</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span> 
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DevanagariCharacter</span><span class="o">.</span><span class="n">_VIRAMA</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prev</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">isConsonant</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">char</span><span class="o">.</span><span class="n">unichr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">_dependentVowel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">char</span><span class="o">.</span><span class="n">_dependentVowel</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+        </div>
+<div class="viewcode-block" id="DevanagariTransliterationScheme"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.DevanagariTransliterationScheme">[docs]</a><span class="k">class</span> <span class="nc">DevanagariTransliterationScheme</span><span class="p">(</span><span class="n">TransliterationScheme</span><span class="p">,</span> <span class="n">_Devanagari</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Class representing a Devanagari transliteration scheme. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blockName</span><span class="p">,</span> <span class="n">schemeName</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">swapTable</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set up a Devanagari transliteration scheme.</span>
+<span class="sd">        </span>
+<span class="sd">        Extends TransliterationScheme.__init__</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">TransliterationScheme</span><span class="o">.</span><span class="n">__init__</span>\
+                <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blockName</span><span class="p">,</span> <span class="n">schemeName</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">swapTable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_implicitA</span> <span class="o">=</span> <span class="bp">False</span> <span class="c"># generate implicit As when transliterating </span>
+                                <span class="c"># *FROM* this scheme</span>
+
+    <span class="k">def</span> <span class="nf">_transliterate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Need to specify which superclass _transliterate() to call. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_Devanagari</span><span class="o">.</span><span class="n">_transliterate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_equivalent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">char</span><span class="p">,</span> <span class="n">prev</span><span class="p">,</span> <span class="nb">next</span><span class="p">,</span> <span class="n">implicitA</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Transliterate a Devanagari character to Latin.</span>
+<span class="sd">        </span>
+<span class="sd">        Add implicit As unless overridden by VIRAMA.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">unichr</span> <span class="o">!=</span> <span class="n">DevanagariCharacter</span><span class="o">.</span><span class="n">_VIRAMA</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">char</span><span class="o">.</span><span class="n">equivalents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+        <span class="sd">&quot;&quot;&quot; Append implicit A to consonants if the next character isn&#39;t a vowel. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">implicitA</span> <span class="ow">and</span> <span class="n">char</span><span class="o">.</span><span class="n">isConsonant</span> \
+        <span class="ow">and</span> <span class="p">((</span><span class="nb">next</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+        <span class="ow">and</span> <span class="nb">next</span><span class="o">.</span><span class="n">unichr</span> <span class="o">!=</span> <span class="n">DevanagariCharacter</span><span class="o">.</span><span class="n">_VIRAMA</span> \
+        <span class="ow">and</span> <span class="ow">not</span> <span class="nb">next</span><span class="o">.</span><span class="n">isVowel</span><span class="p">)</span> \
+        <span class="ow">or</span> <span class="nb">next</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">characterBlocks</span><span class="p">[</span><span class="s">&#39;DEVANAGARI&#39;</span><span class="p">]</span>\
+                   <span class="p">[</span><span class="n">DevanagariCharacter</span><span class="o">.</span><span class="n">_LETTER_A</span><span class="p">]</span><span class="o">.</span><span class="n">equivalents</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">result</span>
+  
+</div>
+<span class="sd">&quot;&quot;&quot; DEVANAGARI DATA</span>
+
+<span class="sd">set up the Devanagari character set with three commonly used transliteration </span>
+<span class="sd">schemes:</span>
+<span class="sd">ITRANS</span>
+<span class="sd">Harvard Kyoto</span>
+<span class="sd">IAST</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">DevanagariCharacterBlock</span><span class="p">(</span><span class="s">&#39;DEVANAGARI&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mh">0x900</span><span class="p">,</span> <span class="mh">0x97F</span><span class="p">))</span>
+
+<span class="n">HARVARDKYOTO</span> <span class="o">=</span> <span class="p">{</span> \
+    <span class="s">&#39;M&#39;</span><span class="p">:</span> <span class="mh">0x902</span><span class="p">,</span>
+    <span class="s">&#39;H&#39;</span><span class="p">:</span> <span class="mh">0x903</span><span class="p">,</span>
+    <span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mh">0x905</span><span class="p">,</span>
+    <span class="s">&#39;A&#39;</span><span class="p">:</span> <span class="mh">0x906</span><span class="p">,</span>
+    <span class="s">&#39;i&#39;</span><span class="p">:</span> <span class="mh">0x907</span><span class="p">,</span>
+    <span class="s">&#39;I&#39;</span><span class="p">:</span> <span class="mh">0x908</span><span class="p">,</span>
+    <span class="s">&#39;u&#39;</span><span class="p">:</span> <span class="mh">0x909</span><span class="p">,</span>
+    <span class="s">&#39;U&#39;</span><span class="p">:</span> <span class="mh">0x90A</span><span class="p">,</span>
+    <span class="s">&#39;R&#39;</span><span class="p">:</span> <span class="mh">0x90B</span><span class="p">,</span>
+    <span class="s">&#39;lR&#39;</span><span class="p">:</span> <span class="mh">0x90C</span><span class="p">,</span>
+    <span class="s">&#39;e&#39;</span><span class="p">:</span> <span class="mh">0x90F</span><span class="p">,</span>
+    <span class="s">&#39;ai&#39;</span><span class="p">:</span> <span class="mh">0x910</span><span class="p">,</span>
+    <span class="s">&#39;o&#39;</span><span class="p">:</span> <span class="mh">0x913</span><span class="p">,</span>
+    <span class="s">&#39;au&#39;</span><span class="p">:</span> <span class="mh">0x914</span><span class="p">,</span>
+    <span class="s">&#39;k&#39;</span><span class="p">:</span> <span class="mh">0x915</span><span class="p">,</span>
+    <span class="s">&#39;kh&#39;</span><span class="p">:</span> <span class="mh">0x916</span><span class="p">,</span>
+    <span class="s">&#39;g&#39;</span><span class="p">:</span> <span class="mh">0x917</span><span class="p">,</span>
+    <span class="s">&#39;gh&#39;</span><span class="p">:</span> <span class="mh">0x918</span><span class="p">,</span>
+    <span class="s">&#39;G&#39;</span><span class="p">:</span> <span class="mh">0x919</span><span class="p">,</span>
+    <span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="mh">0x91A</span><span class="p">,</span>
+    <span class="s">&#39;ch&#39;</span><span class="p">:</span> <span class="mh">0x91B</span><span class="p">,</span>
+    <span class="s">&#39;j&#39;</span><span class="p">:</span> <span class="mh">0x91C</span><span class="p">,</span>
+    <span class="s">&#39;jh&#39;</span><span class="p">:</span> <span class="mh">0x91D</span><span class="p">,</span>
+    <span class="s">&#39;J&#39;</span><span class="p">:</span> <span class="mh">0x91E</span><span class="p">,</span>
+    <span class="s">&#39;T&#39;</span><span class="p">:</span> <span class="mh">0x91F</span><span class="p">,</span>
+    <span class="s">&#39;Th&#39;</span><span class="p">:</span> <span class="mh">0x920</span><span class="p">,</span>
+    <span class="s">&#39;D&#39;</span><span class="p">:</span> <span class="mh">0x921</span><span class="p">,</span>
+    <span class="s">&#39;Dh&#39;</span><span class="p">:</span> <span class="mh">0x922</span><span class="p">,</span>
+    <span class="s">&#39;N&#39;</span><span class="p">:</span> <span class="mh">0x923</span><span class="p">,</span>
+    <span class="s">&#39;t&#39;</span><span class="p">:</span> <span class="mh">0x924</span><span class="p">,</span>
+    <span class="s">&#39;th&#39;</span><span class="p">:</span> <span class="mh">0x925</span><span class="p">,</span>
+    <span class="s">&#39;d&#39;</span><span class="p">:</span> <span class="mh">0x926</span><span class="p">,</span>
+    <span class="s">&#39;dh&#39;</span><span class="p">:</span> <span class="mh">0x927</span><span class="p">,</span>
+    <span class="s">&#39;n&#39;</span><span class="p">:</span> <span class="mh">0x928</span><span class="p">,</span>
+    <span class="s">&#39;p&#39;</span><span class="p">:</span> <span class="mh">0x92A</span><span class="p">,</span>
+    <span class="s">&#39;ph&#39;</span><span class="p">:</span> <span class="mh">0x92B</span><span class="p">,</span>
+    <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mh">0x92C</span><span class="p">,</span>
+    <span class="s">&#39;bh&#39;</span><span class="p">:</span> <span class="mh">0x92D</span><span class="p">,</span>
+    <span class="s">&#39;m&#39;</span><span class="p">:</span> <span class="mh">0x92E</span><span class="p">,</span>
+    <span class="s">&#39;y&#39;</span><span class="p">:</span> <span class="mh">0x92F</span><span class="p">,</span>
+    <span class="s">&#39;r&#39;</span><span class="p">:</span> <span class="mh">0x930</span><span class="p">,</span>
+    <span class="s">&#39;l&#39;</span><span class="p">:</span> <span class="mh">0x932</span><span class="p">,</span>
+    <span class="s">&#39;v&#39;</span><span class="p">:</span> <span class="mh">0x935</span><span class="p">,</span>
+    <span class="s">&#39;z&#39;</span><span class="p">:</span> <span class="mh">0x936</span><span class="p">,</span>
+    <span class="s">&#39;S&#39;</span><span class="p">:</span> <span class="mh">0x937</span><span class="p">,</span>
+    <span class="s">&#39;s&#39;</span><span class="p">:</span> <span class="mh">0x938</span><span class="p">,</span>
+    <span class="s">&#39;h&#39;</span><span class="p">:</span> <span class="mh">0x939</span><span class="p">,</span>
+    <span class="s">&quot;&#39;&quot;</span><span class="p">:</span> <span class="mh">0x93D</span><span class="p">,</span>
+    <span class="s">&#39;oM&#39;</span><span class="p">:</span> <span class="mh">0x950</span><span class="p">,</span>
+     <span class="p">}</span>
+<span class="n">DevanagariTransliterationScheme</span><span class="p">(</span><span class="s">&#39;DEVANAGARI&#39;</span><span class="p">,</span><span class="s">&#39;HARVARDKYOTO&#39;</span><span class="p">,</span> <span class="n">HARVARDKYOTO</span><span class="p">)</span>
+     
+<span class="n">ITRANS</span> <span class="o">=</span> <span class="p">{</span> \
+    <span class="s">&#39;R&#39;</span><span class="p">:</span> <span class="mh">0x931</span><span class="p">,</span>  <span class="c"># added by anoop # extension </span>
+    <span class="s">&#39;M&#39;</span><span class="p">:</span> <span class="mh">0x902</span><span class="p">,</span>
+    <span class="s">&#39;.n&#39;</span><span class="p">:</span> <span class="mh">0x902</span><span class="p">,</span>
+    <span class="s">&#39;.m&#39;</span><span class="p">:</span> <span class="mh">0x902</span><span class="p">,</span>
+    <span class="s">&#39;H&#39;</span><span class="p">:</span> <span class="mh">0x903</span><span class="p">,</span>
+    <span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mh">0x905</span><span class="p">,</span>
+    <span class="s">&#39;A&#39;</span><span class="p">:</span> <span class="mh">0x906</span><span class="p">,</span>
+    <span class="s">&#39;aa&#39;</span><span class="p">:</span> <span class="mh">0x906</span><span class="p">,</span>
+    <span class="s">&#39;i&#39;</span><span class="p">:</span> <span class="mh">0x907</span><span class="p">,</span>
+    <span class="s">&#39;I&#39;</span><span class="p">:</span> <span class="mh">0x908</span><span class="p">,</span>
+    <span class="s">&#39;ii&#39;</span><span class="p">:</span> <span class="mh">0x908</span><span class="p">,</span>
+    <span class="s">&#39;u&#39;</span><span class="p">:</span> <span class="mh">0x909</span><span class="p">,</span>
+    <span class="s">&#39;U&#39;</span><span class="p">:</span> <span class="mh">0x90A</span><span class="p">,</span>
+    <span class="s">&#39;uu&#39;</span><span class="p">:</span> <span class="mh">0x90A</span><span class="p">,</span>
+    <span class="s">&#39;RRi&#39;</span><span class="p">:</span> <span class="mh">0x90B</span><span class="p">,</span>
+    <span class="s">&#39;R^i&#39;</span><span class="p">:</span> <span class="mh">0x90B</span><span class="p">,</span>
+    <span class="s">&#39;RRI&#39;</span><span class="p">:</span> <span class="mh">0x960</span><span class="p">,</span> <span class="c"># added by Anoop # extension </span>
+    <span class="s">&#39;R^I&#39;</span><span class="p">:</span> <span class="mh">0x960</span><span class="p">,</span><span class="c"># added by Anoop # extension </span>
+    <span class="s">&#39;LLi&#39;</span><span class="p">:</span> <span class="mh">0x90C</span><span class="p">,</span>
+    <span class="s">&#39;L^i&#39;</span><span class="p">:</span> <span class="mh">0x90C</span><span class="p">,</span>
+    <span class="s">&#39;LLI&#39;</span><span class="p">:</span> <span class="mh">0x961</span><span class="p">,</span><span class="c"># added by Anoop # extension </span>
+    <span class="s">&#39;L^I&#39;</span><span class="p">:</span> <span class="mh">0x961</span><span class="p">,</span><span class="c"># added by Anoop # extension </span>
+    <span class="s">&#39;.e&#39;</span><span class="p">:</span> <span class="mh">0x90E</span><span class="p">,</span>   <span class="c"># added by Anoop # extension </span>
+    <span class="s">&#39;e&#39;</span><span class="p">:</span> <span class="mh">0x90F</span><span class="p">,</span>
+    <span class="s">&#39;ai&#39;</span><span class="p">:</span> <span class="mh">0x910</span><span class="p">,</span>
+    <span class="s">&#39;.o&#39;</span><span class="p">:</span> <span class="mh">0x912</span><span class="p">,</span>   <span class="c"># added by Anoop # extension </span>
+    <span class="s">&#39;o&#39;</span><span class="p">:</span> <span class="mh">0x913</span><span class="p">,</span>
+    <span class="s">&#39;au&#39;</span><span class="p">:</span> <span class="mh">0x914</span><span class="p">,</span>
+    <span class="s">&#39;k&#39;</span><span class="p">:</span> <span class="mh">0x915</span><span class="p">,</span>
+    <span class="s">&#39;kh&#39;</span><span class="p">:</span> <span class="mh">0x916</span><span class="p">,</span>
+    <span class="s">&#39;g&#39;</span><span class="p">:</span> <span class="mh">0x917</span><span class="p">,</span>
+    <span class="s">&#39;gh&#39;</span><span class="p">:</span> <span class="mh">0x918</span><span class="p">,</span>
+    <span class="s">&#39;~N&#39;</span><span class="p">:</span> <span class="mh">0x919</span><span class="p">,</span>
+    <span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="mh">0x91A</span><span class="p">,</span>
+    <span class="s">&#39;ch&#39;</span><span class="p">:</span> <span class="mh">0x91A</span><span class="p">,</span>
+    <span class="s">&#39;Ch&#39;</span><span class="p">:</span> <span class="mh">0x91B</span><span class="p">,</span>
+    <span class="s">&#39;j&#39;</span><span class="p">:</span> <span class="mh">0x91C</span><span class="p">,</span>
+    <span class="s">&#39;jh&#39;</span><span class="p">:</span> <span class="mh">0x91D</span><span class="p">,</span>
+    <span class="s">&#39;~n&#39;</span><span class="p">:</span> <span class="mh">0x91E</span><span class="p">,</span>
+    <span class="s">&#39;T&#39;</span><span class="p">:</span> <span class="mh">0x91F</span><span class="p">,</span>
+    <span class="s">&#39;Th&#39;</span><span class="p">:</span> <span class="mh">0x920</span><span class="p">,</span>
+    <span class="s">&#39;D&#39;</span><span class="p">:</span> <span class="mh">0x921</span><span class="p">,</span>
+    <span class="s">&#39;Dh&#39;</span><span class="p">:</span> <span class="mh">0x922</span><span class="p">,</span>
+    <span class="s">&#39;N&#39;</span><span class="p">:</span> <span class="mh">0x923</span><span class="p">,</span>
+    <span class="s">&#39;t&#39;</span><span class="p">:</span> <span class="mh">0x924</span><span class="p">,</span>
+    <span class="s">&#39;th&#39;</span><span class="p">:</span> <span class="mh">0x925</span><span class="p">,</span>
+    <span class="s">&#39;d&#39;</span><span class="p">:</span> <span class="mh">0x926</span><span class="p">,</span>
+    <span class="s">&#39;dh&#39;</span><span class="p">:</span> <span class="mh">0x927</span><span class="p">,</span>
+    <span class="s">&#39;n&#39;</span><span class="p">:</span> <span class="mh">0x928</span><span class="p">,</span>
+    <span class="s">&#39;p&#39;</span><span class="p">:</span> <span class="mh">0x92A</span><span class="p">,</span>
+    <span class="s">&#39;ph&#39;</span><span class="p">:</span> <span class="mh">0x92B</span><span class="p">,</span>
+    <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mh">0x92C</span><span class="p">,</span>
+    <span class="s">&#39;bh&#39;</span><span class="p">:</span> <span class="mh">0x92D</span><span class="p">,</span>
+    <span class="s">&#39;m&#39;</span><span class="p">:</span> <span class="mh">0x92E</span><span class="p">,</span>
+    <span class="s">&#39;y&#39;</span><span class="p">:</span> <span class="mh">0x92F</span><span class="p">,</span>
+    <span class="s">&#39;r&#39;</span><span class="p">:</span> <span class="mh">0x930</span><span class="p">,</span>
+    <span class="s">&#39;l&#39;</span><span class="p">:</span> <span class="mh">0x932</span><span class="p">,</span>
+    <span class="s">&#39;L&#39;</span><span class="p">:</span> <span class="mh">0x933</span><span class="p">,</span> <span class="c"># added by anoop</span>
+    <span class="s">&#39;ld&#39;</span><span class="p">:</span> <span class="mh">0x933</span><span class="p">,</span> <span class="c"># added by anoop</span>
+    <span class="s">&#39;zh&#39;</span><span class="p">:</span> <span class="mh">0x934</span><span class="p">,</span> <span class="c"># added by anoop # extension</span>
+    <span class="s">&#39;v&#39;</span><span class="p">:</span> <span class="mh">0x935</span><span class="p">,</span>
+    <span class="s">&#39;w&#39;</span><span class="p">:</span> <span class="mh">0x935</span><span class="p">,</span>
+    <span class="s">&#39;sh&#39;</span><span class="p">:</span> <span class="mh">0x936</span><span class="p">,</span>
+    <span class="s">&#39;Sh&#39;</span><span class="p">:</span> <span class="mh">0x937</span><span class="p">,</span>
+    <span class="s">&#39;s&#39;</span><span class="p">:</span> <span class="mh">0x938</span><span class="p">,</span>
+    <span class="s">&#39;h&#39;</span><span class="p">:</span> <span class="mh">0x939</span><span class="p">,</span>
+    <span class="s">&quot;.a&quot;</span><span class="p">:</span> <span class="mh">0x93D</span><span class="p">,</span> <span class="c"># avagraha</span>
+    <span class="s">&#39;OM&#39;</span><span class="p">:</span> <span class="mh">0x950</span><span class="p">,</span>
+    <span class="s">&#39;AUM&#39;</span><span class="p">:</span> <span class="mh">0x950</span><span class="p">,</span>
+    <span class="s">&#39;.&#39;</span><span class="p">:</span> <span class="mh">0x0964</span><span class="p">,</span>
+    <span class="s">&#39;..&#39;</span><span class="p">:</span> <span class="mh">0x0965</span><span class="p">,</span>
+    <span class="s">&#39;0&#39;</span><span class="p">:</span> <span class="mh">0x0966</span><span class="p">,</span>
+    <span class="s">&#39;1&#39;</span><span class="p">:</span> <span class="mh">0x0967</span><span class="p">,</span>
+    <span class="s">&#39;2&#39;</span><span class="p">:</span> <span class="mh">0x0968</span><span class="p">,</span>
+    <span class="s">&#39;3&#39;</span><span class="p">:</span> <span class="mh">0x0969</span><span class="p">,</span>
+    <span class="s">&#39;4&#39;</span><span class="p">:</span> <span class="mh">0x096A</span><span class="p">,</span>
+    <span class="s">&#39;5&#39;</span><span class="p">:</span> <span class="mh">0x096B</span><span class="p">,</span>
+    <span class="s">&#39;6&#39;</span><span class="p">:</span> <span class="mh">0x096C</span><span class="p">,</span>
+    <span class="s">&#39;7&#39;</span><span class="p">:</span> <span class="mh">0x096D</span><span class="p">,</span>
+    <span class="s">&#39;8&#39;</span><span class="p">:</span> <span class="mh">0x096E</span><span class="p">,</span>
+    <span class="s">&#39;9&#39;</span><span class="p">:</span> <span class="mh">0x096F</span><span class="p">,</span>
+    <span class="c"># non-standard/obsolete iTrans variants still used in texts from </span>
+    <span class="c"># http://sanskrit.gde.to/</span>
+    <span class="s">&#39;.h&#39;</span><span class="p">:</span> <span class="mh">0x903</span><span class="p">,</span>
+    <span class="s">&#39;N^&#39;</span><span class="p">:</span> <span class="mh">0x919</span><span class="p">,</span>
+    <span class="s">&#39;shh&#39;</span><span class="p">:</span> <span class="mh">0x937</span><span class="p">,</span>
+    <span class="s">&#39;JN&#39;</span><span class="p">:</span> <span class="mh">0x91E</span><span class="p">,</span>
+     <span class="p">}</span>
+     
+<span class="sd">&quot;&quot;&quot; ITrans uses some characters only in common ligatures.</span>
+
+<span class="sd">The easiest way to deal with these is to replace them with their</span>
+<span class="sd">&quot;normal consonant&quot; equivalents before we try to transliterate.</span>
+
+<span class="sd">(This assumes we are mainly transliterating iTrans inbound, and that </span>
+<span class="sd">the normal consonants are acceptable outbound. ITrans is not a good</span>
+<span class="sd">choice for outbound anyway because it has so many ambiguities)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">_swapTable</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;GY&#39;</span><span class="p">:</span> <span class="s">&#39;j~n&#39;</span><span class="p">,</span> <span class="s">&#39;dny&#39;</span><span class="p">:</span> <span class="s">&#39;j~n&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="s">&#39;kSh&#39;</span><span class="p">,</span>
+                    <span class="p">}</span>
+
+<span class="n">DevanagariTransliterationScheme</span><span class="p">(</span><span class="s">&#39;DEVANAGARI&#39;</span><span class="p">,</span> <span class="s">&#39;ITRANS&#39;</span><span class="p">,</span> <span class="n">ITRANS</span><span class="p">,</span> <span class="n">_swapTable</span><span class="p">)</span>
+
+<span class="n">IAST</span> <span class="o">=</span> <span class="p">{</span> \
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E43</span><span class="p">):</span> <span class="mh">0x902</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E25</span><span class="p">):</span> <span class="mh">0x903</span><span class="p">,</span>
+    <span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mh">0x905</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x101</span><span class="p">):</span> <span class="mh">0x906</span><span class="p">,</span>
+    <span class="s">&#39;i&#39;</span><span class="p">:</span> <span class="mh">0x907</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x12B</span><span class="p">):</span> <span class="mh">0x908</span><span class="p">,</span>
+    <span class="s">&#39;u&#39;</span><span class="p">:</span> <span class="mh">0x909</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x16B</span><span class="p">):</span> <span class="mh">0x90A</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E5B</span><span class="p">):</span> <span class="mh">0x90B</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E37</span><span class="p">):</span> <span class="mh">0x90C</span><span class="p">,</span>
+    <span class="s">&#39;e&#39;</span><span class="p">:</span> <span class="mh">0x90F</span><span class="p">,</span>
+    <span class="s">&#39;ai&#39;</span><span class="p">:</span> <span class="mh">0x910</span><span class="p">,</span>
+    <span class="s">&#39;o&#39;</span><span class="p">:</span> <span class="mh">0x913</span><span class="p">,</span>
+    <span class="s">&#39;au&#39;</span><span class="p">:</span> <span class="mh">0x914</span><span class="p">,</span>
+    <span class="s">&#39;k&#39;</span><span class="p">:</span> <span class="mh">0x915</span><span class="p">,</span>
+    <span class="s">&#39;kh&#39;</span><span class="p">:</span> <span class="mh">0x916</span><span class="p">,</span>
+    <span class="s">&#39;g&#39;</span><span class="p">:</span> <span class="mh">0x917</span><span class="p">,</span>
+    <span class="s">&#39;gh&#39;</span><span class="p">:</span> <span class="mh">0x918</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E45</span><span class="p">):</span> <span class="mh">0x919</span><span class="p">,</span>
+    <span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="mh">0x91A</span><span class="p">,</span>
+    <span class="s">&#39;ch&#39;</span><span class="p">:</span> <span class="mh">0x91B</span><span class="p">,</span>
+    <span class="s">&#39;j&#39;</span><span class="p">:</span> <span class="mh">0x91C</span><span class="p">,</span>
+    <span class="s">&#39;jh&#39;</span><span class="p">:</span> <span class="mh">0x91D</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0xF1</span><span class="p">):</span> <span class="mh">0x91E</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E6D</span><span class="p">):</span> <span class="mh">0x91F</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E6D</span><span class="p">)</span> <span class="o">+</span><span class="s">&#39;h&#39;</span><span class="p">:</span> <span class="mh">0x920</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E0D</span><span class="p">):</span> <span class="mh">0x921</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E0D</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;h&#39;</span><span class="p">:</span> <span class="mh">0x922</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E47</span><span class="p">):</span> <span class="mh">0x923</span><span class="p">,</span>
+    <span class="s">&#39;t&#39;</span><span class="p">:</span> <span class="mh">0x924</span><span class="p">,</span>
+    <span class="s">&#39;th&#39;</span><span class="p">:</span> <span class="mh">0x925</span><span class="p">,</span>
+    <span class="s">&#39;d&#39;</span><span class="p">:</span> <span class="mh">0x926</span><span class="p">,</span>
+    <span class="s">&#39;dh&#39;</span><span class="p">:</span> <span class="mh">0x927</span><span class="p">,</span>
+    <span class="s">&#39;n&#39;</span><span class="p">:</span> <span class="mh">0x928</span><span class="p">,</span>
+    <span class="s">&#39;p&#39;</span><span class="p">:</span> <span class="mh">0x92A</span><span class="p">,</span>
+    <span class="s">&#39;ph&#39;</span><span class="p">:</span> <span class="mh">0x92B</span><span class="p">,</span>
+    <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mh">0x92C</span><span class="p">,</span>
+    <span class="s">&#39;bh&#39;</span><span class="p">:</span> <span class="mh">0x92D</span><span class="p">,</span>
+    <span class="s">&#39;m&#39;</span><span class="p">:</span> <span class="mh">0x92E</span><span class="p">,</span>
+    <span class="s">&#39;y&#39;</span><span class="p">:</span> <span class="mh">0x92F</span><span class="p">,</span>
+    <span class="s">&#39;r&#39;</span><span class="p">:</span> <span class="mh">0x930</span><span class="p">,</span>
+    <span class="s">&#39;l&#39;</span><span class="p">:</span> <span class="mh">0x932</span><span class="p">,</span>
+    <span class="s">&#39;v&#39;</span><span class="p">:</span> <span class="mh">0x935</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x15B</span><span class="p">):</span> <span class="mh">0x936</span><span class="p">,</span>
+    <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E63</span><span class="p">):</span> <span class="mh">0x937</span><span class="p">,</span>
+    <span class="s">&#39;s&#39;</span><span class="p">:</span> <span class="mh">0x938</span><span class="p">,</span>
+    <span class="s">&#39;h&#39;</span><span class="p">:</span> <span class="mh">0x939</span><span class="p">,</span>
+    <span class="s">&quot;&#39;&quot;</span><span class="p">:</span> <span class="mh">0x93D</span><span class="p">,</span> <span class="c"># avagraha</span>
+    <span class="s">&#39;O&#39;</span> <span class="o">+</span> <span class="nb">unichr</span><span class="p">(</span><span class="mh">0x1E43</span><span class="p">):</span> <span class="mh">0x950</span><span class="p">,</span>
+    <span class="s">&#39;.&#39;</span><span class="p">:</span> <span class="mh">0x0964</span><span class="p">,</span>
+    <span class="s">&#39;..&#39;</span><span class="p">:</span> <span class="mh">0x0965</span><span class="p">,</span>
+    <span class="s">&#39;0&#39;</span><span class="p">:</span> <span class="mh">0x0966</span><span class="p">,</span>
+    <span class="s">&#39;1&#39;</span><span class="p">:</span> <span class="mh">0x0967</span><span class="p">,</span>
+    <span class="s">&#39;2&#39;</span><span class="p">:</span> <span class="mh">0x0968</span><span class="p">,</span>
+    <span class="s">&#39;3&#39;</span><span class="p">:</span> <span class="mh">0x0969</span><span class="p">,</span>
+    <span class="s">&#39;4&#39;</span><span class="p">:</span> <span class="mh">0x096A</span><span class="p">,</span>
+    <span class="s">&#39;5&#39;</span><span class="p">:</span> <span class="mh">0x096B</span><span class="p">,</span>
+    <span class="s">&#39;6&#39;</span><span class="p">:</span> <span class="mh">0x096C</span><span class="p">,</span>
+    <span class="s">&#39;7&#39;</span><span class="p">:</span> <span class="mh">0x096D</span><span class="p">,</span>
+    <span class="s">&#39;8&#39;</span><span class="p">:</span> <span class="mh">0x096E</span><span class="p">,</span>
+    <span class="s">&#39;9&#39;</span><span class="p">:</span> <span class="mh">0x096F</span><span class="p">,</span>
+     <span class="p">}</span>
+
+<span class="n">DevanagariTransliterationScheme</span><span class="p">(</span><span class="s">&#39;DEVANAGARI&#39;</span><span class="p">,</span> <span class="s">&#39;IAST&#39;</span><span class="p">,</span> <span class="n">IAST</span><span class="p">)</span>
+
+
+<span class="sd">&quot;&quot;&quot; CYRILLIC DATA</span>
+
+<span class="sd">set up Cyrillic and the ISO 9:1995 (Russian) transliteration scheme.</span>
+<span class="sd">    </span>
+<span class="sd">The Cyrillic unicode range contains about 4x what contemporary Russian</span>
+<span class="sd">uses - other languages &amp; history wacky stuff. Set the full range up in case</span>
+<span class="sd">anybody ever has occasion to use it.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">CharacterBlock</span><span class="p">(</span><span class="s">&#39;CYRILLIC&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mh">0x400</span><span class="p">,</span> <span class="mh">0x510</span><span class="p">))</span>
+
+<span class="n">_ISO9RUS</span> <span class="o">=</span> <span class="p">{</span>\
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x0CB</span><span class="p">):</span> <span class="mh">0x401</span><span class="p">,</span> <span class="c"># IO</span>
+	<span class="s">&#39;A&#39;</span><span class="p">:</span> <span class="mh">0x410</span><span class="p">,</span>
+	<span class="s">&#39;B&#39;</span><span class="p">:</span> <span class="mh">0x411</span><span class="p">,</span>
+	<span class="s">&#39;V&#39;</span><span class="p">:</span> <span class="mh">0x412</span><span class="p">,</span>
+	<span class="s">&#39;G&#39;</span><span class="p">:</span> <span class="mh">0x413</span><span class="p">,</span>
+	<span class="s">&#39;D&#39;</span><span class="p">:</span> <span class="mh">0x414</span><span class="p">,</span>
+	<span class="s">&#39;E&#39;</span><span class="p">:</span> <span class="mh">0x415</span><span class="p">,</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x17D</span><span class="p">):</span> <span class="mh">0x416</span><span class="p">,</span> <span class="c"># ZHE</span>
+	<span class="s">&#39;Z&#39;</span><span class="p">:</span> <span class="mh">0x417</span><span class="p">,</span>
+	<span class="s">&#39;I&#39;</span><span class="p">:</span> <span class="mh">0x418</span><span class="p">,</span>
+	<span class="s">&#39;J&#39;</span><span class="p">:</span> <span class="mh">0x419</span><span class="p">,</span>
+	<span class="s">&#39;K&#39;</span><span class="p">:</span> <span class="mh">0x41a</span><span class="p">,</span>
+	<span class="s">&#39;L&#39;</span><span class="p">:</span> <span class="mh">0x41b</span><span class="p">,</span>
+	<span class="s">&#39;M&#39;</span><span class="p">:</span> <span class="mh">0x41c</span><span class="p">,</span>
+	<span class="s">&#39;N&#39;</span><span class="p">:</span> <span class="mh">0x41d</span><span class="p">,</span>
+	<span class="s">&#39;O&#39;</span><span class="p">:</span> <span class="mh">0x41e</span><span class="p">,</span>
+	<span class="s">&#39;P&#39;</span><span class="p">:</span> <span class="mh">0x41f</span><span class="p">,</span>
+	<span class="s">&#39;R&#39;</span><span class="p">:</span> <span class="mh">0x420</span><span class="p">,</span>
+	<span class="s">&#39;S&#39;</span><span class="p">:</span> <span class="mh">0x421</span><span class="p">,</span>
+	<span class="s">&#39;T&#39;</span><span class="p">:</span> <span class="mh">0x422</span><span class="p">,</span>
+	<span class="s">&#39;U&#39;</span><span class="p">:</span> <span class="mh">0x423</span><span class="p">,</span>
+	<span class="s">&#39;F&#39;</span><span class="p">:</span> <span class="mh">0x424</span><span class="p">,</span>
+	<span class="s">&#39;H&#39;</span><span class="p">:</span> <span class="mh">0x425</span><span class="p">,</span>
+	<span class="s">&#39;C&#39;</span><span class="p">:</span> <span class="mh">0x426</span><span class="p">,</span> <span class="c"># TS</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x10C</span><span class="p">):</span> <span class="mh">0x427</span><span class="p">,</span> <span class="c"># CH</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x160</span><span class="p">):</span> <span class="mh">0x428</span><span class="p">,</span> <span class="c"># SH</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x15C</span><span class="p">):</span> <span class="mh">0x429</span><span class="p">,</span> <span class="c"># SHCH</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x2BA</span><span class="p">):</span> <span class="mh">0x42a</span><span class="p">,</span> <span class="c"># hard</span>
+	<span class="s">&#39;Y&#39;</span><span class="p">:</span> <span class="mh">0x42b</span><span class="p">,</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x2B9</span><span class="p">):</span> <span class="mh">0x42c</span><span class="p">,</span> <span class="c"># soft</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x0C8</span><span class="p">):</span> <span class="mh">0x42d</span><span class="p">,</span> <span class="c"># YE</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x0DB</span><span class="p">):</span> <span class="mh">0x42e</span><span class="p">,</span> <span class="c"># YU</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x0C2</span><span class="p">):</span> <span class="mh">0x42f</span><span class="p">,</span> <span class="c"># YA</span>
+	<span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mh">0x430</span><span class="p">,</span>
+	<span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mh">0x431</span><span class="p">,</span>
+	<span class="s">&#39;v&#39;</span><span class="p">:</span> <span class="mh">0x432</span><span class="p">,</span>
+	<span class="s">&#39;g&#39;</span><span class="p">:</span> <span class="mh">0x433</span><span class="p">,</span>
+	<span class="s">&#39;d&#39;</span><span class="p">:</span> <span class="mh">0x434</span><span class="p">,</span>
+	<span class="s">&#39;e&#39;</span><span class="p">:</span> <span class="mh">0x435</span><span class="p">,</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x17E</span><span class="p">):</span> <span class="mh">0x436</span><span class="p">,</span> <span class="c"># zhe</span>
+	<span class="s">&#39;z&#39;</span><span class="p">:</span> <span class="mh">0x437</span><span class="p">,</span>
+	<span class="s">&#39;i&#39;</span><span class="p">:</span> <span class="mh">0x438</span><span class="p">,</span>
+	<span class="s">&#39;j&#39;</span><span class="p">:</span> <span class="mh">0x439</span><span class="p">,</span>
+	<span class="s">&#39;k&#39;</span><span class="p">:</span> <span class="mh">0x43a</span><span class="p">,</span>
+	<span class="s">&#39;l&#39;</span><span class="p">:</span> <span class="mh">0x43b</span><span class="p">,</span>
+	<span class="s">&#39;m&#39;</span><span class="p">:</span> <span class="mh">0x43c</span><span class="p">,</span>
+	<span class="s">&#39;n&#39;</span><span class="p">:</span> <span class="mh">0x43d</span><span class="p">,</span>
+	<span class="s">&#39;o&#39;</span><span class="p">:</span> <span class="mh">0x43e</span><span class="p">,</span>
+	<span class="s">&#39;p&#39;</span><span class="p">:</span> <span class="mh">0x43f</span><span class="p">,</span>
+	<span class="s">&#39;r&#39;</span><span class="p">:</span> <span class="mh">0x440</span><span class="p">,</span>
+	<span class="s">&#39;s&#39;</span><span class="p">:</span> <span class="mh">0x441</span><span class="p">,</span>
+	<span class="s">&#39;t&#39;</span><span class="p">:</span> <span class="mh">0x442</span><span class="p">,</span>
+	<span class="s">&#39;u&#39;</span><span class="p">:</span> <span class="mh">0x443</span><span class="p">,</span>
+	<span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="mh">0x444</span><span class="p">,</span>
+	<span class="s">&#39;h&#39;</span><span class="p">:</span> <span class="mh">0x445</span><span class="p">,</span>
+	<span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="mh">0x446</span><span class="p">,</span> <span class="c"># ts</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x10D</span><span class="p">):</span> <span class="mh">0x447</span><span class="p">,</span> <span class="c"># ch</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x161</span><span class="p">):</span> <span class="mh">0x448</span><span class="p">,</span> <span class="c"># sh</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x15D</span><span class="p">):</span> <span class="mh">0x449</span><span class="p">,</span> <span class="c"># shch</span>
+	<span class="c"># unichr(0x2BA): 0x44a, # hard - same upper &amp; lowercase</span>
+	<span class="s">&#39;y&#39;</span><span class="p">:</span> <span class="mh">0x44b</span><span class="p">,</span>
+	<span class="c"># unichr(0x2B9): 0x44c, # soft - same upper &amp; lowercase</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0xE8</span><span class="p">):</span> <span class="mh">0x44d</span><span class="p">,</span> <span class="c"># ye</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x0FB</span><span class="p">):</span> <span class="mh">0x44e</span><span class="p">,</span> <span class="c">#yu</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x0E2</span><span class="p">):</span> <span class="mh">0x44f</span><span class="p">,</span> <span class="c"># ya</span>
+	<span class="nb">unichr</span><span class="p">(</span><span class="mh">0x0EB</span><span class="p">):</span> <span class="mh">0x451</span><span class="p">,</span> <span class="c">#  io</span>
+    <span class="p">}</span>
+
+<span class="n">TransliterationScheme</span><span class="p">(</span><span class="s">&#39;CYRILLIC&#39;</span><span class="p">,</span> <span class="s">&#39;ISO9RUS&#39;</span><span class="p">,</span> <span class="n">_ISO9RUS</span><span class="p">)</span>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../indicnlp.transliterate.html#indicnlp.transliterate.itrans_transliterator.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Call transliterator from a command line.</span>
+<span class="sd">    </span>
+<span class="sd">    python transliterator.py text inputFormat outputFormat</span>
+<span class="sd">    </span>
+<span class="sd">    ... writes the transliterated text to stdout</span>
+<span class="sd">    </span>
+<span class="sd">    text -- the text to be transliterated OR the name of a file containing the text</span>
+<span class="sd">    inputFormat -- the name of the character block or transliteration scheme that</span>
+<span class="sd">                   the text is to be transliterated FROM, e.g. &#39;CYRILLIC&#39;, &#39;IAST&#39;.</span>
+<span class="sd">                   Not case-sensitive</span>
+<span class="sd">    outputFormat -- the name of the character block or transliteration scheme that</span>
+<span class="sd">                   the text is to be transliterated TO, e.g. &#39;CYRILLIC&#39;, &#39;IAST&#39;.</span>
+<span class="sd">                   Not case-sensitive</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">argv</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">argv</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span>
+    <span class="k">try</span><span class="p">:</span>    
+        <span class="n">text</span><span class="p">,</span> <span class="n">inFormat</span><span class="p">,</span> <span class="n">outFormat</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">main</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="k">return</span> <span class="mi">2</span>
+    <span class="n">inFormat</span> <span class="o">=</span> <span class="n">inFormat</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="n">outFormat</span> <span class="o">=</span> <span class="n">outFormat</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="c"># try assuming &quot;text&quot; is a filename</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="c"># it wasn&#39;t, so it must be the actual text</span>
+        <span class="k">print</span> <span class="n">transliterate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">inFormat</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;#&#39;</span><span class="p">):</span>
+                <span class="k">print</span> <span class="n">transliterate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">inFormat</span><span class="p">,</span> <span class="n">outFormat</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="mi">0</span>
+            </div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Indic NLP Library 0.2 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Anoop Kunchukuttan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

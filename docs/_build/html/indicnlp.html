@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>indicnlp Package &mdash; Indic NLP Library 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Indic NLP Library 0.2 documentation" href="index.html" />
+    <link rel="next" title="morph Package" href="indicnlp.morph.html" />
+    <link rel="prev" title="Welcome to Indic NLP Library’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="indicnlp.morph.html" title="morph Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Indic NLP Library’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Indic NLP Library 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="indicnlp-package">
+<h1>indicnlp Package<a class="headerlink" href="#indicnlp-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-indicnlp.common">
+<span id="common-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">common</span></tt> Module<a class="headerlink" href="#module-indicnlp.common" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="indicnlp.common.IndicNlpException">
+<em class="property">exception </em><tt class="descclassname">indicnlp.common.</tt><tt class="descname">IndicNlpException</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="_modules/indicnlp/common.html#IndicNlpException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.common.IndicNlpException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.common.get_resources_path">
+<tt class="descclassname">indicnlp.common.</tt><tt class="descname">get_resources_path</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/indicnlp/common.html#get_resources_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.common.get_resources_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.common.init">
+<tt class="descclassname">indicnlp.common.</tt><tt class="descname">init</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/indicnlp/common.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.common.init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.common.set_resources_path">
+<tt class="descclassname">indicnlp.common.</tt><tt class="descname">set_resources_path</tt><big>(</big><em>resources_path</em><big>)</big><a class="reference internal" href="_modules/indicnlp/common.html#set_resources_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.common.set_resources_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-indicnlp.langinfo">
+<span id="langinfo-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">langinfo</span></tt> Module<a class="headerlink" href="#module-indicnlp.langinfo" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="indicnlp.langinfo.get_offset">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">get_offset</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#get_offset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.get_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applicable to Brahmi derived Indic scripts</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.in_coordinated_range">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">in_coordinated_range</tt><big>(</big><em>c_offset</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#in_coordinated_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.in_coordinated_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applicable to Brahmi derived Indic scripts</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_approximant">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_approximant</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_approximant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_approximant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character an approximant consonant</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_aspirated">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_aspirated</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_aspirated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_aspirated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a aspirated consonant</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_aum">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_aum</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_aum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_aum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a vowel sign (maatraa)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_consonant">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_consonant</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_consonant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_consonant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a consonant</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_dental">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_dental</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_dental"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_dental" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a dental</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_fricative">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_fricative</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_fricative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_fricative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a fricative consonant</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_halanta">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_halanta</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_halanta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_halanta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character the halanta character</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_indiclang_char">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_indiclang_char</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_indiclang_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_indiclang_char" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applicable to Brahmi derived Indic scripts</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_labial">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_labial</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_labial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_labial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a labial</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_nasal">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_nasal</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_nasal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_nasal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a nasal consonant</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_nukta">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_nukta</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_nukta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_nukta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character the halanta character</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_number">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_number</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a number</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_palatal">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_palatal</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_palatal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_palatal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a palatal</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_retroflex">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_retroflex</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_retroflex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_retroflex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a retroflex</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_unaspirated">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_unaspirated</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_unaspirated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_unaspirated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a unaspirated consonant</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_unvoiced">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_unvoiced</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_unvoiced"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_unvoiced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a unvoiced consonant</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_velar">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_velar</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_velar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_velar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a velar</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_voiced">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_voiced</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_voiced"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_voiced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a voiced consonant</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_vowel">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_vowel</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_vowel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_vowel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a vowel</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.is_vowel_sign">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">is_vowel_sign</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#is_vowel_sign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.is_vowel_sign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the character a vowel sign (maatraa)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.langinfo.offset_to_char">
+<tt class="descclassname">indicnlp.langinfo.</tt><tt class="descname">offset_to_char</tt><big>(</big><em>c</em>, <em>lang</em><big>)</big><a class="reference internal" href="_modules/indicnlp/langinfo.html#offset_to_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.langinfo.offset_to_char" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applicable to Brahmi derived Indic scripts</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-indicnlp.loader">
+<span id="loader-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">loader</span></tt> Module<a class="headerlink" href="#module-indicnlp.loader" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="indicnlp.loader.load">
+<tt class="descclassname">indicnlp.loader.</tt><tt class="descname">load</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/indicnlp/loader.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.loader.load" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="indicnlp.morph.html">morph Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="indicnlp.morph.html#module-indicnlp.morph.unsupervised_morph"><tt class="docutils literal"><span class="pre">unsupervised_morph</span></tt> Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="indicnlp.normalize.html">normalize Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="indicnlp.normalize.html#module-indicnlp.normalize.indic_normalize"><tt class="docutils literal"><span class="pre">indic_normalize</span></tt> Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="indicnlp.script.html">script Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="indicnlp.script.html#module-indicnlp.script.indic_scripts"><tt class="docutils literal"><span class="pre">indic_scripts</span></tt> Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="indicnlp.tokenize.html">tokenize Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="indicnlp.tokenize.html#module-indicnlp.tokenize.indic_tokenize"><tt class="docutils literal"><span class="pre">indic_tokenize</span></tt> Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="indicnlp.transliterate.html">transliterate Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="indicnlp.transliterate.html#module-indicnlp.transliterate.itrans_transliterator"><tt class="docutils literal"><span class="pre">itrans_transliterator</span></tt> Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="indicnlp.transliterate.html#command-line-usage">COMMAND LINE USAGE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="indicnlp.transliterate.html#usage">USAGE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="indicnlp.transliterate.html#copyright-and-disclaimer">COPYRIGHT AND DISCLAIMER</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="indicnlp.transliterate.html#module-indicnlp.transliterate.sinhala_transliterator"><tt class="docutils literal"><span class="pre">sinhala_transliterator</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="indicnlp.transliterate.html#module-indicnlp.transliterate.unicode_transliterate"><tt class="docutils literal"><span class="pre">unicode_transliterate</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">indicnlp Package</a><ul>
+<li><a class="reference internal" href="#module-indicnlp.common"><tt class="docutils literal"><span class="pre">common</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-indicnlp.langinfo"><tt class="docutils literal"><span class="pre">langinfo</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-indicnlp.loader"><tt class="docutils literal"><span class="pre">loader</span></tt> Module</a></li>
+<li><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Indic NLP Library&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="indicnlp.morph.html"
+                        title="next chapter">morph Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/indicnlp.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="indicnlp.morph.html" title="morph Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Indic NLP Library’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Indic NLP Library 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Anoop Kunchukuttan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

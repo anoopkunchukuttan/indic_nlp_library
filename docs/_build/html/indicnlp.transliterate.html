@@ -1,0 +1,406 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>transliterate Package &mdash; Indic NLP Library 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Indic NLP Library 0.2 documentation" href="index.html" />
+    <link rel="up" title="indicnlp Package" href="indicnlp.html" />
+    <link rel="prev" title="tokenize Package" href="indicnlp.tokenize.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="indicnlp.tokenize.html" title="tokenize Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Indic NLP Library 0.2 documentation</a> &raquo;</li>
+          <li><a href="indicnlp.html" accesskey="U">indicnlp Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="transliterate-package">
+<h1>transliterate Package<a class="headerlink" href="#transliterate-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-indicnlp.transliterate.itrans_transliterator">
+<span id="itrans-transliterator-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">itrans_transliterator</span></tt> Module<a class="headerlink" href="#module-indicnlp.transliterate.itrans_transliterator" title="Permalink to this headline">¶</a></h2>
+<p>Transliterate texts between unicode and standard transliteration schemes.</p>
+<p>Transliterate texts between non-latin scripts and commonly-used latin
+transliteration schemes. Uses standard Unicode character blocks &#8211; 
+e.g. DEVANAGARI U+0900 ... U+097F &#8211; and transliteration schemes &#8211; 
+e.g. the IAST convention for transliteration of Sanskrit to latin-with-dots.</p>
+<p>The following character blocks and transliteration schemes are included:</p>
+<dl class="docutils">
+<dt>DEVANAGARI</dt>
+<dd>IAST
+ITRANS &#8211; <a class="reference external" href="http://www.aczoom.com/itrans/#itransencoding">http://www.aczoom.com/itrans/#itransencoding</a> (Sanskrit only)
+Harvard Kyoto</dd>
+<dt>CYRILLIC</dt>
+<dd>ISO 9:1995 (Russian only)</dd>
+</dl>
+<p>New character blocks and transliteration schemes can be added by creating
+new CharacterBlock and TransliterationScheme objects.</p>
+<div class="section" id="command-line-usage">
+<h3>COMMAND LINE USAGE<a class="headerlink" href="#command-line-usage" title="Permalink to this headline">¶</a></h3>
+<p>python transliterator.py text inputFormat outputFormat</p>
+<p>... writes the transliterated text to stdout</p>
+<p>text &#8211; the text to be transliterated OR the name of a file containing the text
+inputFormat &#8211; the name of the character block or transliteration scheme that</p>
+<blockquote>
+<div>the text is to be transliterated FROM, e.g. &#8216;CYRILLIC&#8217;, &#8216;IAST&#8217;.
+Not case-sensitive</div></blockquote>
+<dl class="docutils">
+<dt>outputFormat &#8211; the name of the character block or transliteration scheme that</dt>
+<dd>the text is to be transliterated TO, e.g. &#8216;CYRILLIC&#8217;, &#8216;IAST&#8217;.
+Not case-sensitive</dd>
+</dl>
+</div>
+<div class="section" id="usage">
+<h3>USAGE<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<p>Transliterate a text:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">transliterator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transliterator</span><span class="o">.</span><span class="n">transliterate</span><span class="p">(</span><span class="s">&#39;yogazcittavRttinirodhaH&#39;</span><span class="p">,</span> <span class="s">&#39;harvardkyoto&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s">&#39;devanagari&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;outputASCIIEncoded&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">})</span>
+<span class="go">&#39;&amp;#x92f;&amp;#x94b;&amp;#x917;&amp;#x936;&amp;#x94d;&amp;#x91a;&amp;#x93f;&amp;#x924;&amp;#x94d;&amp;#x924;&amp;#x935;&amp;#x943;&amp;#x924;&amp;#x94d;&amp;#x924;&amp;#x93f;&amp;#x928;&amp;#x93f;&amp;#x930;&amp;#x94b;&amp;#x927;&amp;#x903;&#39;</span>
+</pre></div>
+</div>
+<p>Create a new CharacterBlock and TransliterationScheme:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">transliterator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cb</span> <span class="o">=</span> <span class="n">transliterator</span><span class="o">.</span><span class="n">CharacterBlock</span><span class="p">(</span><span class="s">&#39;NEWBLOCK&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mh">0x901</span><span class="p">,</span> <span class="mh">0x9FF</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scheme</span> <span class="o">=</span> <span class="n">transliterator</span><span class="o">.</span><span class="n">TransliterationScheme</span><span class="p">(</span><span class="n">cb</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;NEWSCHEME&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                         <span class="p">{</span><span class="s">&#39;ab&#39;</span><span class="p">:</span> <span class="mh">0x901</span><span class="p">,</span> <span class="s">&#39;cd&#39;</span><span class="p">:</span> <span class="mh">0x902</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transliterator</span><span class="o">.</span><span class="n">transliterate</span><span class="p">(</span><span class="s">&#39;abcd&#39;</span><span class="p">,</span> <span class="n">scheme</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;outputASCIIEncoded&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">})</span>
+<span class="go">&#39;&amp;#x901;&amp;#x902;&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="copyright-and-disclaimer">
+<h3>COPYRIGHT AND DISCLAIMER<a class="headerlink" href="#copyright-and-disclaimer" title="Permalink to this headline">¶</a></h3>
+<p>Transliterator is:</p>
+<p>version 0.1 software  - use at your own risk.</p>
+<p>The IAST, ITRANS and Harvard-Kyoto transliteration schemes have been
+tested for classical Sanskrit, not for any other language.</p>
+<p>The Cyrillic alphabet and ISO 9:1995 transliteration (for Russian only)
+are included but have been even more lightly tested than Devanagari.</p>
+<p>Copyright (c) 2005 by Alan Little</p>
+<p>By obtaining, using, and/or copying this software and/or its
+associated documentation, you agree that you have read, understood,
+and will comply with the following terms and conditions:</p>
+<p>Permission to use, copy, modify, and distribute this software and
+its associated documentation for any purpose and without fee is
+hereby granted, provided that the above copyright notice appears in
+all copies, and that both that copyright notice and this permission
+notice appear in supporting documentation, and that the name of 
+the author not be used in advertising or publicity pertaining to 
+distribution of the software without specific, written prior permission.</p>
+<p>THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 
+INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR 
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM 
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, 
+NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION 
+WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</p>
+<dl class="class">
+<dt id="indicnlp.transliterate.itrans_transliterator.CharacterBlock">
+<em class="property">class </em><tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">CharacterBlock</tt><big>(</big><em>name</em>, <em>charRange</em>, <em>charClass=&lt;class 'indicnlp.transliterate.itrans_transliterator.TLCharacter'&gt;</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#CharacterBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.CharacterBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></p>
+<p>Dictionary-like representation of a set of unicode characters.</p>
+<p>For our purposes, a character block corresponds to an alphabet/script
+that we want to be able to transliterate to or from, e.g. Cyrillic,
+Devanagari.</p>
+<p>Keys are unicode characters.
+Values are TLCharacter instances.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="indicnlp.transliterate.itrans_transliterator.DevanagariCharacter">
+<em class="property">class </em><tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">DevanagariCharacter</tt><big>(</big><em>unicodeHexValue</em>, <em>block</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#DevanagariCharacter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.DevanagariCharacter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#indicnlp.transliterate.itrans_transliterator.TLCharacter" title="indicnlp.transliterate.itrans_transliterator.TLCharacter"><tt class="xref py py-class docutils literal"><span class="pre">indicnlp.transliterate.itrans_transliterator.TLCharacter</span></tt></a></p>
+<p>Special processing for Devanagari characters.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="indicnlp.transliterate.itrans_transliterator.DevanagariCharacterBlock">
+<em class="property">class </em><tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">DevanagariCharacterBlock</tt><big>(</big><em>name</em>, <em>charRange</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#DevanagariCharacterBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.DevanagariCharacterBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#indicnlp.transliterate.itrans_transliterator.CharacterBlock" title="indicnlp.transliterate.itrans_transliterator.CharacterBlock"><tt class="xref py py-class docutils literal"><span class="pre">indicnlp.transliterate.itrans_transliterator.CharacterBlock</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">indicnlp.transliterate.itrans_transliterator._Devanagari</span></tt></p>
+<p>Class representing the Devanagari Unicode character block.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="indicnlp.transliterate.itrans_transliterator.DevanagariTransliterationScheme">
+<em class="property">class </em><tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">DevanagariTransliterationScheme</tt><big>(</big><em>blockName</em>, <em>schemeName</em>, <em>data</em>, <em>swapTable=None</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#DevanagariTransliterationScheme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.DevanagariTransliterationScheme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#indicnlp.transliterate.itrans_transliterator.TransliterationScheme" title="indicnlp.transliterate.itrans_transliterator.TransliterationScheme"><tt class="xref py py-class docutils literal"><span class="pre">indicnlp.transliterate.itrans_transliterator.TransliterationScheme</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">indicnlp.transliterate.itrans_transliterator._Devanagari</span></tt></p>
+<p>Class representing a Devanagari transliteration scheme.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="indicnlp.transliterate.itrans_transliterator.ITRANS">
+<tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">ITRANS</tt><em class="property"> = {'aa': 2310, '.h': 2307, 'ch': 2330, 'zh': 2356, 'Th': 2336, 'RRi': 2315, 'ai': 2320, 'j': 2332, 'shh': 2359, '.e': 2318, 'ii': 2312, 'R^i': 2315, 'au': 2324, '~n': 2334, '.a': 2365, 'gh': 2328, 'ld': 2355, 'N^': 2329, 'bh': 2349, 'RRI': 2400, 'p': 2346, '..': 2405, 'LLI': 2401, '.': 2404, '1': 2407, '0': 2406, 'R^I': 2400, 'sh': 2358, '5': 2411, 'OM': 2384, '~N': 2329, 'h': 2361, 'AUM': 2384, '8': 2414, 'ph': 2347, 'b': 2348, '4': 2410, 'A': 2310, '7': 2413, 'JN': 2334, '9': 2415, 'L^i': 2316, 'D': 2337, 'dh': 2343, '3': 2409, 'I': 2312, 'H': 2307, 'Sh': 2359, '6': 2412, 'M': 2306, 'L': 2355, 'N': 2339, 'g': 2327, '2': 2408, 'R': 2353, 'U': 2314, 'T': 2335, 'Dh': 2338, 'e': 2319, 'th': 2341, 'd': 2342, 'a': 2309, 'c': 2330, 'Ch': 2331, 'L^I': 2401, '.m': 2306, '.n': 2306, '.o': 2322, 'i': 2311, 'l': 2354, 'k': 2325, 'kh': 2326, 'm': 2350, 'LLi': 2316, 'o': 2323, 'n': 2344, 'uu': 2314, 's': 2360, 'r': 2352, 'u': 2313, 't': 2340, 'w': 2357, 'v': 2357, 'y': 2351, 'jh': 2333}</em><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.ITRANS" title="Permalink to this definition">¶</a></dt>
+<dd><p>ITrans uses some characters only in common ligatures.</p>
+<p>The easiest way to deal with these is to replace them with their
+&#8220;normal consonant&#8221; equivalents before we try to transliterate.</p>
+<p>(This assumes we are mainly transliterating iTrans inbound, and that
+the normal consonants are acceptable outbound. ITrans is not a good
+choice for outbound anyway because it has so many ambiguities)</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="indicnlp.transliterate.itrans_transliterator.TLCharacter">
+<em class="property">class </em><tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">TLCharacter</tt><big>(</big><em>unicodeHexValue</em>, <em>block</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#TLCharacter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.TLCharacter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Class representing a Unicode character with its equivalents.</p>
+<p>Public attributes:
+unicodeHexValue &#8211; the numeric value of the Unicode code point.
+unichr &#8211; the character value of the Unicode code point.
+name &#8211; the name of the Unicode code point.
+equivalents &#8211; a dict containing the character&#8217;s equivalents in</p>
+<blockquote>
+<div>various transliteration schemes, in the format:
+{&#8216;Scheme A&#8217;: &#8216;A&#8217;, &#8216;Scheme B&#8217;: &#8216;aah&#8217;, }
+where keys are TransliterationScheme names,
+values are transliterated equivalents of the 
+character.</div></blockquote>
+<dl class="method">
+<dt id="indicnlp.transliterate.itrans_transliterator.TLCharacter.addEquivalent">
+<tt class="descname">addEquivalent</tt><big>(</big><em>equivName</em>, <em>equivalent</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#TLCharacter.addEquivalent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.TLCharacter.addEquivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an equivalent for the character.</p>
+<p>Arguments:
+equivName &#8211; the name of a TransliterationScheme
+equivalent &#8211; string/unicode equivalent in the named</p>
+<blockquote>
+<div>TransliterationScheme for this code point.</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="indicnlp.transliterate.itrans_transliterator.TLCharacter.unicodeHexValue">
+<tt class="descname">unicodeHexValue</tt><em class="property"> = None</em><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.TLCharacter.unicodeHexValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use name check to filter out unused characters.
+unicodedata.name() raises ValueError for these</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="indicnlp.transliterate.itrans_transliterator.TransliterationScheme">
+<em class="property">class </em><tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">TransliterationScheme</tt><big>(</big><em>blockName</em>, <em>schemeName</em>, <em>data</em>, <em>swapTable=None</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#TransliterationScheme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.TransliterationScheme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></p>
+<p>Dictionary-like representation of a transliteration scheme.</p>
+<p>e.g. the Harvard-Kyoto, IAST or ITRANS schemes for
+transliterating Devanagari to or from the latin alphabet.</p>
+<p>Keys are unicode strings representing the letter-equivalents used
+in the transliteration scheme.
+Values are TLCharacter instances.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.transliterate.itrans_transliterator.main">
+<tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">main</tt><big>(</big><em>argv=None</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call transliterator from a command line.</p>
+<p>python transliterator.py text inputFormat outputFormat</p>
+<p>... writes the transliterated text to stdout</p>
+<p>text &#8211; the text to be transliterated OR the name of a file containing the text
+inputFormat &#8211; the name of the character block or transliteration scheme that</p>
+<blockquote>
+<div>the text is to be transliterated FROM, e.g. &#8216;CYRILLIC&#8217;, &#8216;IAST&#8217;.
+Not case-sensitive</div></blockquote>
+<dl class="docutils">
+<dt>outputFormat &#8211; the name of the character block or transliteration scheme that</dt>
+<dd>the text is to be transliterated TO, e.g. &#8216;CYRILLIC&#8217;, &#8216;IAST&#8217;.
+Not case-sensitive</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.transliterate.itrans_transliterator.resetOptions">
+<tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">resetOptions</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#resetOptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.resetOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset options to their default values.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="indicnlp.transliterate.itrans_transliterator.transliterate">
+<tt class="descclassname">indicnlp.transliterate.itrans_transliterator.</tt><tt class="descname">transliterate</tt><big>(</big><em>text</em>, <em>inFormat</em>, <em>outFormat</em>, <em>requestOptions={}</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/itrans_transliterator.html#transliterate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.itrans_transliterator.transliterate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transliterate a text.</p>
+<p>Keyword arguments:
+text &#8211; a unicode string containing the text to be transliterated
+inFormat &#8211; the &#8220;from&#8221; CharacterBlock or TransliterationScheme, or its name
+outFormat &#8211; the target CharacterBlock or TransliterationScheme, or its name
+requestOptions &#8211; optional dict containing option settings that override the</p>
+<blockquote>
+<div>defaults for this request.</div></blockquote>
+<p>Returns a unicode object containing the text transliterated into the
+target character set.</p>
+<p>Raises:
+ValueError &#8211; unrecognised input or output format.
+KeyError &#8211; a character in text is not a member of inFormat, or has no
+corresponding character defined in outFormat.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-indicnlp.transliterate.sinhala_transliterator">
+<span id="sinhala-transliterator-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">sinhala_transliterator</span></tt> Module<a class="headerlink" href="#module-indicnlp.transliterate.sinhala_transliterator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator">
+<em class="property">class </em><tt class="descclassname">indicnlp.transliterate.sinhala_transliterator.</tt><tt class="descname">SinhalaDevanagariTransliterator</tt><a class="reference internal" href="_modules/indicnlp/transliterate/sinhala_transliterator.html#SinhalaDevanagariTransliterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A Devanagari to Sinhala transliterator based on explicit Unicode Mapping</p>
+<dl class="staticmethod">
+<dt id="indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator.devanagari_to_sinhala">
+<em class="property">static </em><tt class="descname">devanagari_to_sinhala</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/sinhala_transliterator.html#SinhalaDevanagariTransliterator.devanagari_to_sinhala"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator.devanagari_to_sinhala" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator.devnag_sinhala_map">
+<tt class="descname">devnag_sinhala_map</tt><em class="property"> = {u'\u0901': u'\u0d82', u'\u0900': u'\u0d82', u'\u0903': u'\u0d83', u'\u0902': u'\u0d82', u'\u0905': u'\u0d85', u'\u0904': u'\u0d84', u'\u0907': u'\u0d89', u'\u0906': u'\u0d86', u'\u0909': u'\u0d8b', u'\u0908': u'\u0d8a', u'\u090b': u'\u0d8d', u'\u090a': u'\u0d8c', u'\u090d': u'\u0d88', u'\u090c': u'\u0d8f', u'\u090f': u'\u0d92', u'\u090e': u'\u0d91', u'\u0910': u'\u0d93', u'\u0913': u'\u0d95', u'\u0912': u'\u0d94', u'\u0915': u'\u0d9a', u'\u0914': u'\u0d96', u'\u0917': u'\u0d9c', u'\u0916': u'\u0d9b', u'\u0919': u'\u0d9e', u'\u0918': u'\u0d9d', u'\u091b': u'\u0da1', u'\u091a': u'\u0da0', u'\u091d': u'\u0da3', u'\u091c': u'\u0da2', u'\u091f': u'\u0da7', u'\u091e': u'\u0da4', u'\u0921': u'\u0da9', u'\u0920': u'\u0da8', u'\u0923': u'\u0dab', u'\u0922': u'\u0daa', u'\u0925': u'\u0dae', u'\u0924': u'\u0dad', u'\u0927': u'\u0db0', u'\u0926': u'\u0daf', u'\u0929': u'\u0db1', u'\u0928': u'\u0db1', u'\u092b': u'\u0db5', u'\u092a': u'\u0db4', u'\u092d': u'\u0db7', u'\u092c': u'\u0db6', u'\u092f': u'\u0dba', u'\u092e': u'\u0db8', u'\u0930': u'\u0dbb', u'\u0933': u'\u0dc5', u'\u0932': u'\u0dbd', u'\u0935': u'\u0dc0', u'\u0937': u'\u0dc2', u'\u0936': u'\u0dc1', u'\u0939': u'\u0dc4', u'\u0938': u'\u0dc3', u'\u093f': u'\u0dd2', u'\u093e': u'\u0dcf', u'\u0941': u'\u0dd4', u'\u0940': u'\u0dd3', u'\u0943': u'\u0dd8', u'\u0942': u'\u0dd6', u'\u0947': u'\u0dda', u'\u0946': u'\u0dd9', u'\u0949': u'\u0dd1', u'\u0948': u'\u0ddb', u'\u094b': u'\u0ddd', u'\u094a': u'\u0ddc', u'\u094d': u'\u0dca', u'\u094c': u'\u0dde'}</em><a class="headerlink" href="#indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator.devnag_sinhala_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator.sinhala_devnag_map">
+<tt class="descname">sinhala_devnag_map</tt><em class="property"> = {u'\u0d83': u'\u0903', u'\u0d82': u'\u0902', u'\u0d85': u'\u0905', u'\u0d84': u'\u0904', u'\u0d87': u'\u090d', u'\u0d86': u'\u0906', u'\u0d89': u'\u0907', u'\u0d88': u'\u090d', u'\u0d8b': u'\u0909', u'\u0d8a': u'\u0908', u'\u0d8d': u'\u090b', u'\u0d8c': u'\u090a', u'\u0d8f': u'\u090c', u'\u0d91': u'\u090e', u'\u0d93': u'\u0910', u'\u0d92': u'\u090f', u'\u0d95': u'\u0913', u'\u0d94': u'\u0912', u'\u0d96': u'\u0914', u'\u0d9b': u'\u0916', u'\u0d9a': u'\u0915', u'\u0d9d': u'\u0918', u'\u0d9c': u'\u0917', u'\u0d9f': u'\u0919', u'\u0d9e': u'\u0919', u'\u0da1': u'\u091b', u'\u0da0': u'\u091a', u'\u0da3': u'\u091d', u'\u0da2': u'\u091c', u'\u0da5': u'\u091e', u'\u0da4': u'\u091e', u'\u0da7': u'\u091f', u'\u0da6': u'\u091e', u'\u0da9': u'\u0921', u'\u0da8': u'\u0920', u'\u0dab': u'\u0923', u'\u0daa': u'\u0922', u'\u0dad': u'\u0924', u'\u0dac': u'\u0923', u'\u0daf': u'\u0926', u'\u0dae': u'\u0925', u'\u0db1': u'\u0928', u'\u0db0': u'\u0927', u'\u0db3': u'\u0928', u'\u0db2': u'\u0928', u'\u0db5': u'\u092b', u'\u0db4': u'\u092a', u'\u0db7': u'\u092d', u'\u0db6': u'\u092c', u'\u0db8': u'\u092e', u'\u0dbb': u'\u0930', u'\u0dba': u'\u092f', u'\u0dbd': u'\u0932', u'\u0dc1': u'\u0936', u'\u0dc0': u'\u0935', u'\u0dc3': u'\u0938', u'\u0dc2': u'\u0937', u'\u0dc5': u'\u0933', u'\u0dc4': u'\u0939', u'\u0dca': u'\u094d', u'\u0dcf': u'\u093e', u'\u0dd1': u'\u0949', u'\u0dd0': u'\u0949', u'\u0dd3': u'\u0940', u'\u0dd2': u'\u093f', u'\u0dd4': u'\u0941', u'\u0dd6': u'\u0942', u'\u0dd9': u'\u0946', u'\u0dd8': u'\u0943', u'\u0ddb': u'\u0948', u'\u0dda': u'\u0947', u'\u0ddd': u'\u094b', u'\u0ddc': u'\u094a', u'\u0dde': u'\u094c'}</em><a class="headerlink" href="#indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator.sinhala_devnag_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator.sinhala_to_devanagari">
+<em class="property">static </em><tt class="descname">sinhala_to_devanagari</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/sinhala_transliterator.html#SinhalaDevanagariTransliterator.sinhala_to_devanagari"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.sinhala_transliterator.SinhalaDevanagariTransliterator.sinhala_to_devanagari" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-indicnlp.transliterate.unicode_transliterate">
+<span id="unicode-transliterate-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">unicode_transliterate</span></tt> Module<a class="headerlink" href="#module-indicnlp.transliterate.unicode_transliterate" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="indicnlp.transliterate.unicode_transliterate.ItransTransliterator">
+<em class="property">class </em><tt class="descclassname">indicnlp.transliterate.unicode_transliterate.</tt><tt class="descname">ItransTransliterator</tt><a class="reference internal" href="_modules/indicnlp/transliterate/unicode_transliterate.html#ItransTransliterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.unicode_transliterate.ItransTransliterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Transliterator between Indian scripts and ITRANS</p>
+<dl class="staticmethod">
+<dt id="indicnlp.transliterate.unicode_transliterate.ItransTransliterator.from_itrans">
+<em class="property">static </em><tt class="descname">from_itrans</tt><big>(</big><em>text</em>, <em>lang_code</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/unicode_transliterate.html#ItransTransliterator.from_itrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.unicode_transliterate.ItransTransliterator.from_itrans" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="indicnlp.transliterate.unicode_transliterate.ItransTransliterator.to_itrans">
+<em class="property">static </em><tt class="descname">to_itrans</tt><big>(</big><em>text</em>, <em>lang_code</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/unicode_transliterate.html#ItransTransliterator.to_itrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.unicode_transliterate.ItransTransliterator.to_itrans" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="indicnlp.transliterate.unicode_transliterate.UnicodeIndicTransliterator">
+<em class="property">class </em><tt class="descclassname">indicnlp.transliterate.unicode_transliterate.</tt><tt class="descname">UnicodeIndicTransliterator</tt><a class="reference internal" href="_modules/indicnlp/transliterate/unicode_transliterate.html#UnicodeIndicTransliterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.unicode_transliterate.UnicodeIndicTransliterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Base class for transliterator of Indian languages.</p>
+<p>Script pair specific transliterators should derive from this class and override the transliterate() method. 
+They can call the super class &#8216;transliterate()&#8217; method to avail of the common transliteration</p>
+<dl class="staticmethod">
+<dt id="indicnlp.transliterate.unicode_transliterate.UnicodeIndicTransliterator.transliterate">
+<em class="property">static </em><tt class="descname">transliterate</tt><big>(</big><em>text</em>, <em>lang1_code</em>, <em>lang2_code</em><big>)</big><a class="reference internal" href="_modules/indicnlp/transliterate/unicode_transliterate.html#UnicodeIndicTransliterator.transliterate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#indicnlp.transliterate.unicode_transliterate.UnicodeIndicTransliterator.transliterate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">transliterate Package</a><ul>
+<li><a class="reference internal" href="#module-indicnlp.transliterate.itrans_transliterator"><tt class="docutils literal"><span class="pre">itrans_transliterator</span></tt> Module</a><ul>
+<li><a class="reference internal" href="#command-line-usage">COMMAND LINE USAGE</a></li>
+<li><a class="reference internal" href="#usage">USAGE</a></li>
+<li><a class="reference internal" href="#copyright-and-disclaimer">COPYRIGHT AND DISCLAIMER</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-indicnlp.transliterate.sinhala_transliterator"><tt class="docutils literal"><span class="pre">sinhala_transliterator</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-indicnlp.transliterate.unicode_transliterate"><tt class="docutils literal"><span class="pre">unicode_transliterate</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="indicnlp.tokenize.html"
+                        title="previous chapter">tokenize Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/indicnlp.transliterate.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="indicnlp.tokenize.html" title="tokenize Package"
+             >previous</a> |</li>
+        <li><a href="index.html">Indic NLP Library 0.2 documentation</a> &raquo;</li>
+          <li><a href="indicnlp.html" >indicnlp Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Anoop Kunchukuttan.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
