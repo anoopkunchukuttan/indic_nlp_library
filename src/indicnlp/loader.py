@@ -19,10 +19,16 @@ from indicnlp import common
 from indicnlp.script import indic_scripts
 
 def load():
+    """
+        Initializes the Indic NLP library. Clients should call this method before using the library. 
+
+        Any module requiring initialization should have a init() method, to which a call must be made from this method 
+    """
 
     ### Order of intialization may matter 
 
     # Common has to be loaded first to get access to resources 
     common.init()
 
+    ## Initialization of Indic scripts module 
     indic_scripts.init()

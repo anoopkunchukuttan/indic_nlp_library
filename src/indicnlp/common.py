@@ -18,9 +18,18 @@
 
 import os
 
+"""
+Path to the Indic NLP Resources directory
+"""
 INDIC_RESOURCES_PATH=''
 
 def init():
+    """
+    Initialize the module. The following actions are performed:
+
+    - Checks of INDIC_RESOURCES_PATH variable is set. If not, checks if it can beb initialized from 
+        INDIC_RESOURCES_PATH environment variable. If that fails, an exception is raised
+    """
     global INDIC_RESOURCES_PATH 
     try: 
         if INDIC_RESOURCES_PATH=='':
@@ -34,14 +43,23 @@ def init():
 
 
 def get_resources_path(): 
+    """
+        Get the path to the Indic NLP Resources directory
+    """
     return INDIC_RESOURCES_PATH
 
 def set_resources_path(resources_path): 
+    """
+        Set the path to the Indic NLP Resources directory
+    """
     global INDIC_RESOURCES_PATH 
     INDIC_RESOURCES_PATH=resources_path
 
 class IndicNlpException(Exception):
-
+    """
+        Exceptions thrown by Indic NLP Library components are instances of this class.  
+        'msg' attribute contains exception details.
+    """
     def __init__(self, msg):
         self.msg = msg 
 
