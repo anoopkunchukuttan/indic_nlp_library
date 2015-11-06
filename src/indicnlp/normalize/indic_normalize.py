@@ -25,6 +25,12 @@ import sys, codecs, string, itertools, re
 
 class NormalizerI(object):
     """
+    The normalizer classes do the following: 
+
+        - Some characters have multiple Unicode codepoints. The normalizer chooses a single standard representation
+        - Some control characters are deleted
+        - While typing using the Latin keyboard, certain typical mistakes occur which are corrected by the module
+
     Base class for normalizer. Performs some common normalization, which includes: 
         - Byte order mark, word joiner, etc. removal 
         - ZERO_WIDTH_NON_JOINER and ZERO_WIDTH_JOINER removal 
@@ -305,12 +311,13 @@ class OriyaNormalizer(NormalizerI):
 class BengaliNormalizer(NormalizerI): 
     """
     Normalizer for the Bengali script. In addition to basic normalization by the super class, 
-    - Replaces the composite characters containing nuktas by their decomposed form 
-    - Replace the reserved character for poorna virama (if used) with the 
-    recommended generic Indic scripts poorna virama 
-    - Canonicalize two part dependent vowels
-    - replace pipe character '|' by poorna virama character
-    - replace colon ':' by visarga if the colon follows a charcter in this script 
+
+    * Replaces the composite characters containing nuktas by their decomposed form 
+    * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
+    * Canonicalize two part dependent vowels
+    * replace pipe character '|' by poorna virama character
+    * replace colon ':' by visarga if the colon follows a charcter in this script 
+
     """
 
     NUKTA=u'\u09BC' 
