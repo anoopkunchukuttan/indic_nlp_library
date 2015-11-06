@@ -27,14 +27,15 @@ class NormalizerI(object):
     """
     The normalizer classes do the following: 
 
-        - Some characters have multiple Unicode codepoints. The normalizer chooses a single standard representation
-        - Some control characters are deleted
-        - While typing using the Latin keyboard, certain typical mistakes occur which are corrected by the module
+    * Some characters have multiple Unicode codepoints. The normalizer chooses a single standard representation
+    * Some control characters are deleted
+    * While typing using the Latin keyboard, certain typical mistakes occur which are corrected by the module
 
     Base class for normalizer. Performs some common normalization, which includes: 
-        - Byte order mark, word joiner, etc. removal 
-        - ZERO_WIDTH_NON_JOINER and ZERO_WIDTH_JOINER removal 
-        - ZERO_WIDTH_SPACE and NO_BREAK_SPACE replaced by spaces 
+
+    * Byte order mark, word joiner, etc. removal 
+    * ZERO_WIDTH_NON_JOINER and ZERO_WIDTH_JOINER removal 
+    * ZERO_WIDTH_SPACE and NO_BREAK_SPACE replaced by spaces 
 
     Script specific normalizers should derive from this class and override the normalize() method. 
     They can call the super class 'normalize() method to avail of the common normalization 
@@ -93,9 +94,10 @@ class NormalizerI(object):
 class DevanagariNormalizer(NormalizerI): 
     """
     Normalizer for the Devanagari script. In addition to basic normalization by the super class, 
-    - Replaces the composite characters containing nuktas by their decomposed form 
-    - replace pipe character '|' by poorna virama character
-    - replace colon ':' by visarga if the colon follows a charcter in this script 
+
+    * Replaces the composite characters containing nuktas by their decomposed form 
+    * replace pipe character '|' by poorna virama character
+    * replace colon ':' by visarga if the colon follows a charcter in this script 
     
     """
 
@@ -175,11 +177,11 @@ class DevanagariNormalizer(NormalizerI):
 class GurmukhiNormalizer(NormalizerI): 
     """
     Normalizer for the Gurmukhi script. In addition to basic normalization by the super class, 
-    - Replaces the composite characters containing nuktas by their decomposed form 
-    - Replace the reserved character for poorna virama (if used) with the 
-    recommended generic Indic scripts poorna virama 
-    - replace pipe character '|' by poorna virama character
-    - replace colon ':' by visarga if the colon follows a charcter in this script 
+
+    * Replaces the composite characters containing nuktas by their decomposed form 
+    * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
+    * replace pipe character '|' by poorna virama character
+    * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     NUKTA=u'\u0A3C' 
@@ -220,9 +222,9 @@ class GurmukhiNormalizer(NormalizerI):
 class GujaratiNormalizer(NormalizerI): 
     """
     Normalizer for the Gujarati script. In addition to basic normalization by the super class, 
-    - Replace the reserved character for poorna virama (if used) with the 
-    recommended generic Indic scripts poorna virama 
-    - replace colon ':' by visarga if the colon follows a charcter in this script 
+
+    * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
+    * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     NUKTA=u'\u0ABC' 
@@ -254,13 +256,13 @@ class GujaratiNormalizer(NormalizerI):
 class OriyaNormalizer(NormalizerI): 
     """
     Normalizer for the Oriya script. In addition to basic normalization by the super class, 
-    - Replaces the composite characters containing nuktas by their decomposed form 
-    - Replace the reserved character for poorna virama (if used) with the 
-    recommended generic Indic scripts poorna virama 
-    - Canonicalize two part dependent vowels
-    - Replace 'va' with 'ba'
-    - replace pipe character '|' by poorna virama character
-    - replace colon ':' by visarga if the colon follows a charcter in this script 
+
+    * Replaces the composite characters containing nuktas by their decomposed form 
+    * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
+    * Canonicalize two part dependent vowels
+    * Replace 'va' with 'ba'
+    * replace pipe character '|' by poorna virama character
+    * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     NUKTA=u'\u0B3C' 
@@ -360,10 +362,10 @@ class BengaliNormalizer(NormalizerI):
 class TamilNormalizer(NormalizerI): 
     """
     Normalizer for the Tamil script. In addition to basic normalization by the super class, 
-    - Replace the reserved character for poorna virama (if used) with the 
-    recommended generic Indic scripts poorna virama 
-    - canonicalize two-part dependent vowel signs
-    - replace colon ':' by visarga if the colon follows a charcter in this script 
+
+    * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
+    * canonicalize two-part dependent vowel signs
+    * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     def normalize(self,text): 
@@ -391,10 +393,10 @@ class TamilNormalizer(NormalizerI):
 class TeluguNormalizer(NormalizerI): 
     """
     Normalizer for the Teluguscript. In addition to basic normalization by the super class, 
-    - Replace the reserved character for poorna virama (if used) with the 
-    recommended generic Indic scripts poorna virama 
-    - canonicalize two-part dependent vowel signs
-    - replace colon ':' by visarga if the colon follows a charcter in this script 
+
+    * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
+    * canonicalize two-part dependent vowel signs
+    * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     def __init__(self,remove_nuktas=False):
@@ -424,10 +426,10 @@ class TeluguNormalizer(NormalizerI):
 class KannadaNormalizer(NormalizerI): 
     """
     Normalizer for the Kannada script. In addition to basic normalization by the super class, 
-    - Replace the reserved character for poorna virama (if used) with the 
-    recommended generic Indic scripts poorna virama 
-    - canonicalize two-part dependent vowel signs
-    - replace colon ':' by visarga if the colon follows a charcter in this script 
+
+    * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
+    * canonicalize two-part dependent vowel signs
+    * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     def normalize(self,text): 
@@ -456,11 +458,11 @@ class KannadaNormalizer(NormalizerI):
 class MalayalamNormalizer(NormalizerI): 
     """
     Normalizer for the Malayalam script. In addition to basic normalization by the super class, 
-    - Replace the reserved character for poorna virama (if used) with the 
-    recommended generic Indic scripts poorna virama 
-    - canonicalize two-part dependent vowel signs
-    - Change from old encoding of chillus (till Unicode 5.0) to new encoding
-    - replace colon ':' by visarga if the colon follows a charcter in this script 
+
+    * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
+    * canonicalize two-part dependent vowel signs
+    * Change from old encoding of chillus (till Unicode 5.0) to new encoding
+    * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
     def normalize(self,text): 
@@ -496,7 +498,19 @@ class MalayalamNormalizer(NormalizerI):
 
 
 class IndicNormalizerFactory(object):
+    """
+    Factory class to create language specific normalizers. 
+
+    """
+
     def get_normalizer(self,language,remove_nuktas=False):
+        """
+            Call the get_normalizer function to get the language specific normalizer
+
+            Paramters: 
+            |language: language code
+            |remove_nuktas: boolean, should the normalizer remove nukta characters 
+        """
         normalizer=None
         if language in ['hi','mr','sa','kK','ne','sd']:
             normalizer=DevanagariNormalizer(remove_nuktas)
@@ -522,6 +536,9 @@ class IndicNormalizerFactory(object):
         return normalizer    
 
     def is_language_supported(self,language): 
+        """
+        Is the language supported?
+        """
         if language in ['hi','mr','sa','kK','ne',
                         'pa',
                         'gu',
