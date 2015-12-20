@@ -59,6 +59,9 @@ PV_PROP_RANGES={
         'aspiration': [23,25],
         'voicing': [25,27],
         'nasalization': [27,29],
+        'vowel_horizontal': [29,32],
+        'vowel_vertical': [32,36],
+        'vowel_roundness': [36,38],
         }
 
 

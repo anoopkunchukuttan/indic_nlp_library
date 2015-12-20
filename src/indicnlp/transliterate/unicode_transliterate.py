@@ -31,7 +31,7 @@ from indicnlp.transliterate.sinhala_transliterator import SinhalaDevanagariTrans
 
 class UnicodeIndicTransliterator(object):
     """
-    Base class for transliterator of Indian languages. 
+    Base class for rule-based transliteration among Indian languages. 
 
     Script pair specific transliterators should derive from this class and override the transliterate() method. 
     They can call the super class 'transliterate()' method to avail of the common transliteration
@@ -62,6 +62,13 @@ class UnicodeIndicTransliterator(object):
 
     @staticmethod
     def transliterate(text,lang1_code,lang2_code):
+        """
+        convert the source language script (lang1) to target language script (lang2)
+
+        text: text to transliterate
+        lang1_code: language 1 code 
+        lang1_code: language 2 code 
+        """
         if langinfo.SCRIPT_RANGES.has_key(lang1_code) and langinfo.SCRIPT_RANGES.has_key(lang2_code):
             
             # if Sinhala is source, do a mapping to Devanagari first 
