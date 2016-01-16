@@ -54,10 +54,11 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
         self._script_check_re=re.compile(self._script_range_pat)
 
     def _contains_number(self,text):
-        for c in text: 
-            offset=ord(c)-langinfo.SCRIPT_RANGES[self.lang][0]
-            if offset >=langinfo.NUMERIC_OFFSET_START and offset <= langinfo.NUMERIC_OFFSET_END:
-                return True  
+        if self.lang in langinfo.SCRIPT_RANGES: 
+            for c in text: 
+                offset=ord(c)-langinfo.SCRIPT_RANGES[self.lang][0]
+                if offset >=langinfo.NUMERIC_OFFSET_START and offset <= langinfo.NUMERIC_OFFSET_END:
+                    return True  
         return False     
 
     def _morphanalysis_needed(self,word):
