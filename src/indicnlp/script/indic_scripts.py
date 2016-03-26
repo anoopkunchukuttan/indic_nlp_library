@@ -40,7 +40,7 @@ ALL_PHONETIC_VECTORS=None
 TAMIL_PHONETIC_VECTORS=None
 
 """ Length of phonetic vector """
-PHONETIC_VECTOR_LENGTH=-1
+PHONETIC_VECTOR_LENGTH=38
 
 """ Start offset for the phonetic feature vector in the phonetic data vector """
 PHONETIC_VECTOR_START_OFFSET=6
