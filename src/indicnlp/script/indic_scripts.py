@@ -45,6 +45,22 @@ PHONETIC_VECTOR_LENGTH=-1
 """ Start offset for the phonetic feature vector in the phonetic data vector """
 PHONETIC_VECTOR_START_OFFSET=6
 
+## PHONETIC PROPERTIES in order in which they occur in the vector 
+## This list must be in sync with the keys in the PV_PROP_RANGES dictionary 
+PV_PROP=['basic_type',
+    'vowel_length',
+    'vowel_strength',
+    'vowel_status',
+    'consonant_type',
+    'articulation_place',
+    'aspiration',
+    'voicing',
+    'nasalization',
+    'vowel_horizontal',
+    'vowel_vertical',
+    'vowel_roundness',
+    ]
+
 ### 
 # Bit vector ranges for various properties 
 ###
@@ -172,22 +188,28 @@ def is_valid(v):
     return np.sum(v)>0
 
 def is_vowel(v): 
-    return True if v[PVIDX_BT_VOWEL]==1 else False
+    return v[PVIDX_BT_VOWEL]==1 
 
 def is_consonant(v): 
-    return True if v[PVIDX_BT_CONSONANT]==1 else False
+    return  v[PVIDX_BT_CONSONANT]==1 
 
 def is_halant(v): 
-    return True if v[PVIDX_BT_HALANT]==1 else False
+    return  v[PVIDX_BT_HALANT]==1 
 
 def is_nukta(v): 
-    return True if v[PVIDX_BT_NUKTA]==1 else False
+    return  v[PVIDX_BT_NUKTA]==1 
 
 def is_anusvaar(v): 
-    return True if v[PVIDX_BT_ANUSVAAR]==1 else False
+    return  v[PVIDX_BT_ANUSVAAR]==1 
+
+def is_misc(v): 
+    return v[PVIDX_BT_MISC]==1 
 
 def is_dependent_vowel(v): 
     return is_vowel(v) and v[PVIDX_VSTAT_DEP]==1
+
+def is_plosive(v): 
+    return is_consonant(v) and get_property_vector(v,'consonant_type')[0]==1
 
 ### Binary operations on phonetic vectors
 
