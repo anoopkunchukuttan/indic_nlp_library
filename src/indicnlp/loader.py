@@ -17,6 +17,7 @@
 
 from indicnlp import common
 from indicnlp.script import indic_scripts
+from indicnlp.script import english_script
 
 def load():
     """
@@ -32,3 +33,8 @@ def load():
 
     ## Initialization of Indic scripts module 
     indic_scripts.init()
+
+    ## Initialization of English scripts module 
+    english_script.init()
+
+
