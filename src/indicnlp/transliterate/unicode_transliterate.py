@@ -145,12 +145,24 @@ if __name__ == '__main__':
         print "Usage: python unicode_transliterate.py <infile> <outfile> <src_language> <tgt_language>"
         sys.exit(1)
 
-    src_language=sys.argv[3]
-    tgt_language=sys.argv[4]
+    if sys.argv[1]=='transliterate':
 
-    # Do normalization 
-    with codecs.open(sys.argv[1],'r','utf-8') as ifile:
-        with codecs.open(sys.argv[2],'w','utf-8') as ofile:
-            for line in ifile.readlines():
-                transliterated_line=UnicodeIndicTransliterator.transliterate(line,src_language,tgt_language)
-                ofile.write(transliterated_line)
+        src_language=sys.argv[4]
+        tgt_language=sys.argv[5]
+
+        with codecs.open(sys.argv[2],'r','utf-8') as ifile:
+            with codecs.open(sys.argv[3],'w','utf-8') as ofile:
+                for line in ifile.readlines():
+                    transliterated_line=UnicodeIndicTransliterator.transliterate(line,src_language,tgt_language)
+                    ofile.write(transliterated_line)
+
+    elif sys.argv[1]=='romanize':
+
+        language=sys.argv[4]
+
+        with codecs.open(sys.argv[2],'r','utf-8') as ifile:
+            with codecs.open(sys.argv[3],'w','utf-8') as ofile:
+                for line in ifile.readlines():
+                    transliterated_line=ItransTransliterator.to_itrans(line,language)
+                    ofile.write(transliterated_line)
+
