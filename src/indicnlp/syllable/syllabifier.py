@@ -83,3 +83,30 @@ def orthographic_syllabify(word,lang):
 
     return u''.join(syllables).strip().split(u' ')        
 
+def orthographic_simple_syllabify(word,lang): 
+
+    p_vectors=[si.get_phonetic_feature_vector(c,lang) for c in word]
+
+    syllables=[]
+
+    for i in xrange(len(word)): 
+        v=p_vectors[i]
+
+        syllables.append(word[i])
+
+        ## simplified syllabification 
+        if i+1<len(word) and \
+                (not si.is_valid(p_vectors[i+1]) or si.is_misc(p_vectors[i+1])):
+            syllables.append(u' ')
+
+        elif not si.is_valid(v) or si.is_misc(v) or si.is_vowel(v):
+            syllables.append(u' ')
+
+        elif i+1<len(word) and \
+             (si.is_consonant(v) or si.is_nukta(v)) and \
+             (si.is_consonant(p_vectors[i+1]) or si.is_anusvaar(p_vectors[i+1])):
+            syllables.append(u' ')
+
+
+    return u''.join(syllables).strip().split(u' ')        
+
