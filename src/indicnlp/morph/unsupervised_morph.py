@@ -97,13 +97,13 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
 
         @param tokens: string sequence of words 
 
-        @return seuqence of morphemes 
+        @return list of segmentations for each word. Each segmentation is a list of the morphs of the word. 
         """
 
         out_tokens=[]
         for token in tokens: 
             morphs=self.morph_analyze(token)
-            out_tokens.extend(morphs)
+            out_tokens.append(morphs)
         return out_tokens    
 
         #### Older implementation
