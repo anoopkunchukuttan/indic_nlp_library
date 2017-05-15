@@ -142,7 +142,7 @@ class ItransTransliterator(object):
 if __name__ == '__main__': 
 
     if len(sys.argv)<4:
-        print "Usage: python unicode_transliterate.py <infile> <outfile> <src_language> <tgt_language>"
+        print "Usage: python unicode_transliterate.py <command> <infile> <outfile> <src_language> <tgt_language>"
         sys.exit(1)
 
     if sys.argv[1]=='transliterate':
@@ -164,5 +164,15 @@ if __name__ == '__main__':
             with codecs.open(sys.argv[3],'w','utf-8') as ofile:
                 for line in ifile.readlines():
                     transliterated_line=ItransTransliterator.to_itrans(line,language)
+                    ofile.write(transliterated_line)
+
+    elif sys.argv[1]=='indicize':
+
+        language=sys.argv[4]
+
+        with codecs.open(sys.argv[2],'r','utf-8') as ifile:
+            with codecs.open(sys.argv[3],'w','utf-8') as ofile:
+                for line in ifile.readlines():
+                    transliterated_line=ItransTransliterator.from_itrans(line,language)
                     ofile.write(transliterated_line)
 
