@@ -97,13 +97,13 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
 
         @param tokens: string sequence of words 
 
-        @return list of segmentations for each word. Each segmentation is a list of the morphs of the word. 
+        @return list of segments in the document after morph analysis 
         """
 
         out_tokens=[]
         for token in tokens: 
             morphs=self.morph_analyze(token)
-            out_tokens.append(morphs)
+            out_tokens.extend(morphs)
         return out_tokens    
 
         #### Older implementation
@@ -133,7 +133,9 @@ if __name__ == '__main__':
     if len(sys.argv)==6:
         add_marker= True if sys.argv[5] == 'True' else False 
 
+    print 'Loading morph analyser for ' + language 
     analyzer=UnsupervisedMorphAnalyzer(language,add_marker)
+    print 'Loaded morph analyser for ' + language 
 
     with codecs.open(sys.argv[1],'r','utf-8') as ifile:
         with codecs.open(sys.argv[2],'w','utf-8') as ofile:
