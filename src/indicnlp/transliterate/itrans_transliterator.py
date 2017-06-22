@@ -785,6 +785,7 @@ ITRANS = { \
     'd': 0x926,
     'dh': 0x927,
     'n': 0x928,
+    '*n': 0x929, # added by anoop
     'p': 0x92A,
     'ph': 0x92B,
     'b': 0x92C,
