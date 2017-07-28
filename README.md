@@ -46,7 +46,7 @@ Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
 ## Version: 0.3
 
-##R evision Log
+## Revision Log
 0.3 : 21 Oct 2014: Supports morph-analysis between Indian languages
 
 0.2 : 13 Jun 2014: Supports transliteration between Indian languages and tokenization of Indian languages 
