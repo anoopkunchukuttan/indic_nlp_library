@@ -41,19 +41,19 @@ for examples
 
 http://anoopkunchukuttan.github.io/indic_nlp_library 
 
-##Author
+## Author
 Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
-##Version: 0.3
+## Version: 0.3
 
-##Revision Log
+##R evision Log
 0.3 : 21 Oct 2014: Supports morph-analysis between Indian languages
 
 0.2 : 13 Jun 2014: Supports transliteration between Indian languages and tokenization of Indian languages 
 
 0.1 : 12 Mar 2014: Initial version. Supports text normalization.
 
-##LICENSE
+## LICENSE
 
 Copyright Anoop Kunchukuttan 2013 - present
  
