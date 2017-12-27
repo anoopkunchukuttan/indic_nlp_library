@@ -150,8 +150,8 @@ if __name__ == '__main__':
         src_language=sys.argv[4]
         tgt_language=sys.argv[5]
 
-        with codecs.open(sys.argv[2],'r','utf-8') as ifile:
-            with codecs.open(sys.argv[3],'w','utf-8') as ofile:
+        with codecs.open(sys.argv[2],'r','utf_16_le') as ifile:
+            with codecs.open(sys.argv[3],'w','utf_16_le') as ofile:
                 for line in ifile.readlines():
                     transliterated_line=UnicodeIndicTransliterator.transliterate(line,src_language,tgt_language)
                     ofile.write(transliterated_line)
@@ -160,8 +160,8 @@ if __name__ == '__main__':
 
         language=sys.argv[4]
 
-        with codecs.open(sys.argv[2],'r','utf-8') as ifile:
-            with codecs.open(sys.argv[3],'w','utf-8') as ofile:
+        with codecs.open(sys.argv[2],'r','utf_16_le') as ifile:
+            with codecs.open(sys.argv[3],'w','utf_16_le') as ofile:
                 for line in ifile.readlines():
                     transliterated_line=ItransTransliterator.to_itrans(line,language)
                     ofile.write(transliterated_line)
@@ -170,8 +170,8 @@ if __name__ == '__main__':
 
         language=sys.argv[4]
 
-        with codecs.open(sys.argv[2],'r','utf-8') as ifile:
-            with codecs.open(sys.argv[3],'w','utf-8') as ofile:
+        with codecs.open(sys.argv[2],'r','utf_16_le') as ifile:
+            with codecs.open(sys.argv[3],'w','utf_16_le') as ofile:
                 for line in ifile.readlines():
                     transliterated_line=ItransTransliterator.from_itrans(line,language)
                     ofile.write(transliterated_line)
