@@ -64,6 +64,6 @@ if __name__ == '__main__':
 
     with codecs.open(sys.argv[1],'r','utf-8') as ifile:
         with codecs.open(sys.argv[2],'w','utf-8') as ofile:
-            for line in ifile.readlines():
+            for line in ifile:
                 tokenized_line=string.join(trivial_tokenize(line,sys.argv[3]),sep=' ')
                 ofile.write(tokenized_line)
