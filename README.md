@@ -1,3 +1,6 @@
+# SRC: Anoop's indic library(https://github.com/anoopkunchukuttan/indic_nlp_library/)
+Changes to the library to run in _python 3_. It won't run in python 2.
+
 # Indic NLP Library
 
 The goal of the Indic NLP Library is to build Python based libraries for common text processing and Natural Language Processing in Indian languages. Indian languages share a lot of similarity in terms of script, phonology, language syntax, etc. and this library is an attempt to provide a general solution to very commonly required toolsets for Indian language text.
