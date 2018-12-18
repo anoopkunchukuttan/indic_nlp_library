@@ -24,10 +24,11 @@
 
 import string, re, sys, codecs
 
+from indicnlp.common import IndicNlpException
+
+### tokenizer patterns 
 triv_tokenizer_indic_pat=re.compile(ur'(['+string.punctuation+ur'\u0964\u0965'+ur'])')
 triv_tokenizer_urdu_pat=re.compile(ur'(['+string.punctuation+ur'\u0609\u060A\u060C\u061E\u066A\u066B\u066C\u066D\u06D4'+ur'])')
-
-
 
 def trivial_tokenize_indic(s): 
     """
@@ -37,6 +38,7 @@ def trivial_tokenize_indic(s):
     """
     tok_str=triv_tokenizer_indic_pat.sub(r' \1 ',s.replace('\t',' '))
     return re.sub(r'[ ]+',u' ',tok_str).strip(' ').split(' ')
+
 
 def trivial_tokenize_urdu(s): 
     """
