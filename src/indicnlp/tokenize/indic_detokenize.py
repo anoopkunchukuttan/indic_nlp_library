@@ -27,13 +27,13 @@ import string, re, sys, codecs
 from indicnlp.common import IndicNlpException
 
 ## detokenizer patterns 
-left_attach=u'!%)\]},.:;>?\u0964\u0965'
+left_attach=ur'!%)\]},.:;>?\u0964\u0965'
 pat_la=re.compile(ur'[ ](['+left_attach+ur'])')
 
-right_attach=u'#$(\[{<@'
+right_attach=ur'#$(\[{<@'
 pat_ra=re.compile(ur'(['+right_attach+ur'])[ ]')
 
-lr_attach=u'-/\\'
+lr_attach=ur'-/\\'
 pat_lra=re.compile(ur'[ ](['+lr_attach+ur'])[ ]')
 
 #donknow=u'&*+=^_|~'
