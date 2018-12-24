@@ -27,35 +27,55 @@ import string, re, sys, codecs
 from indicnlp.common import IndicNlpException
 
 ## detokenizer patterns 
-left_attach=u'!%)\]},./:;>?\\\u0964\u0965'
+left_attach=u'!%)\]},.:;>?\u0964\u0965'
 pat_la=re.compile(ur'[ ](['+left_attach+ur'])')
 
 right_attach=u'#$(\[{<@'
 pat_ra=re.compile(ur'(['+right_attach+ur'])[ ]')
 
-lr_attach=u'-'
+lr_attach=u'-/\\'
 pat_lra=re.compile(ur'[ ](['+lr_attach+ur'])[ ]')
 
 #donknow=u'&*+=^_|~'
 
+## date, numbers, section/article numbering
+pat_num_seq=re.compile(ur'([0-9]+ [,.:/] )+[0-9]+')
+
+### e-mail address
+#pat_num=re.compile(ur'[a-zA-Z]+[ ]? 
+
 def trivial_detokenize_indic(s): 
     """
-    A trivial detokenizer which just tokenizes on the punctuation boundaries. 
-    This also includes punctuations for the Indian language scripts
-      - the purna virama and the deergha virama
+    A trivial detokenizer
+        - decides whether punctuation attaches to left/right or both
+        - handles number sequences
+        - smart handling of quotes
     returns a detokenized string
     """
 
     ### some normalizations 
+
     #numbers and dates
+    new_s=''
+    prev=0
+    for m in pat_num_seq.finditer(s):
+        start=m.start()
+        end=m.end()
+        if start>prev:
+            new_s=new_s+s[prev:start]
+            new_s=new_s+s[start:end].replace(' ','')
+            prev=end
+   
+    new_s=new_s+s[prev:]
+    s=new_s
 
     ###  consective single quotes or backslashes become double quotes
     #s=s.replace("' '", "''")
     #s=s.replace("` `", '``')
 
+    s=pat_lra.sub(u'\\1',s)
     s=pat_la.sub(u'\\1',s)
     s=pat_ra.sub(u'\\1',s)
-    s=pat_lra.sub(u'\\1',s)
 
     # assumes well formedness of quotes and alternates between right and left attach
 
