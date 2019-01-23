@@ -276,7 +276,7 @@ class DevanagariNormalizer(BaseNormalizer):
         # replace pipe character for poorna virama 
         text=text.replace(u'\u007c',u'\u0964')
 
-        # correct visarge 
+        # correct visarga 
         text=re.sub(ur'([\u0900-\u097f]):',u'\\1\u0903',text)
 
         return text
