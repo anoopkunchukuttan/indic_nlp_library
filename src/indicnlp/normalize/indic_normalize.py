@@ -53,6 +53,14 @@ class NormalizerI(object):
     ZERO_WIDTH_NON_JOINER=u'\u200C'
     ZERO_WIDTH_JOINER=u'\u200D'
 
+    # r1_nasal=re.compile(r'\u0902([\u0915-\u0918])')
+    # r2_nasal=re.compile(r'\u0902([\u091a-\u091d])')
+    # r3_nasal=re.compile(r'\u0902([\u091f-\u0922])')
+    # r4_nasal=re.compile(r'\u0902([\u0924-\u0927])')
+    # r5_nasal=re.compile(r'\u0902([\u092a-\u092d])')
+
+    self.lang=None
+
     def normalize(self,text):
         """
         Method to be implemented for normalization for each script 
@@ -68,7 +76,13 @@ class NormalizerI(object):
         text=text.replace(NormalizerI.ZERO_WIDTH_NON_JOINER, '')
         text=text.replace(NormalizerI.ZERO_WIDTH_JOINER,'')
 
+
+        text=normalize_anusvara(text)
         return text
+
+
+    def normalize_anusvara(text): 
+        pass 
 
     def get_char_stats(self,text):    
         print(len(re.findall(NormalizerI.BYTE_ORDER_MARK,text)))
@@ -103,7 +117,8 @@ class DevanagariNormalizer(NormalizerI):
 
     NUKTA=u'\u093C' 
 
-    def __init__(self,remove_nuktas=False):
+    def __init__(self,remove_nuktas=False,lang='hi',normalize_nasals=False):
+        self.lang=lang
         self.remove_nuktas=remove_nuktas
 
     def normalize(self,text): 
@@ -186,7 +201,8 @@ class GurmukhiNormalizer(NormalizerI):
 
     NUKTA=u'\u0A3C' 
 
-    def __init__(self,remove_nuktas=False):
+    def __init__(self,remove_nuktas=False,lang='pa',normalize_nasals=False):
+        self.lang=lang
         self.remove_nuktas=remove_nuktas
 
     def normalize(self,text): 
@@ -229,7 +245,8 @@ class GujaratiNormalizer(NormalizerI):
 
     NUKTA=u'\u0ABC' 
 
-    def __init__(self,remove_nuktas=False):
+    def __init__(self,remove_nuktas=False,lang='gu',normalize_nasals=False):
+        self.lang=lang
         self.remove_nuktas=remove_nuktas
 
     def normalize(self,text): 
@@ -267,7 +284,8 @@ class OriyaNormalizer(NormalizerI):
 
     NUKTA=u'\u0B3C' 
 
-    def __init__(self,remove_nuktas=False):
+    def __init__(self,remove_nuktas=False,lang='or',normalize_nasals=False):
+        self.lang=lang
         self.remove_nuktas=remove_nuktas
 
     def normalize(self,text): 
@@ -324,7 +342,8 @@ class BengaliNormalizer(NormalizerI):
 
     NUKTA=u'\u09BC' 
 
-    def __init__(self,remove_nuktas=False):
+    def __init__(self,remove_nuktas=False,lang='bn',normalize_nasals=False):
+        self.lang=lang
         self.remove_nuktas=remove_nuktas
 
     def normalize(self,text): 
@@ -368,6 +387,9 @@ class TamilNormalizer(NormalizerI):
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
+    def __init__(self,lang='ta',normalize_nasals=False):
+        self.lang=lang
+
     def normalize(self,text): 
 
         # common normalization for Indic scripts 
@@ -399,8 +421,8 @@ class TeluguNormalizer(NormalizerI):
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
-    def __init__(self,remove_nuktas=False):
-        self.remove_nuktas=remove_nuktas
+    def __init__(self,lang='te',normalize_nasals=False):
+        self.lang=lang
 
     def normalize(self,text): 
 
@@ -431,6 +453,10 @@ class KannadaNormalizer(NormalizerI):
     * canonicalize two-part dependent vowel signs
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
+
+    def __init__(self,lang='kn',normalize_nasals=False):
+        self.lang=lang
+
 
     def normalize(self,text): 
 
@@ -464,6 +490,9 @@ class MalayalamNormalizer(NormalizerI):
     * Change from old encoding of chillus (till Unicode 5.0) to new encoding
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
+
+    def __init__(self,lang='ml',normalize_nasals=False):
+        self.lang=lang
 
     def normalize(self,text): 
 
@@ -503,7 +532,7 @@ class IndicNormalizerFactory(object):
 
     """
 
-    def get_normalizer(self,language,remove_nuktas=False):
+    def get_normalizer(self,language,remove_nuktas=False,normalize_nasals=False):
         """
             Call the get_normalizer function to get the language specific normalizer
 
@@ -513,23 +542,23 @@ class IndicNormalizerFactory(object):
         """
         normalizer=None
         if language in ['hi','mr','sa','kK','ne','sd']:
-            normalizer=DevanagariNormalizer(remove_nuktas)
+            normalizer=DevanagariNormalizer(lang=language, remove_nuktas=remove_nuktas, normalize_nasals=normalize_nasals)
         elif language in ['pa']:
-            normalizer=GurmukhiNormalizer(remove_nuktas)
+            normalizer=GurmukhiNormalizer(lang=language, remove_nuktas=remove_nuktas, normalize_nasals=normalize_nasals)
         elif language in ['gu']:
-            normalizer=GujaratiNormalizer(remove_nuktas)
+            normalizer=GujaratiNormalizer(lang=language, remove_nuktas=remove_nuktas, normalize_nasals=normalize_nasals)
         elif language in ['bn','as']:
-            normalizer=BengaliNormalizer(remove_nuktas)
+            normalizer=BengaliNormalizer(lang=language, remove_nuktas=remove_nuktas, normalize_nasals=normalize_nasals)
         elif language in ['or']:
-            normalizer=OriyaNormalizer(remove_nuktas)
+            normalizer=OriyaNormalizer(lang=language, remove_nuktas=remove_nuktas, normalize_nasals=normalize_nasals)
         elif language in ['ml']:
-            normalizer=MalayalamNormalizer()
+            normalizer=MalayalamNormalizer(lang=language, normalize_nasals=normalize_nasals)
         elif language in ['kn']:
-            normalizer=KannadaNormalizer()
+            normalizer=KannadaNormalizer(lang=language, normalize_nasals=normalize_nasals)
         elif language in ['ta']:
-            normalizer=TamilNormalizer()
+            normalizer=TamilNormalizer(lang=language, normalize_nasals=normalize_nasals)
         elif language in ['te']:
-            normalizer=TeluguNormalizer()
+            normalizer=TeluguNormalizer(lang=language, normalize_nasals=normalize_nasals)
         else:    
             normalizer=NormalizerI()
 
