@@ -308,18 +308,6 @@ class DevanagariNormalizer(BaseNormalizer):
         #print(len(re.findall(u'\u092B'+DevanagariNormalizer.NUKTA,text)))
         #print(len(re.findall(u'\u092F'+DevanagariNormalizer.NUKTA,text)))
 
-        #print(u'\u0929')
-        #print(u'\u0931')
-        #print(u'\u0934')
-        #print(u'\u0958')
-        #print(u'\u0959')
-        #print(u'\u095A')
-        #print(u'\u095B')
-        #print(u'\u095C')
-        #print(u'\u095D')
-        #print(u'\u095E')
-        #print(u'\u095F')
-
 class GurmukhiNormalizer(BaseNormalizer): 
     """
     Normalizer for the Gurmukhi script. In addition to basic normalization by the super class, 
