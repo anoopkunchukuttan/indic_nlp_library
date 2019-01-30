@@ -18,7 +18,7 @@ The data resources required by the Indic NLP Library are hosted in a different r
 
 ## Pre-requisites
 
-- Python 2.7+
+- Python 3.x (For Python 2.x version check the tag `PYTHON_2.7_FINAL_JAN_2019`. Not actively supporting Python 2.x anymore, but will try to maintain as much compatibility as possible)
 - [Morfessor 2.0 Python Library](http://www.cis.hut.fi/projects/morpho/morfessor2.shtml)
 - [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources)
 
@@ -33,20 +33,23 @@ The data resources required by the Indic NLP Library are hosted in a different r
 
 ## Usage 
 
-- Python API: Check [this IPython Notebook](http://nbviewer.ipython.org/url/anoopkunchukuttan.github.io/indic_nlp_library/doc/indic_nlp_examples.ipynb) 
-for examples
+- Python API: Check [this IPython Notebook](http://nbviewer.ipython.org/url/anoopkunchukuttan.github.io/indic_nlp_library/doc/indic_nlp_examples.ipynb) for examples.
+  - You can find the Python 2.x Notebook [here](http://nbviewer.ipython.org/url/anoopkunchukuttan.github.io/indic_nlp_library/doc/indic_nlp_examples_2_7.ipynb) 
 - Commandline Interface: The commandline interface is documented on the [project website](http://anoopkunchukuttan.github.io/indic_nlp_library)
 
 ## Website
 
-http://anoopkunchukuttan.github.io/indic_nlp_library 
+`http://anoopkunchukuttan.github.io/indic_nlp_library`
 
 ## Author
 Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
-## Version: 0.3
+## Version: 0.4
 
 ## Revision Log
+
+0.4 : 28 Jan 2019: Ported to Python 3, and lots of feature additions since last release; primarily around script information, script similarity and syllabification.
+
 0.3 : 21 Oct 2014: Supports morph-analysis between Indian languages
 
 0.2 : 13 Jun 2014: Supports transliteration between Indian languages and tokenization of Indian languages 
