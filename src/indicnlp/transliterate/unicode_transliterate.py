@@ -47,7 +47,7 @@ class UnicodeIndicTransliterator(object):
         if offset>=0x15 and offset<=0x28 and \
                 offset!=0x1c and \
                 not ( (offset-0x15)%5==0 or (offset-0x15)%5==4 )  :
-            subst_char=(offset-0x15)/5
+            subst_char=(offset-0x15)//5
             offset=0x15+5*subst_char
 
         # for 5th consonant row of varnamala                         
@@ -69,7 +69,7 @@ class UnicodeIndicTransliterator(object):
         lang1_code: language 1 code 
         lang1_code: language 2 code 
         """
-        if langinfo.SCRIPT_RANGES.has_key(lang1_code) and langinfo.SCRIPT_RANGES.has_key(lang2_code):
+        if lang1_code in langinfo.SCRIPT_RANGES and lang2_code in langinfo.SCRIPT_RANGES:
             
             # if Sinhala is source, do a mapping to Devanagari first 
             if lang1_code=='si': 
@@ -90,15 +90,15 @@ class UnicodeIndicTransliterator(object):
                     if lang2_code=='ta': 
                         # tamil exceptions 
                         offset=UnicodeIndicTransliterator._correct_tamil_mapping(offset)
-                    newc=unichr(langinfo.SCRIPT_RANGES[lang2_code][0]+offset)
+                    newc=chr(langinfo.SCRIPT_RANGES[lang2_code][0]+offset)
 
                 trans_lit_text.append(newc)        
 
             # if Sinhala is source, do a mapping to Devanagari first 
             if org_lang2_code=='si': 
-                return sdt.devanagari_to_sinhala(string.join(trans_lit_text,sep=''))
+                return sdt.devanagari_to_sinhala(''.join(trans_lit_text))
 
-            return string.join(trans_lit_text,sep='')
+            return ''.join(trans_lit_text)
         else:
             return text
 
@@ -109,15 +109,15 @@ class ItransTransliterator(object):
 
     @staticmethod
     def to_itrans(text,lang_code):
-        if langinfo.SCRIPT_RANGES.has_key(lang_code):
+        if lang_code in langinfo.SCRIPT_RANGES:
             if lang_code=='ml': 
                 # Change from chillus characters to corresponding consonant+halant
-                text=text.replace(u'\u0d7a',u'\u0d23\u0d4d')
-                text=text.replace(u'\u0d7b',u'\u0d28\u0d4d')
-                text=text.replace(u'\u0d7c',u'\u0d30\u0d4d')
-                text=text.replace(u'\u0d7d',u'\u0d32\u0d4d')
-                text=text.replace(u'\u0d7e',u'\u0d33\u0d4d')
-                text=text.replace(u'\u0d7f',u'\u0d15\u0d4d')
+                text=text.replace('\u0d7a','\u0d23\u0d4d')
+                text=text.replace('\u0d7b','\u0d28\u0d4d')
+                text=text.replace('\u0d7c','\u0d30\u0d4d')
+                text=text.replace('\u0d7d','\u0d32\u0d4d')
+                text=text.replace('\u0d7e','\u0d33\u0d4d')
+                text=text.replace('\u0d7f','\u0d15\u0d4d')
 
             devnag=UnicodeIndicTransliterator.transliterate(text,lang_code,'hi')
             
@@ -129,7 +129,7 @@ class ItransTransliterator(object):
 
     @staticmethod
     def from_itrans(text,lang_code):
-        if langinfo.SCRIPT_RANGES.has_key(lang_code): 
+        if lang_code in langinfo.SCRIPT_RANGES: 
             devnag_text=itrans_transliterator.transliterate(text.encode('utf-8'), 'itrans', 'devanagari',
                                  {'outputASCIIEncoded' : False, 'handleUnrecognised': itrans_transliterator.UNRECOGNISED_ECHO})
 
@@ -142,7 +142,7 @@ class ItransTransliterator(object):
 if __name__ == '__main__': 
 
     if len(sys.argv)<4:
-        print "Usage: python unicode_transliterate.py <command> <infile> <outfile> <src_language> <tgt_language>"
+        print("Usage: python unicode_transliterate.py <command> <infile> <outfile> <src_language> <tgt_language>")
         sys.exit(1)
 
     if sys.argv[1]=='transliterate':
@@ -180,7 +180,7 @@ if __name__ == '__main__':
                     transliterated_line=ItransTransliterator.to_itrans(line,language)
 
                     ## temp fix to replace 'ph' to 'F' to match with Urdu transliteration scheme
-                    transliterated_line=transliterated_line.replace(u'ph',u'f')
+                    transliterated_line=transliterated_line.replace('ph','f')
 
                     ofile.write(transliterated_line)
 

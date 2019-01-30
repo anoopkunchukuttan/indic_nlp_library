@@ -27,8 +27,8 @@ import string, re, sys, codecs
 from indicnlp.common import IndicNlpException
 
 ### tokenizer patterns 
-triv_tokenizer_indic_pat=re.compile(ur'(['+string.punctuation+ur'\u0964\u0965'+ur'])')
-triv_tokenizer_urdu_pat=re.compile(ur'(['+string.punctuation+ur'\u0609\u060A\u060C\u061E\u066A\u066B\u066C\u066D\u06D4'+ur'])')
+triv_tokenizer_indic_pat=re.compile(r'(['+string.punctuation+r'\u0964\u0965'+r'])')
+triv_tokenizer_urdu_pat=re.compile(r'(['+string.punctuation+r'\u0609\u060A\u060C\u061E\u066A\u066B\u066C\u066D\u06D4'+r'])')
 
 def trivial_tokenize_indic(s): 
     """
@@ -37,7 +37,7 @@ def trivial_tokenize_indic(s):
     returns a list of tokens   
     """
     tok_str=triv_tokenizer_indic_pat.sub(r' \1 ',s.replace('\t',' '))
-    return re.sub(r'[ ]+',u' ',tok_str).strip(' ').split(' ')
+    return re.sub(r'[ ]+',' ',tok_str).strip(' ').split(' ')
 
 
 def trivial_tokenize_urdu(s): 
@@ -47,7 +47,7 @@ def trivial_tokenize_urdu(s):
     returns a list of tokens   
     """
     tok_str=triv_tokenizer_urdu_pat.sub(r' \1 ',s.replace('\t',' '))
-    return re.sub(r'[ ]+',u' ',tok_str).strip(' ').split(' ')
+    return re.sub(r'[ ]+',' ',tok_str).strip(' ').split(' ')
 
 def trivial_tokenize(s,lang='hi'): 
     """
@@ -61,7 +61,7 @@ def trivial_tokenize(s,lang='hi'):
 if __name__ == '__main__': 
 
     if len(sys.argv)<4:
-        print "Usage: python indic_tokenize.py <infile> <outfile> <language>"
+        print("Usage: python indic_tokenize.py <infile> <outfile> <language>")
         sys.exit(1)
 
     with codecs.open(sys.argv[1],'r','utf-8') as ifile:

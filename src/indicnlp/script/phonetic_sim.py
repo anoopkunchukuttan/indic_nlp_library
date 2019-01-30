@@ -55,9 +55,9 @@ def create_similarity_matrix(sim_func,slang,tlang,normalize=True):
     dim=langinfo.COORDINATED_RANGE_END_INCLUSIVE-langinfo.COORDINATED_RANGE_START_INCLUSIVE+1    
     sim_mat=np.zeros((dim,dim))    
 
-    for offset1 in xrange(langinfo.COORDINATED_RANGE_START_INCLUSIVE, langinfo.COORDINATED_RANGE_END_INCLUSIVE+1): 
+    for offset1 in range(langinfo.COORDINATED_RANGE_START_INCLUSIVE, langinfo.COORDINATED_RANGE_END_INCLUSIVE+1): 
         v1=get_phonetic_feature_vector(offset_to_char(offset1,slang),slang)
-        for offset2 in xrange(langinfo.COORDINATED_RANGE_START_INCLUSIVE, langinfo.COORDINATED_RANGE_END_INCLUSIVE+1): 
+        for offset2 in range(langinfo.COORDINATED_RANGE_START_INCLUSIVE, langinfo.COORDINATED_RANGE_END_INCLUSIVE+1): 
             v2=get_phonetic_feature_vector(offset_to_char(offset2,tlang),tlang)
             sim_mat[offset1,offset2]=sim_func(v1,v2)
 

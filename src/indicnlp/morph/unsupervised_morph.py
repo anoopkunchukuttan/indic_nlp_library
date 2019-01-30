@@ -50,7 +50,7 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
         io = morfessor.MorfessorIO()
         self._morfessor_model=io.read_any_model(common.INDIC_RESOURCES_PATH+'/morph/morfessor/{}.model'.format(lang))
 
-        self._script_range_pat=ur'^[{}-{}]+$'.format(unichr(langinfo.SCRIPT_RANGES[lang][0]),unichr(langinfo.SCRIPT_RANGES[lang][1]))
+        self._script_range_pat=r'^[{}-{}]+$'.format(chr(langinfo.SCRIPT_RANGES[lang][0]),chr(langinfo.SCRIPT_RANGES[lang][1]))
         self._script_check_re=re.compile(self._script_range_pat)
 
     def _contains_number(self,text):
@@ -75,10 +75,10 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
             val=self._morfessor_model.viterbi_segment(word)
             m_list=val[0]
             if self.add_marker:
-                m_list= [ u'{}_S_'.format(m) if i>0 else u'{}_R_'.format(m)  for i,m in enumerate(m_list)]
+                m_list= [ '{}_S_'.format(m) if i>0 else '{}_R_'.format(m)  for i,m in enumerate(m_list)]
         else:
             if self.add_marker:
-                word=u'{}_E_'.format(word)
+                word='{}_E_'.format(word)
             m_list=[word]
         return m_list 
 
@@ -122,7 +122,7 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
 if __name__ == '__main__': 
 
     if len(sys.argv)<4:
-        print "Usage: python unsupervised_morph.py <infile> <outfile> <language> <indic_resources_path> [<add_marker>]"
+        print("Usage: python unsupervised_morph.py <infile> <outfile> <language> <indic_resources_path> [<add_marker>]")
         sys.exit(1)
 
     language=sys.argv[3]
@@ -133,9 +133,9 @@ if __name__ == '__main__':
     if len(sys.argv)==6:
         add_marker= True if sys.argv[5] == 'True' else False 
 
-    print 'Loading morph analyser for ' + language 
+    print('Loading morph analyser for ' + language) 
     analyzer=UnsupervisedMorphAnalyzer(language,add_marker)
-    print 'Loaded morph analyser for ' + language 
+    print('Loaded morph analyser for ' + language) 
 
     with codecs.open(sys.argv[1],'r','utf-8') as ifile:
         with codecs.open(sys.argv[2],'w','utf-8') as ofile:

@@ -118,7 +118,7 @@ def init():
     PHONETIC_VECTOR_LENGTH=ALL_PHONETIC_VECTORS.shape[1]
 
 def is_supported_language(lang): 
-    return lang in li.SCRIPT_RANGES.keys()
+    return lang in list(li.SCRIPT_RANGES.keys())
 
 def get_offset(c,lang): 
     if not is_supported_language(lang): 
@@ -131,7 +131,7 @@ def offset_to_char(off,lang):
     """
     if not is_supported_language(lang): 
         raise IndicNlpException('Language {}  not supported'.format(lang))
-    return unichr(off+li.SCRIPT_RANGES[lang][0])
+    return chr(off+li.SCRIPT_RANGES[lang][0])
 
 def is_indiclang_char(c,lang): 
     """

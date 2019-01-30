@@ -35,10 +35,10 @@ def init():
         if INDIC_RESOURCES_PATH=='':
             INDIC_RESOURCES_PATH=os.environ['INDIC_RESOURCES_PATH']
     except Exception as e: 
-        raise IndicNlpException('Indic Resources Path not set')
+        raise IndicNlpException('INDIC_RESOURCES_PATH not set')
 
     if INDIC_RESOURCES_PATH=='': 
-        raise IndicNlpException('Indic Resources Path not set')
+        raise IndicNlpException('INDIC_RESOURCES_PATH not set')
 
 
 

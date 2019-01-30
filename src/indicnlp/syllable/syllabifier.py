@@ -21,28 +21,28 @@ from indicnlp.script import indic_scripts as si
 import re
 
 chillu_char_map= {
-                    u'\u0d7a': u'\u0d23', 
-                    u'\u0d7b': u'\u0d28',
-                    u'\u0d7c': u'\u0d30',
-                    u'\u0d7d': u'\u0d32',
-                    u'\u0d7e': u'\u0d33',
-                    u'\u0d7f': u'\u0d15',
+                    '\u0d7a': '\u0d23', 
+                    '\u0d7b': '\u0d28',
+                    '\u0d7c': '\u0d30',
+                    '\u0d7d': '\u0d32',
+                    '\u0d7e': '\u0d33',
+                    '\u0d7f': '\u0d15',
                  }
 
 char_chillu_map= {}
-for k,v in chillu_char_map.iteritems():
+for k,v in chillu_char_map.items():
     char_chillu_map[v]=k
 
 def normalize_malayalam(word): 
 
-    word_mask=re.sub(ur'[0-9]',u'0',word)
+    word_mask=re.sub(r'[0-9]','0',word)
 
     # instead of chillu characters, use consonant+halant 
-    for chillu,char in chillu_char_map.iteritems(): 
-        word=word.replace(chillu,u'{}\u0d4d'.format(char)) 
-        word_mask=word_mask.replace(chillu,u'41')
+    for chillu,char in chillu_char_map.items(): 
+        word=word.replace(chillu,'{}\u0d4d'.format(char)) 
+        word_mask=word_mask.replace(chillu,'41')
 
-    word_mask=re.sub(ur'[^0-9]',u'0',word_mask)
+    word_mask=re.sub(r'[^0-9]','0',word_mask)
 
     return word, word_mask
 
@@ -57,25 +57,25 @@ def denormalize_malayalam(word, word_mask):
         try: 
             idx=word_mask.index('4',idx)
             word[idx:idx+2]=char_chillu_map[word[idx]]
-            word_mask[idx:idx+2]=u'0'
+            word_mask[idx:idx+2]='0'
             start=idx            
         except ValueError as e: 
             break
 
-    return u''.join(word)
+    return ''.join(word)
 
 def normalize_punjabi(word): 
-    word_mask=re.sub(ur'[0-9]',u'0',word)
+    word_mask=re.sub(r'[0-9]','0',word)
 
     ## replace tippi with anusvaar
-    word=word.replace(u'\u0a70',u'\u0a02')
-    word_mask=word_mask.replace(u'\u0a70',u'2')
+    word=word.replace('\u0a70','\u0a02')
+    word_mask=word_mask.replace('\u0a70','2')
 
     ## replace addak+consonant with consonat+halant+consonant
-    word=re.sub(ur'\u0a71(.)',u'\\1\u0a4d\\1',word)
-    word_mask=re.sub(ur'\u0a71(.)',u'311',word_mask)
+    word=re.sub(r'\u0a71(.)','\\1\u0a4d\\1',word)
+    word_mask=re.sub(r'\u0a71(.)','311',word_mask)
 
-    word_mask=re.sub(ur'[^0-9]',u'0',word_mask)
+    word_mask=re.sub(r'[^0-9]','0',word_mask)
 
     return word, word_mask
 
@@ -89,8 +89,8 @@ def denormalize_punjabi(word, word_mask):
     while idx>=0: 
         try: 
             idx=word_mask.index('2',idx)
-            word[idx]=u'\u0a70'
-            word_mask[idx]=u'0'
+            word[idx]='\u0a70'
+            word_mask[idx]='0'
             start=idx            
         except ValueError as e: 
             break
@@ -100,13 +100,13 @@ def denormalize_punjabi(word, word_mask):
     while idx>=0: 
         try: 
             idx=word_mask.index('3',idx)
-            word[idx:idx+3]=u'\u0a71{}'.format(word[idx])
-            word_mask[idx:idx+3]=u'00'
+            word[idx:idx+3]='\u0a71{}'.format(word[idx])
+            word_mask[idx:idx+3]='00'
             start=idx            
         except ValueError as e: 
             break
 
-    return u''.join(word)
+    return ''.join(word)
 
 def orthographic_syllabify_improved(word,lang): 
 
@@ -123,7 +123,7 @@ def orthographic_syllabify_improved(word,lang):
     syllables=[]
     syllables_mask=[]
 
-    for i in xrange(len(word)): 
+    for i in range(len(word)): 
         v=p_vectors[i]
 
         syllables.append(word[i])
@@ -147,12 +147,12 @@ def orthographic_syllabify_improved(word,lang):
 
         #### better syllabification 
         if i+1<len(word) and (not si.is_valid(p_vectors[i+1]) or si.is_misc(p_vectors[i+1])):
-            syllables.append(u' ')
-            syllables_mask.append(u'0')
+            syllables.append(' ')
+            syllables_mask.append('0')
 
         elif not si.is_valid(v) or si.is_misc(v) :
-            syllables.append(u' ')
-            syllables_mask.append(u'0')
+            syllables.append(' ')
+            syllables_mask.append('0')
 
         elif si.is_vowel(v):
 
@@ -165,18 +165,18 @@ def orthographic_syllabify_improved(word,lang):
                            si.is_anusvaar(p_vectors[i+1]) )
 
             if not(anu_nonplos or anu_eow):              
-                syllables.append(u' ')
-                syllables_mask.append(u'0')
+                syllables.append(' ')
+                syllables_mask.append('0')
 
         elif i+1<len(word) and \
                 (si.is_consonant(v) or si.is_nukta(v)): 
             if si.is_consonant(p_vectors[i+1]): 
-                syllables.append(u' ')
-                syllables_mask.append(u'0')
+                syllables.append(' ')
+                syllables_mask.append('0')
             elif si.is_vowel(p_vectors[i+1]) and \
                     not si.is_dependent_vowel(p_vectors[i+1]): 
-                syllables.append(u' ')
-                syllables_mask.append(u'0')
+                syllables.append(' ')
+                syllables_mask.append('0')
             elif si.is_anusvaar(p_vectors[i+1]):
                 anu_nonplos= ( i+2<len(word) and \
                                not si.is_plosive(p_vectors[i+2])\
@@ -185,23 +185,23 @@ def orthographic_syllabify_improved(word,lang):
                 anu_eow= i+2==len(word) 
 
                 if not(anu_nonplos or anu_eow):              
-                    syllables.append(u' ')
-                    syllables_mask.append(u'0')
+                    syllables.append(' ')
+                    syllables_mask.append('0')
 
-    syllables_mask=u''.join(syllables_mask)
-    syllables=u''.join(syllables)
+    syllables_mask=''.join(syllables_mask)
+    syllables=''.join(syllables)
 
     #assert len(syllables_mask) == len(syllables)
     #assert syllables_mask.find('01') == -1
     if syllables_mask.find('01') >= 0: 
-        print 'Warning'
+        print('Warning')
 
     if lang=='ml': 
         syllables = denormalize_malayalam(syllables,syllables_mask)
     elif lang=='pa': 
         syllables = denormalize_punjabi(syllables,syllables_mask)
 
-    return syllables.strip().split(u' ')        
+    return syllables.strip().split(' ')        
 
 def orthographic_syllabify(word,lang): 
 
@@ -209,7 +209,7 @@ def orthographic_syllabify(word,lang):
 
     syllables=[]
 
-    for i in xrange(len(word)): 
+    for i in range(len(word)): 
         v=p_vectors[i]
 
         syllables.append(word[i])
@@ -229,10 +229,10 @@ def orthographic_syllabify(word,lang):
 
         #### better syllabification 
         if i+1<len(word) and (not si.is_valid(p_vectors[i+1]) or si.is_misc(p_vectors[i+1])):
-            syllables.append(u' ')
+            syllables.append(' ')
 
         elif not si.is_valid(v) or si.is_misc(v) :
-            syllables.append(u' ')
+            syllables.append(' ')
 
         elif si.is_vowel(v):
 
@@ -245,15 +245,15 @@ def orthographic_syllabify(word,lang):
                            si.is_anusvaar(p_vectors[i+1]) )
 
             if not(anu_nonplos or anu_eow):              
-                syllables.append(u' ')
+                syllables.append(' ')
 
         elif i+1<len(word) and \
                 (si.is_consonant(v) or si.is_nukta(v)): 
             if si.is_consonant(p_vectors[i+1]): 
-                syllables.append(u' ')
+                syllables.append(' ')
             elif si.is_vowel(p_vectors[i+1]) and \
                     not si.is_dependent_vowel(p_vectors[i+1]): 
-                syllables.append(u' ')
+                syllables.append(' ')
             elif si.is_anusvaar(p_vectors[i+1]):
                 anu_nonplos= ( i+2<len(word) and \
                                not si.is_plosive(p_vectors[i+2])\
@@ -262,9 +262,9 @@ def orthographic_syllabify(word,lang):
                 anu_eow= i+2==len(word) 
 
                 if not(anu_nonplos or anu_eow):              
-                    syllables.append(u' ')
+                    syllables.append(' ')
 
-    return u''.join(syllables).strip().split(u' ')        
+    return ''.join(syllables).strip().split(' ')        
 
 def orthographic_simple_syllabify(word,lang): 
 
@@ -272,7 +272,7 @@ def orthographic_simple_syllabify(word,lang):
 
     syllables=[]
 
-    for i in xrange(len(word)): 
+    for i in range(len(word)): 
         v=p_vectors[i]
 
         syllables.append(word[i])
@@ -280,16 +280,16 @@ def orthographic_simple_syllabify(word,lang):
         ## simplified syllabification 
         if i+1<len(word) and \
                 (not si.is_valid(p_vectors[i+1]) or si.is_misc(p_vectors[i+1])):
-            syllables.append(u' ')
+            syllables.append(' ')
 
         elif not si.is_valid(v) or si.is_misc(v) or si.is_vowel(v):
-            syllables.append(u' ')
+            syllables.append(' ')
 
         elif i+1<len(word) and \
              (si.is_consonant(v) or si.is_nukta(v)) and \
              (si.is_consonant(p_vectors[i+1]) or si.is_anusvaar(p_vectors[i+1])):
-            syllables.append(u' ')
+            syllables.append(' ')
 
 
-    return u''.join(syllables).strip().split(u' ')        
+    return ''.join(syllables).strip().split(' ')        
 

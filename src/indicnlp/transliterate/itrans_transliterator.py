@@ -103,7 +103,7 @@ is there a problem with implicit A before visarga?
 __version__ = '0.1'
 
 import unicodedata
-from sets import Set
+# from sets import Set
 import sys
 
 characterBlocks = {}
@@ -140,7 +140,7 @@ def _unrecognised(chr):
     elif options['handleUnrecognised'] == UNRECOGNISED_SUBSTITUTE:
         return options['substituteChar']
     else:
-        raise KeyError, chr
+        raise KeyError(chr)
  
 class TLCharacter (object):
     """ Class representing a Unicode character with its equivalents.
@@ -171,13 +171,13 @@ class TLCharacter (object):
         
         """
         if unicodeHexValue < 0 or unicodeHexValue > 0x10FFFF:
-            raise ValueError, "numeric value outside Unicode range"
+            raise ValueError("numeric value outside Unicode range")
         self.unicodeHexValue = unicodeHexValue
         """ Use name check to filter out unused characters.
               unicodedata.name() raises ValueError for these
         """
-        self.unichr = unichr(self.unicodeHexValue)
-        self.name = unicodedata.name(self.unichr)
+        self.chr = chr(self.unicodeHexValue)
+        self.name = unicodedata.name(self.chr)
         self.equivalents = {}
         self._block = block
         
@@ -225,7 +225,7 @@ class CharacterBlock(dict):
         for c in charRange:
             try:
                 tlchar = charClass(c, self)
-                self[tlchar.unichr] = tlchar
+                self[tlchar.chr] = tlchar
             except ValueError: # Unicode reserved code points.
                 # not an error
                 pass
@@ -295,13 +295,13 @@ class TransliterationScheme(dict):
         """
         self.block = characterBlocks[blockName]
         self.name = schemeName
-        for equiv, unicodeHexValue in data.items():
-            self[equiv] = self.block[unichr(unicodeHexValue)]
+        for equiv, unicodeHexValue in list(data.items()):
+            self[equiv] = self.block[chr(unicodeHexValue)]
             self[equiv].addEquivalent(self.name, equiv)
-        self._longestEntry = max([len(e) for e in data.keys()])
+        self._longestEntry = max([len(e) for e in list(data.keys())])
         if self._longestEntry > 1:
             self._parseTree = {}
-            self._parsedata = data.keys()
+            self._parsedata = list(data.keys())
             self._parsedata.sort()
             self._setupParseTree(0, len(data) - 1, 0, self._parseTree)
         if swapTable is not None:
@@ -370,7 +370,7 @@ class TransliterationScheme(dict):
             else: 
                 chr = self._getNextChar(text, i)
                 try:
-                    result.append(self[chr].unichr)
+                    result.append(self[chr].chr)
                 except KeyError:
                     result.append(_unrecognised(chr))
                 i = i + len(chr)
@@ -406,24 +406,24 @@ def transliterate(text, inFormat, outFormat, requestOptions={}):
         options.update(requestOptions)
     
         """ Ensure we have the correct encoding for input text. """
-        if isinstance(text, str):
+        if isinstance(text, bytes):
             text = text.decode(options['inputEncoding'])
             
         """ Look up input & output format names. """
         def findFormat(fmt):
-            if isinstance(fmt, basestring):
+            if isinstance(fmt, str):
                 try:
                     fmt = _names[fmt.upper()]
                 except KeyError:
-                    raise ValueError, 'unrecognised format ' + fmt
+                    raise ValueError('unrecognised format ' + fmt)
             return fmt
         inFormat = findFormat(inFormat)
         outFormat = findFormat(outFormat)
         
         """ Perform sanity checks. """
     
-        if not isinstance(text, basestring): 
-                raise TypeError, "The text must be a string or a unicode object"
+        if not isinstance(text, str): 
+                raise TypeError("The text must be a string or a unicode object")
         
         def getBlock(format):
             if isinstance(format, CharacterBlock):
@@ -433,12 +433,12 @@ def transliterate(text, inFormat, outFormat, requestOptions={}):
         inBlock = getBlock(inFormat)
         outBlock = getBlock(outFormat)
         if not inBlock is outBlock:
-            raise ValueError, "incompatible input and output formats"
+            raise ValueError("incompatible input and output formats")
             
         if inFormat is outFormat:
             # They're trying to trick us. Just do a quick sanity check & bounce it back.
             if inFormat._longestEntry == 1:
-                [inFormat[c] for c in Set(text) if not c.isspace()] 
+                [inFormat[c] for c in set(text) if not c.isspace()] 
                 # -> KeyError for extraneous chars.
                 return text
             
@@ -447,7 +447,7 @@ def transliterate(text, inFormat, outFormat, requestOptions={}):
         result = inFormat._transliterate(text, outFormat)
         if options['outputASCIIEncoded']:
             result = [asciiEncode(c) for c in result]
-        return u''.join(result).encode(options['outputEncoding'])
+        return ''.join(result).encode(options['outputEncoding'])
     finally:
         resetOptions()
     
@@ -469,10 +469,10 @@ class DevanagariCharacter (TLCharacter):
         - so need to hard code the ranges
     """
     _vowelOffset = 0x93E - 0x906
-    _depVowelRange = range(0x93E, 0x94D) + [0x962,0x963]
-    _vowelRange = range(0x904, 0x915) + [0x960,0x961]
-    _VIRAMA = unichr(0x94D)
-    _LETTER_A = unichr(0x905)
+    _depVowelRange = list(range(0x93E, 0x94D)) + [0x962,0x963]
+    _vowelRange = list(range(0x904, 0x915)) + [0x960,0x961]
+    _VIRAMA = chr(0x94D)
+    _LETTER_A = chr(0x905)
     """ Unicode calls agravaha a letter. Not for our purposes:
         we need to not treat it as one for handling virama & implicit 'a'
     """
@@ -505,15 +505,15 @@ class DevanagariCharacter (TLCharacter):
         if unicodeHexValue in DevanagariCharacter._depVowelRange:
             vowel=None
             if  unicodeHexValue == 0x962: 
-                vowel=block[unichr(0x90C)]
+                vowel=block[chr(0x90C)]
             elif  unicodeHexValue == 0x963: 
-                vowel=block[unichr(0x961)]
+                vowel=block[chr(0x961)]
             elif unicodeHexValue == 0x944:
                 ## dependency vowel sign for vocalic RR is set only when processing the vowel, since the maatra precedes the vowel in the Unicode chart
                 ## That step's cpde is above, with documentation 
                 pass 
             else:                 
-                vowel=block[unichr(unicodeHexValue - DevanagariCharacter._vowelOffset)]
+                vowel=block[chr(unicodeHexValue - DevanagariCharacter._vowelOffset)]
             if vowel is not None:                 
                 # The check condition is for 0x944, processing deferred for later
                 vowel._setDependentVowel(unicodeHexValue)
@@ -523,7 +523,7 @@ class DevanagariCharacter (TLCharacter):
 
         self.isConsonant = False
         if self.isVowel == False \
-        and self.unichr.isalpha() \
+        and self.chr.isalpha() \
         and self.unicodeHexValue not in (DevanagariCharacter._AGRAVAHA,
                                                            DevanagariCharacter._OM):
             self.isConsonant = True
@@ -531,8 +531,8 @@ class DevanagariCharacter (TLCharacter):
     def _setDependentVowel(self, unicodeHexValue):
         if unicodeHexValue is not None:
             if not self.isVowel: raise ValueError
-            self._dependentVowel = unichr(unicodeHexValue)
-            self._block[unichr(unicodeHexValue)] = self
+            self._dependentVowel = chr(unicodeHexValue)
+            self._block[chr(unicodeHexValue)] = self
             
 class _Devanagari(object):
     """ Holder class for the Devanagari transliteration algorithm. """
@@ -618,14 +618,14 @@ class DevanagariCharacterBlock(CharacterBlock, _Devanagari):
         """
         result = []
         if char.isVowel == False:
-            result.append(char.unichr)
+            result.append(char.chr)
             if char.isConsonant \
             and ((next is not None and next.isConsonant) \
             or next is None): 
                 result.append(DevanagariCharacter._VIRAMA)
         else:
             if prev is None or prev.isConsonant == False:
-                result.append(char.unichr)
+                result.append(char.chr)
             else:
                 if char._dependentVowel is not None:
                     result.append(char._dependentVowel)
@@ -657,12 +657,12 @@ class DevanagariTransliterationScheme(TransliterationScheme, _Devanagari):
         
         """
         result = []
-        if char.unichr != DevanagariCharacter._VIRAMA:
+        if char.chr != DevanagariCharacter._VIRAMA:
             result.append(char.equivalents[self.name])
         """ Append implicit A to consonants if the next character isn't a vowel. """
         if implicitA and char.isConsonant \
         and ((next is not None \
-        and next.unichr != DevanagariCharacter._VIRAMA \
+        and next.chr != DevanagariCharacter._VIRAMA \
         and not next.isVowel) \
         or next is None):
             result.append(characterBlocks['DEVANAGARI']\
@@ -680,7 +680,7 @@ IAST
 
 """
 
-DevanagariCharacterBlock('DEVANAGARI', range(0x900, 0x97F))
+DevanagariCharacterBlock('DEVANAGARI', list(range(0x900, 0x97F)))
 
 HARVARDKYOTO = { \
     'M': 0x902,
@@ -842,16 +842,16 @@ _swapTable = {'GY': 'j~n', 'dny': 'j~n', 'x': 'kSh',
 DevanagariTransliterationScheme('DEVANAGARI', 'ITRANS', ITRANS, _swapTable)
 
 IAST = { \
-    unichr(0x1E43): 0x902,
-    unichr(0x1E25): 0x903,
+    chr(0x1E43): 0x902,
+    chr(0x1E25): 0x903,
     'a': 0x905,
-    unichr(0x101): 0x906,
+    chr(0x101): 0x906,
     'i': 0x907,
-    unichr(0x12B): 0x908,
+    chr(0x12B): 0x908,
     'u': 0x909,
-    unichr(0x16B): 0x90A,
-    unichr(0x1E5B): 0x90B,
-    unichr(0x1E37): 0x90C,
+    chr(0x16B): 0x90A,
+    chr(0x1E5B): 0x90B,
+    chr(0x1E37): 0x90C,
     'e': 0x90F,
     'ai': 0x910,
     'o': 0x913,
@@ -860,17 +860,17 @@ IAST = { \
     'kh': 0x916,
     'g': 0x917,
     'gh': 0x918,
-    unichr(0x1E45): 0x919,
+    chr(0x1E45): 0x919,
     'c': 0x91A,
     'ch': 0x91B,
     'j': 0x91C,
     'jh': 0x91D,
-    unichr(0xF1): 0x91E,
-    unichr(0x1E6D): 0x91F,
-    unichr(0x1E6D) +'h': 0x920,
-    unichr(0x1E0D): 0x921,
-    unichr(0x1E0D) + 'h': 0x922,
-    unichr(0x1E47): 0x923,
+    chr(0xF1): 0x91E,
+    chr(0x1E6D): 0x91F,
+    chr(0x1E6D) +'h': 0x920,
+    chr(0x1E0D): 0x921,
+    chr(0x1E0D) + 'h': 0x922,
+    chr(0x1E47): 0x923,
     't': 0x924,
     'th': 0x925,
     'd': 0x926,
@@ -885,12 +885,12 @@ IAST = { \
     'r': 0x930,
     'l': 0x932,
     'v': 0x935,
-    unichr(0x15B): 0x936,
-    unichr(0x1E63): 0x937,
+    chr(0x15B): 0x936,
+    chr(0x1E63): 0x937,
     's': 0x938,
     'h': 0x939,
     "'": 0x93D, # avagraha
-    'O' + unichr(0x1E43): 0x950,
+    'O' + chr(0x1E43): 0x950,
     '.': 0x0964,
     '..': 0x0965,
     '0': 0x0966,
@@ -918,17 +918,17 @@ anybody ever has occasion to use it.
 
 """
 
-CharacterBlock('CYRILLIC', range(0x400, 0x510))
+CharacterBlock('CYRILLIC', list(range(0x400, 0x510)))
 
 _ISO9RUS = {\
-	unichr(0x0CB): 0x401, # IO
+	chr(0x0CB): 0x401, # IO
 	'A': 0x410,
 	'B': 0x411,
 	'V': 0x412,
 	'G': 0x413,
 	'D': 0x414,
 	'E': 0x415,
-	unichr(0x17D): 0x416, # ZHE
+	chr(0x17D): 0x416, # ZHE
 	'Z': 0x417,
 	'I': 0x418,
 	'J': 0x419,
@@ -945,22 +945,22 @@ _ISO9RUS = {\
 	'F': 0x424,
 	'H': 0x425,
 	'C': 0x426, # TS
-	unichr(0x10C): 0x427, # CH
-	unichr(0x160): 0x428, # SH
-	unichr(0x15C): 0x429, # SHCH
-	unichr(0x2BA): 0x42a, # hard
+	chr(0x10C): 0x427, # CH
+	chr(0x160): 0x428, # SH
+	chr(0x15C): 0x429, # SHCH
+	chr(0x2BA): 0x42a, # hard
 	'Y': 0x42b,
-	unichr(0x2B9): 0x42c, # soft
-	unichr(0x0C8): 0x42d, # YE
-	unichr(0x0DB): 0x42e, # YU
-	unichr(0x0C2): 0x42f, # YA
+	chr(0x2B9): 0x42c, # soft
+	chr(0x0C8): 0x42d, # YE
+	chr(0x0DB): 0x42e, # YU
+	chr(0x0C2): 0x42f, # YA
 	'a': 0x430,
 	'b': 0x431,
 	'v': 0x432,
 	'g': 0x433,
 	'd': 0x434,
 	'e': 0x435,
-	unichr(0x17E): 0x436, # zhe
+	chr(0x17E): 0x436, # zhe
 	'z': 0x437,
 	'i': 0x438,
 	'j': 0x439,
@@ -977,16 +977,16 @@ _ISO9RUS = {\
 	'f': 0x444,
 	'h': 0x445,
 	'c': 0x446, # ts
-	unichr(0x10D): 0x447, # ch
-	unichr(0x161): 0x448, # sh
-	unichr(0x15D): 0x449, # shch
+	chr(0x10D): 0x447, # ch
+	chr(0x161): 0x448, # sh
+	chr(0x15D): 0x449, # shch
 	# unichr(0x2BA): 0x44a, # hard - same upper & lowercase
 	'y': 0x44b,
 	# unichr(0x2B9): 0x44c, # soft - same upper & lowercase
-	unichr(0xE8): 0x44d, # ye
-	unichr(0x0FB): 0x44e, #yu
-	unichr(0x0E2): 0x44f, # ya
-	unichr(0x0EB): 0x451, #  io
+	chr(0xE8): 0x44d, # ye
+	chr(0x0FB): 0x44e, #yu
+	chr(0x0E2): 0x44f, # ya
+	chr(0x0EB): 0x451, #  io
     }
 
 TransliterationScheme('CYRILLIC', 'ISO9RUS', _ISO9RUS)
@@ -1012,7 +1012,7 @@ def main(argv=None):
     try:    
         text, inFormat, outFormat = argv[1:4]
     except ValueError:
-        print main.__doc__
+        print(main.__doc__)
         return 2
     inFormat = inFormat.upper()
     outFormat = outFormat.upper()
@@ -1021,13 +1021,13 @@ def main(argv=None):
         f = open(text)
     except IOError:
         # it wasn't, so it must be the actual text
-        print transliterate(text, inFormat, outFormat)
+        print(transliterate(text, inFormat, outFormat))
         return 0
     else:
         i = 1
         for text in f.readlines():
             if len(text) > 0 and not text.startswith('#'):
-                print transliterate(text, inFormat, outFormat).strip('\n')
+                print(transliterate(text, inFormat, outFormat).strip('\n'))
             i = i + 1
         f.close()
         return 0

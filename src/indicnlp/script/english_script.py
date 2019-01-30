@@ -131,7 +131,7 @@ def offset_to_phoneme(ph_id):
     return ID_ARPABET_MAP[ph_id]
 
 def phoneme_to_enc(ph): 
-    return unichr(SCRIPT_RANGE_START+phoneme_to_offset(ph))
+    return chr(SCRIPT_RANGE_START+phoneme_to_offset(ph))
 
 def enc_to_phoneme(ph): 
     return offset_to_phoneme(enc_to_offset(ph))

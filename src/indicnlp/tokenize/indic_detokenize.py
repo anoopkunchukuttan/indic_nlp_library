@@ -27,19 +27,19 @@ import string, re, sys, codecs
 from indicnlp.common import IndicNlpException
 
 ## detokenizer patterns 
-left_attach=ur'!%)\]},.:;>?\u0964\u0965'
-pat_la=re.compile(ur'[ ](['+left_attach+ur'])')
+left_attach=r'!%)\]},.:;>?\u0964\u0965'
+pat_la=re.compile(r'[ ](['+left_attach+r'])')
 
-right_attach=ur'#$(\[{<@'
-pat_ra=re.compile(ur'(['+right_attach+ur'])[ ]')
+right_attach=r'#$(\[{<@'
+pat_ra=re.compile(r'(['+right_attach+r'])[ ]')
 
-lr_attach=ur'-/\\'
-pat_lra=re.compile(ur'[ ](['+lr_attach+ur'])[ ]')
+lr_attach=r'-/\\'
+pat_lra=re.compile(r'[ ](['+lr_attach+r'])[ ]')
 
 #donknow=u'&*+=^_|~'
 
 ## date, numbers, section/article numbering
-pat_num_seq=re.compile(ur'([0-9]+ [,.:/] )+[0-9]+')
+pat_num_seq=re.compile(r'([0-9]+ [,.:/] )+[0-9]+')
 
 ### e-mail address
 #pat_num=re.compile(ur'[a-zA-Z]+[ ]? 
@@ -73,13 +73,13 @@ def trivial_detokenize_indic(s):
     #s=s.replace("' '", "''")
     #s=s.replace("` `", '``')
 
-    s=pat_lra.sub(u'\\1',s)
-    s=pat_la.sub(u'\\1',s)
-    s=pat_ra.sub(u'\\1',s)
+    s=pat_lra.sub('\\1',s)
+    s=pat_la.sub('\\1',s)
+    s=pat_ra.sub('\\1',s)
 
     # assumes well formedness of quotes and alternates between right and left attach
 
-    alt_attach=u'\'"`'
+    alt_attach='\'"`'
     for punc in alt_attach: 
         cnt=0
         out_str=[]
@@ -110,7 +110,7 @@ def trivial_detokenize(s,lang='hi'):
 if __name__ == '__main__': 
 
     if len(sys.argv)<4:
-        print "Usage: python indic_detokenize.py <infile> <outfile> <language>"
+        print("Usage: python indic_detokenize.py <infile> <outfile> <language>")
         sys.exit(1)
 
     with codecs.open(sys.argv[1],'r','utf-8') as ifile:
