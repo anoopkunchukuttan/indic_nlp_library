@@ -16,7 +16,7 @@
 #        along with Indic NLP Library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import codecs, sys, itertools,string,re,os
+import codecs, sys, itertools,re,os
 import morfessor 
 from indicnlp import langinfo
 from indicnlp import common
@@ -143,6 +143,6 @@ if __name__ == '__main__':
                 line=line.strip()
                 tokens=indic_tokenize.trivial_tokenize(line)
                 morph_tokens=analyzer.morph_analyze_document(tokens)
-                ofile.write(string.join(morph_tokens,sep=' '))
+                ofile.write(' '.join(morph_tokens))
                 ofile.write('\n')
 
