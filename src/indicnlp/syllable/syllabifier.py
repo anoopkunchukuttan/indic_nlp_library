@@ -108,7 +108,23 @@ def denormalize_punjabi(word, word_mask):
 
     return ''.join(word)
 
-def orthographic_syllabify_improved(word,lang): 
+def char_backoff(syllables_list,vocab):
+    syllables_final=[]    
+
+    if vocab is None:
+        syllables_final=syllables_list
+    else:
+        for s in syllables_list:
+            if s in vocab: 
+                syllables_final.append(s)
+            else: 
+                for x in s:
+                    syllables_final.append(x)                    
+
+    return syllables_final        
+
+
+def orthographic_syllabify_improved(word,lang,vocab=None): 
 
     word_mask=['0']*len(word)
 
@@ -201,9 +217,10 @@ def orthographic_syllabify_improved(word,lang):
     elif lang=='pa': 
         syllables = denormalize_punjabi(syllables,syllables_mask)
 
-    return syllables.strip().split(' ')        
+    syllables_list = syllables.strip().split(' ')  
+    return(char_backoff(syllables_list,vocab))    
 
-def orthographic_syllabify(word,lang): 
+def orthographic_syllabify(word,lang,vocab=None): 
 
     p_vectors=[si.get_phonetic_feature_vector(c,lang) for c in word]
 
@@ -264,9 +281,10 @@ def orthographic_syllabify(word,lang):
                 if not(anu_nonplos or anu_eow):              
                     syllables.append(' ')
 
-    return ''.join(syllables).strip().split(' ')        
+    syllables_list = ''.join(syllables).strip().split(' ') 
+    return(char_backoff(syllables_list,vocab))
 
-def orthographic_simple_syllabify(word,lang): 
+def orthographic_simple_syllabify(word,lang,vocab=None): 
 
     p_vectors=[si.get_phonetic_feature_vector(c,lang) for c in word]
 
@@ -290,6 +308,5 @@ def orthographic_simple_syllabify(word,lang):
              (si.is_consonant(p_vectors[i+1]) or si.is_anusvaar(p_vectors[i+1])):
             syllables.append(' ')
 
-
-    return ''.join(syllables).strip().split(' ')        
-
+    syllables_list = ''.join(syllables).strip().split(' ') 
+    return(char_backoff(syllables_list,vocab))

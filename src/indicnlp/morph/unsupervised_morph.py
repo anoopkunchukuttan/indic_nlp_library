@@ -16,7 +16,7 @@
 #        along with Indic NLP Library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import codecs, sys, itertools,string,re
+import codecs, sys, itertools,string,re,os
 import morfessor 
 from indicnlp import langinfo
 from indicnlp import common
@@ -48,7 +48,7 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
         self.add_marker=add_marker
 
         io = morfessor.MorfessorIO()
-        self._morfessor_model=io.read_any_model(common.INDIC_RESOURCES_PATH+'/morph/morfessor/{}.model'.format(lang))
+        self._morfessor_model=io.read_any_model(os.path.join(common.INDIC_RESOURCES_PATH,'morph','morfessor','{}.model'.format(lang)))        
 
         self._script_range_pat=r'^[{}-{}]+$'.format(chr(langinfo.SCRIPT_RANGES[lang][0]),chr(langinfo.SCRIPT_RANGES[lang][1]))
         self._script_check_re=re.compile(self._script_range_pat)

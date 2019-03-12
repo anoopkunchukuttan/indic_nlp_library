@@ -18,6 +18,7 @@
 
 import pandas as pd
 import numpy as np
+import os
 
 from indicnlp import common
 from indicnlp.common import IndicNlpException
@@ -109,8 +110,8 @@ def init():
 
     global ALL_PHONETIC_DATA, ALL_PHONETIC_VECTORS, TAMIL_PHONETIC_DATA, TAMIL_PHONETIC_VECTORS, PHONETIC_VECTOR_LENGTH, PHONETIC_VECTOR_START_OFFSET
 
-    ALL_PHONETIC_DATA=pd.read_csv(common.get_resources_path()+'/script/all_script_phonetic_data.csv',encoding='utf-8')    
-    TAMIL_PHONETIC_DATA=pd.read_csv(common.get_resources_path()+'/script/tamil_script_phonetic_data.csv',encoding='utf-8')    
+    ALL_PHONETIC_DATA=pd.read_csv(os.path.join(common.get_resources_path(),'script','all_script_phonetic_data.csv'),encoding='utf-8')    
+    TAMIL_PHONETIC_DATA=pd.read_csv(os.path.join(common.get_resources_path(),'script','tamil_script_phonetic_data.csv'),encoding='utf-8')    
 
     ALL_PHONETIC_VECTORS= ALL_PHONETIC_DATA.ix[:,PHONETIC_VECTOR_START_OFFSET:].as_matrix()
     TAMIL_PHONETIC_VECTORS=TAMIL_PHONETIC_DATA.ix[:,PHONETIC_VECTOR_START_OFFSET:].as_matrix()
