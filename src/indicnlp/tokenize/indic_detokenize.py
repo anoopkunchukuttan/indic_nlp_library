@@ -17,7 +17,7 @@
 #        along with Indic NLP Library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-#Program for tokenizing Indian language input 
+#Program for detokenizing Indian language input 
 #
 # @author Anoop Kunchukuttan 
 #
