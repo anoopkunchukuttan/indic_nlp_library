@@ -24,6 +24,8 @@
 
 import re
 
+from indicnlp.transliterate import unicode_transliterate
+
 DELIM_PAT=re.compile(r'[\.\?!\u0964\u0965]')
 
 
