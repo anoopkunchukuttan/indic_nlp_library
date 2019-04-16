@@ -29,8 +29,10 @@ from indicnlp.transliterate import unicode_transliterate
 DELIM_PAT=re.compile(r'[\.\?!\u0964\u0965]')
 
 
-def is_acronym_char(text,lang):
-    ack_chars =  {'ए', 'ऎ',
+def is_acronym_abbvr(text,lang):
+    ack_chars =  {
+     ## acronym
+      'ए', 'ऎ',
       'बी', 'बि', 
       'सी', 'सि',
       'डी', 'डि',
@@ -73,7 +75,14 @@ def is_acronym_char(text,lang):
      'एक्स्',
      'ऎक्स्',
      'वाय्',
-     'जेड्', 'ज़ेड्',                  
+     'जेड्', 'ज़ेड्',    
+        
+    ## abbreviation
+     'श्री',
+     'डॉ',
+     'कु',
+     'चि',
+     '
     }
 
     return unicode_transliterate.UnicodeIndicTransliterator.transliterate(text,lang,'hi') in ack_chars
@@ -122,7 +131,7 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
             bad_state=True
             sen_buffer = sen_buffer + ' ' + sentence
         ## NEW condition    
-        elif sentence[-1]=='.' and is_acronym_char(words[-1][:-1],lang):
+        elif sentence[-1]=='.' and is_acronym_abbvr(words[-1][:-1],lang):
             if len(sen_buffer)>0 and  not bad_state:
                 final_sentences.append(sen_buffer)
             bad_state=True
