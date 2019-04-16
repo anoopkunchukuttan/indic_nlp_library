@@ -82,7 +82,7 @@ def is_acronym_abbvr(text,lang):
      'डॉ',
      'कु',
      'चि',
-     '
+     'सौ',
     }
 
     return unicode_transliterate.UnicodeIndicTransliterator.transliterate(text,lang,'hi') in ack_chars
