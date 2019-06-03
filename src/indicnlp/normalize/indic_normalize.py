@@ -482,6 +482,8 @@ class BengaliNormalizer(BaseNormalizer):
 
         # replace pipe character for poorna virama 
         text=text.replace('\u007c','\u0964')
+        # replace bengali currency numerator four for poorna virama  (it looks similar and is used as a substitute)
+        text=text.replace('\u09f7','\u0964')
 
         # two part dependent vowels
         text=text.replace('\u09c7\u09be','\u09cb')

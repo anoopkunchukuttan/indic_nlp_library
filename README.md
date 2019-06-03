@@ -6,7 +6,8 @@ The library provides the following functionalities:
 
 - Text Normalization
 - Script Information
-- Tokenization
+- Word Tokenization and Detokenization
+- Sentence Splitting 
 - Word Segmentation
 - Script Conversion
 - Romanization
@@ -44,9 +45,16 @@ The data resources required by the Indic NLP Library are hosted in a different r
 ## Author
 Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
-## Version: 0.4
+## Version: 0.5
 
 ## Revision Log
+
+0.5 : 03 Jun 2019: 
+
+    - Improved word tokenizer to handle dates and numbers. 
+    - Added sentence splitter that can handle common prefixes/honorofics and uses some heuristics.
+    - Added detokenizer
+    - Added acronym transliterator that can convert English acronyms to Brahmi-derived scripts
 
 0.4 : 28 Jan 2019: Ported to Python 3, and lots of feature additions since last release; primarily around script information, script similarity and syllabification.
 
