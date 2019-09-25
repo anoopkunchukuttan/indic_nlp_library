@@ -15,7 +15,9 @@ The library provides the following functionalities:
 - Transliteration
 - Translation
 
-The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some modules. You can download from the [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources) project.
+The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some modules. You can download from the [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources) project. 
+
+If you are interested in Indian language NLP resources, you should check the [Indic NLP Catalog](https://github.com/anoopkunchukuttan/indic_nlp_library) for pointers.
 
 ## Pre-requisites
 
