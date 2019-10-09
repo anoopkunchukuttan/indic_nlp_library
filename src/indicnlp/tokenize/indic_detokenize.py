@@ -22,6 +22,7 @@
 # @author Anoop Kunchukuttan 
 #
 
+import argparse
 import string, re, sys, codecs
 
 from indicnlp.common import IndicNlpException
@@ -111,10 +112,15 @@ if __name__ == '__main__':
 
     if len(sys.argv)<4:
         print("Usage: python indic_detokenize.py <infile> <outfile> <language>")
+        print("       Set file to - for stdin/stdout")
         sys.exit(1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("infile", type = argparse.FileType('r', encoding="utf8"),  metavar='INFILE')
+    parser.add_argument("outfile", type = argparse.FileType('w', encoding="utf8"),  metavar='OUTFILE')
+    parser.add_argument("language", metavar='LANGUAGE')
+    args = parser.parse_args()
 
-    with codecs.open(sys.argv[1],'r','utf-8') as ifile:
-        with codecs.open(sys.argv[2],'w','utf-8') as ofile:
-            for line in ifile:
-                detokenized_line=trivial_detokenize(line,sys.argv[3])
-                ofile.write(detokenized_line)
+
+    for line in args.infile:
+        detokenized_line=trivial_detokenize(line,args.language)
+        args.outfile.write(detokenized_line)
