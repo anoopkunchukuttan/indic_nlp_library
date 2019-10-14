@@ -236,3 +236,66 @@ def get_property_value(v,prop_name):
 
     return int(v)
 
+def lcsr_indic(srcw,tgtw,slang,tlang):
+    """
+    compute the Longest Common Subsequence Ratio (LCSR) between two strings at the character level.
+    This works for Indic scripts by mapping both languages to a common script
+
+    srcw: source language string
+    tgtw: source language string
+    slang: source language 
+    tlang: target language 
+    """    
+    score_mat=np.zeros((len(srcw)+1,len(tgtw)+1))
+
+    for si,sc in enumerate(srcw,1): 
+        for ti,tc in enumerate(tgtw,1): 
+            so=get_offset(sc,slang)
+            to=get_offset(tc,tlang)
+
+            if in_coordinated_range_offset(so) and in_coordinated_range_offset(to) and so==to: 
+                score_mat[si,ti]=score_mat[si-1,ti-1]+1.0
+            elif not (in_coordinated_range_offset(so) or in_coordinated_range_offset(to)) and sc==tc: 
+                score_mat[si,ti]=score_mat[si-1,ti-1]+1.0
+            else: 
+                score_mat[si,ti]= max(
+                    score_mat[si,ti-1],
+                    score_mat[si-1,ti])
+
+    return (score_mat[-1,-1]/float(max(len(srcw),len(tgtw))),float(len(srcw)),float(len(tgtw)))
+
+def lcsr_any(srcw,tgtw):
+    """
+    LCSR computation if both languages have the same script
+    """
+    score_mat=np.zeros((len(srcw)+1,len(tgtw)+1))
+
+    for si,sc in enumerate(srcw,1): 
+        for ti,tc in enumerate(tgtw,1): 
+
+            if sc==tc: 
+                score_mat[si,ti]=score_mat[si-1,ti-1]+1.0
+            else: 
+                score_mat[si,ti]= max(
+                    score_mat[si,ti-1],
+                    score_mat[si-1,ti])
+
+    return (score_mat[-1,-1]/float(max(len(srcw),len(tgtw))),float(len(srcw)),float(len(tgtw)))
+
+def lcsr(srcw,tgtw,slang,tlang):
+    """
+    compute the Longest Common Subsequence Ratio (LCSR) between two strings at the character level.
+
+    srcw: source language string
+    tgtw: source language string
+    slang: source language 
+    tlang: target language 
+    """
+
+    if slang==tlang or not is_supported_language(slang) or not is_supported_language(tlang):
+        return lcsr_any(srcw,tgtw,slang,tlang)
+    else:  
+        return lcsr_indic(srcw,tgtw)
+
+
+
