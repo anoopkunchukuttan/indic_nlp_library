@@ -320,10 +320,68 @@ class GurmukhiNormalizer(BaseNormalizer):
 
     NUKTA='\u0A3C' 
 
-    def __init__(self,lang='pa',remove_nuktas=False,nasals_mode='do_nothing'):
+    VOWEL_NORM_MAPS={
+        '\u0a05\u0a3e': '\u0a06',
+        '\u0a72\u0a3f': '\u0a07',
+        '\u0a72\u0a40': '\u0a08',
+        '\u0a73\u0a41': '\u0a09',
+        '\u0a73\u0a42': '\u0a0a',
+        '\u0a72\u0a47': '\u0a0f',
+        '\u0a05\u0a48': '\u0a10',
+        '\u0a73\u0a4b': '\u0a13',
+        '\u0a05\u0a4c': '\u0a14',            
+    }
+
+    def __init__(self,lang='pa',remove_nuktas=False,nasals_mode='do_nothing',
+                do_canonicalize_addak=False, 
+                do_canonicalize_tippi=False, 
+                do_replace_vowel_bases=False):
         super(GurmukhiNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+        self.do_canonicalize_addak=do_canonicalize_addak
+        self.do_canonicalize_tippi=do_canonicalize_tippi
+        self.do_replace_vowel_bases=do_replace_vowel_bases
+
+
+    def _normalize_vowels(self,text):
+        """
+
+        """
+
+        ## standard replacement as per suggestions in 
+        ## http://www.unicode.org/versions/Unicode12.1.0/ch12.pdf
+        ## Table 12-16
+
+        for k,v in GurmukhiNormalizer.VOWEL_NORM_MAPS.items():
+            text=text.replace(k,v)
+        
+        ## the above mappings should account for majority of the variantions, 
+        ## Rest are handled via this generic rule which looks at the diacritic 
+        ## following the 2 special characters 
+        ## TBD: don't see evidence for this in Wikipedia corpus
+
+        ## If these special characters occur without any diacritic, replace them with closet
+        ## equivalent vowels
+        if self.do_replace_vowel_bases:
+            text=text.replace('\u0a72','\u0a07')
+            text=text.replace('\u0a73','\u0a09')
+
+        return text
+
 
     def normalize(self,text): 
+
+        # Addak
+        if self.do_canonicalize_addak:
+            ## replace addak+consonant with consonat+halant+consonant
+            text=re.sub(r'\u0a71(.)','\\1\u0a4d\\1',text)
+            
+        # Tippi 
+        if self.do_canonicalize_tippi:
+            text=text.replace('\u0a70','\u0a02') 
+
+        # Vowels: Gurumuki has multiple ways of representing independent vowels due
+        # to the characters 'iri' and 'ura'. 
+        text=self._normalize_vowels(text)
 
         # common normalization for Indic scripts 
         text=super(GurmukhiNormalizer,self).normalize(text)
@@ -608,8 +666,24 @@ class MalayalamNormalizer(BaseNormalizer):
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
-    def __init__(self,lang='ml',remove_nuktas=False,nasals_mode='do_nothing'):
+    CHILLU_CHAR_MAP= {
+                    '\u0d7a': '\u0d23', 
+                    '\u0d7b': '\u0d28',
+                    '\u0d7c': '\u0d30',
+                    '\u0d7d': '\u0d32',
+                    '\u0d7e': '\u0d33',
+                    '\u0d7f': '\u0d15',
+                 }
+
+    def _canonicalize_chillus(self,text):
+        for chillu, char in MalayalamNormalizer.CHILLU_CHAR_MAP.items(): 
+            text=text.replace(chillu,'{}\u0d4d'.format(char)) 
+        return text
+
+    def __init__(self,lang='ml',remove_nuktas=False,nasals_mode='do_nothing',
+                do_canonicalize_chillus=False):
         super(MalayalamNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+        self.do_canonicalize_chillus=do_canonicalize_chillus
 
     def normalize(self,text): 
 
@@ -621,7 +695,9 @@ class MalayalamNormalizer(BaseNormalizer):
         text=text.replace('\u0d33\u0d4d\u200d','\u0d7e')
         text=text.replace('\u0d15\u0d4d\u200d','\u0d7f')
 
-        # TODO: Normalize chillus
+        # Normalize chillus
+        if self.do_canonicalize_chillus:
+            self._canonicalize_chillus(text) 
 
         # common normalization for Indic scripts 
         text=super(MalayalamNormalizer,self).normalize(text)
@@ -639,7 +715,7 @@ class MalayalamNormalizer(BaseNormalizer):
         text=text.replace('\u0d46\u0d57','\u0d57')
         text=text.replace('\u0d57','\u0d4c')
 
-        # correct visarge 
+        # correct visarga 
         text=re.sub(r'([\u0d00-\u0d7f]):','\\1\u0d03',text)
 
         return text
