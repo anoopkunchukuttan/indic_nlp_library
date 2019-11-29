@@ -94,29 +94,40 @@ class BasicScriptUnifier():
 if __name__ == '__main__': 
 
     loader.load()
+
     if len(sys.argv)<=4:
         print("Usage: python script_unifier <command> <infile> <outfile> <language>")
         sys.exit(1)
 
-    if sys.argv[1]=='agg':
+    if sys.argv[1]=='agg_nasals':
 
         language=sys.argv[4]
 
-        unifier=AggressiveScriptUnifier()
+        unifier=AggressiveScriptUnifier(nasals_mode='to_nasal_consonants')
 
         with open(sys.argv[2],'r',encoding='utf-8') as ifile:
             with open(sys.argv[3],'w',encoding='utf-8') as ofile:
                 for i, line in enumerate(ifile.readlines()):
-                    if i>100:
-                        break
-                    line=line.split('|||')[3].strip()
 
                     line=line.strip()
                     transliterated_line=unifier.transform(line,language)
                     ofile.write(transliterated_line+'\n')
 
+    elif sys.argv[1]=='agg_anuvaara':
 
-    if sys.argv[1]=='moderate':
+        language=sys.argv[4]
+
+        unifier=AggressiveScriptUnifier(nasals_mode='to_anusvaara_relaxed')
+
+        with open(sys.argv[2],'r',encoding='utf-8') as ifile:
+            with open(sys.argv[3],'w',encoding='utf-8') as ofile:
+                for i, line in enumerate(ifile.readlines()):
+
+                    line=line.strip()
+                    transliterated_line=unifier.transform(line,language)
+                    ofile.write(transliterated_line+'\n')
+
+    elif sys.argv[1]=='moderate':
 
         language=sys.argv[4]
 
@@ -125,9 +136,6 @@ if __name__ == '__main__':
         with open(sys.argv[2],'r',encoding='utf-8') as ifile:
             with open(sys.argv[3],'w',encoding='utf-8') as ofile:
                 for i, line in enumerate(ifile.readlines()):
-                    if i>100:
-                        break
-                    line=line.split('|||')[3].strip()
 
                     line=line.strip()
                     transliterated_line=unifier.transform(line,language)
@@ -142,9 +150,6 @@ if __name__ == '__main__':
         with open(sys.argv[2],'r',encoding='utf-8') as ifile:
             with open(sys.argv[3],'w',encoding='utf-8') as ofile:
                 for i, line in enumerate(ifile.readlines()):
-                    if i>100:
-                        break
-                    line=line.split('|||')[3].strip()
 
                     line=line.strip()
                     transliterated_line=unifier.transform(line,language)

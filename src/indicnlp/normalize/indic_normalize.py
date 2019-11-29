@@ -855,7 +855,7 @@ if __name__ == '__main__':
 
     # create normalizer
     factory=IndicNormalizerFactory()
-    normalizer=factory.get_normalizer(language,remove_nuktas,normalize_nasals)
+    normalizer=factory.get_normalizer(language,remove_nuktas=remove_nuktas,nasals_mode=normalize_nasals)
 
     # DO normalization 
     with codecs.open(sys.argv[1],'r','utf-8') as ifile:
