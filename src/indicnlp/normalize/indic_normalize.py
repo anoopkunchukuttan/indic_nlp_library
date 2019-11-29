@@ -321,6 +321,8 @@ class GurmukhiNormalizer(BaseNormalizer):
     NUKTA='\u0A3C' 
 
     VOWEL_NORM_MAPS={
+        ## http://www.unicode.org/versions/Unicode12.1.0/ch12.pdf
+        ## Table 12-16
         '\u0a05\u0a3e': '\u0a06',
         '\u0a72\u0a3f': '\u0a07',
         '\u0a72\u0a40': '\u0a08',
@@ -347,7 +349,7 @@ class GurmukhiNormalizer(BaseNormalizer):
 
         """
 
-        ## standard replacement as per suggestions in 
+        ## standard vowel replacements as per suggestions in 
         ## http://www.unicode.org/versions/Unicode12.1.0/ch12.pdf
         ## Table 12-16
 
@@ -459,13 +461,26 @@ class OriyaNormalizer(BaseNormalizer):
 
     NUKTA='\u0B3C' 
 
-    def __init__(self,lang='or',remove_nuktas=False,nasals_mode='do_nothing'):
+    VOWEL_NORM_MAPS={
+        ## See Table 12-22 in http://www.unicode.org/versions/Unicode12.1.0/ch12.pdf
+        '\u0b05\u0b3e': '\u0b06',
+        '\u0b0f\u0b57': '\u0b10',
+        '\u0b13\u0b57': '\u0b14',
+    }
+
+
+    def __init__(self,lang='or',remove_nuktas=False,nasals_mode='do_nothing',do_remap_wa=False):
         super(OriyaNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+        self.do_remap_wa=do_remap_wa
 
     def normalize(self,text): 
 
         # common normalization for Indic scripts 
         text=super(OriyaNormalizer,self).normalize(text)
+
+        ## standard vowel replacements as per suggestions in Unicode documents
+        for k,v in OriyaNormalizer.VOWEL_NORM_MAPS.items():
+            text=text.replace(k,v)
 
         # decomposing Nukta based composite characters
         text=text.replace('\u0b5c','\u0b21'+OriyaNormalizer.NUKTA)
@@ -474,16 +489,21 @@ class OriyaNormalizer(BaseNormalizer):
         if self.remove_nuktas:
             text=text.replace(OriyaNormalizer.NUKTA,'')
 
-
         # replace the poorna virama codes specific to script 
         # with generic Indic script codes
         text=text.replace('\u0b64','\u0964')
         text=text.replace('\u0b65','\u0965')
 
         # replace pipe character for poorna virama 
-        text=text.replace('\u007c','\u0964')
+        text=text.replace('\u0b7c','\u0964')
+
+        # replace wa with ba 
+        if self.do_remap_wa:
+            text=text.replace('\u0b71','\u0b2c')
 
         # replace va with ba 
+        # NOTE: documentation (chapter on Indic scripts) and codepoint chart seem contradictory 
+        # (this applied to wa to ba rule also above)
         text=text.replace('\u0b35','\u0b2c')
 
         # AI dependent vowel sign 
@@ -492,6 +512,7 @@ class OriyaNormalizer(BaseNormalizer):
         # two part dependent vowels
         text=text.replace('\u0b47\u0b3e','\u0b4b')
         text=text.replace('\u0b47\u0b57','\u0b4c')
+
 
         # additional consonant - not clear how to handle this
         # ignore
@@ -516,10 +537,12 @@ class BengaliNormalizer(BaseNormalizer):
 
     NUKTA='\u09BC' 
 
-    def __init__(self,lang='bn',remove_nuktas=False,nasals_mode='do_nothing'):
+    def __init__(self,lang='bn',remove_nuktas=False,nasals_mode='do_nothing',
+                    do_remap_assamese_chars=False):
         super(BengaliNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+        self.do_remap_assamese_chars=do_remap_assamese_chars
 
-    def normalize(self,text): 
+    def normalize(self,text):
 
         # common normalization for Indic scripts 
         text=super(BengaliNormalizer,self).normalize(text)
@@ -532,6 +555,9 @@ class BengaliNormalizer(BaseNormalizer):
         if self.remove_nuktas:
             text=text.replace(BengaliNormalizer.NUKTA,'')
 
+        if self.do_remap_assamese_chars and self.lang='as':
+            text=text.replace('\u09f0','\u09b0')  #  'ra' character
+            text=text.replace('\u09f1','\u09ac')  #  'va' character 
 
         # replace the poorna virama codes specific to script 
         # with generic Indic script codes
