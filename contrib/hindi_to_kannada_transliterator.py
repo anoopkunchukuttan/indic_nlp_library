@@ -13,7 +13,7 @@ if __name__ == '__main__':
     with consonant - as is the convention in Kannada
     """
 
-    infname=sys.argv[1]
+    infname=sys.argv[1]  # one sentence/word per line. Sentences should be space-tokenized
     outfname=sys.agv[2]
     loader.load()
 
@@ -30,9 +30,14 @@ if __name__ == '__main__':
             line=line.replace('\u0900','\u0902')
             line=line.replace('\u0901','\u0902')
     
-            ## replace chandra e and o diacritics with e and o respectively
-            line=line.replace('\u0945','\u0947')
-            line=line.replace('\u0949','\u094b')
+            ### replace chandra e and o diacritics with e and o respectively
+            #line=line.replace('\u0945','\u0947')
+            #line=line.replace('\u0949','\u094b')
+   
+            ### replace chandra e and o diacritics with a diacritic
+            ## this seems to be general usage
+            line=line.replace('\u0945','\u093e')
+            line=line.replace('\u0949','\u093e')
    
             ## remove nukta 
             line=line.replace('\u093c','')
