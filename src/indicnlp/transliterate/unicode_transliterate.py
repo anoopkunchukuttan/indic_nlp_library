@@ -51,8 +51,8 @@ def init():
     #
     # pd.DataFrame(l,columns=['offset_hex','devnag_char','itrans']).to_csv('offset_itrans_map.csv',index=False,encoding='utf-8')
 
-    # itrans_map_fname=os.path.join(common.get_resources_path(),'transliterate','offset_itrans_map.csv')
-    itrans_map_fname=r'D:\src\python_sandbox\src\offset_itrans_map.csv'
+    itrans_map_fname=os.path.join(common.get_resources_path(),'transliterate','offset_itrans_map.csv')
+    #itrans_map_fname=r'D:\src\python_sandbox\src\offset_itrans_map.csv'
     itrans_df=pd.read_csv(itrans_map_fname,encoding='utf-8')        
 
     global OFFSET_TO_ITRANS, ITRANS_TO_OFFSET
