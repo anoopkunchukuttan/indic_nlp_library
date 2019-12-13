@@ -24,9 +24,44 @@
 import sys, codecs, string, itertools, re
 
 from indicnlp import langinfo 
-from indicnlp.transliterate import itrans_transliterator
+from indicnlp.script import indic_scripts as isc
+from indicnlp.transliterate import itrans_transliterator  ## to be removed 
 from indicnlp.transliterate.sinhala_transliterator import SinhalaDevanagariTransliterator  as sdt
+import pandas as pd
 
+OFFSET_TO_ITRANS={}
+ITRANS_TO_OFFSET={}
+
+
+def init():
+    """
+    To be called by library loader, do not call it in your program 
+    """
+    
+    ### Load the ITRANS-script offset map. The map was initially generated using the snippet below (uses the old itrans transliterator) 
+    ### The map is modified as needed to accomodate extensions and corrections to the mappings 
+    #
+    # base=0x900
+    # l=[]
+    # for i in range(0,0x80):
+    #     c=chr(base+i)
+    #     itrans=ItransTransliterator.to_itrans(c,'hi')
+    #     l.append((hex(i),c,itrans))
+    # print(l)
+    #
+    # pd.DataFrame(l,columns=['offset_hex','devnag_char','itrans']).to_csv('offset_itrans_map.csv',index=False,encoding='utf-8')
+
+    # itrans_map_fname=os.path.join(common.get_resources_path(),'transliterate','offset_itrans_map.csv')
+    itrans_map_fname=r'D:\src\python_sandbox\src\offset_itrans_map.csv'
+    itrans_df=pd.read_csv(itrans_map_fname,encoding='utf-8')        
+
+    global OFFSET_TO_ITRANS, ITRANS_TO_OFFSET
+
+    for r in itrans_df.iterrows():
+        itrans=r[1]['itrans']
+        o=int(r[1]['offset_hex'],base=16)
+        OFFSET_TO_ITRANS[o]=itrans
+        ITRANS_TO_OFFSET[itrans]=o
 
 
 class UnicodeIndicTransliterator(object):
@@ -102,7 +137,7 @@ class UnicodeIndicTransliterator(object):
         else:
             return text
 
-class ItransTransliterator(object):
+class ItransTransliterator_old(object):
     """
     Transliterator between Indian scripts and ITRANS
     """
@@ -138,6 +173,92 @@ class ItransTransliterator(object):
             return lang_text
         else:
             return text
+
+class ItransTransliterator_old(object):
+    """
+    Transliterator between Indian scripts and ITRANS
+    """
+
+    @staticmethod
+    def to_itrans(text,lang_code):
+        if lang_code in langinfo.SCRIPT_RANGES:
+            if lang_code=='ml': 
+                # Change from chillus characters to corresponding consonant+halant
+                text=text.replace('\u0d7a','\u0d23\u0d4d')
+                text=text.replace('\u0d7b','\u0d28\u0d4d')
+                text=text.replace('\u0d7c','\u0d30\u0d4d')
+                text=text.replace('\u0d7d','\u0d32\u0d4d')
+                text=text.replace('\u0d7e','\u0d33\u0d4d')
+                text=text.replace('\u0d7f','\u0d15\u0d4d')
+
+            devnag=UnicodeIndicTransliterator.transliterate(text,lang_code,'hi')
+            
+            itrans=itrans_transliterator.transliterate(devnag.encode('utf-8'), 'devanagari','itrans',
+                                 {'outputASCIIEncoded' : False, 'handleUnrecognised': itrans_transliterator.UNRECOGNISED_ECHO})
+            return itrans.decode('utf-8') 
+        else:
+            return text
+
+    @staticmethod
+    def from_itrans(text,lang_code):
+        if lang_code in langinfo.SCRIPT_RANGES: 
+            devnag_text=itrans_transliterator.transliterate(text.encode('utf-8'), 'itrans', 'devanagari',
+                                 {'outputASCIIEncoded' : False, 'handleUnrecognised': itrans_transliterator.UNRECOGNISED_ECHO})
+
+            lang_text=UnicodeIndicTransliterator.transliterate(devnag_text.decode('utf-8'),'hi',lang_code)
+            
+            return lang_text
+        else:
+            return text            
+
+class ItransTransliterator(object):
+    """
+    Transliterator between Indian scripts and ITRANS
+    """
+
+    @staticmethod
+    def to_itrans(text,lang_code):
+        if lang_code in langinfo.SCRIPT_RANGES:
+            if lang_code=='ml': 
+                # Change from chillus characters to corresponding consonant+halant
+                text=text.replace('\u0d7a','\u0d23\u0d4d')
+                text=text.replace('\u0d7b','\u0d28\u0d4d')
+                text=text.replace('\u0d7c','\u0d30\u0d4d')
+                text=text.replace('\u0d7d','\u0d32\u0d4d')
+                text=text.replace('\u0d7e','\u0d33\u0d4d')
+                text=text.replace('\u0d7f','\u0d15\u0d4d')
+
+            offsets = [ isc.get_offset(c,lang_code) for c in text ]
+            
+            ### naive lookup
+            # itrans_l = [ OFFSET_TO_ITRANS.get(o, '-' ) for o in offsets ]
+            itrans_l=[]
+            for o in offsets:
+                itrans=OFFSET_TO_ITRANS.get(o, chr(langinfo.SCRIPT_RANGES[lang_code][0]+o) )
+                if langinfo.is_halanta_offset(o):
+                    itrans=''
+                    if len(itrans_l)>0:
+                        itrans_l.pop()
+                elif langinfo.is_vowel_sign_offset(o) and len(itrans_l)>0:
+                    itrans_l.pop()
+                itrans_l.extend(itrans)
+                
+            return ''.join(itrans_l)
+            
+        else:
+            return text
+
+#     @staticmethod
+#     def from_itrans(text,lang_code):
+#         if lang_code in langinfo.SCRIPT_RANGES: 
+#             devnag_text=itrans_transliterator.transliterate(text.encode('utf-8'), 'itrans', 'devanagari',
+#                                  {'outputASCIIEncoded' : False, 'handleUnrecognised': itrans_transliterator.UNRECOGNISED_ECHO})
+
+#             lang_text=UnicodeIndicTransliterator.transliterate(devnag_text.decode('utf-8'),'hi',lang_code)
+            
+#             return lang_text
+#         else:
+#             return text
 
 if __name__ == '__main__': 
 

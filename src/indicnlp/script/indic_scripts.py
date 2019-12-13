@@ -182,7 +182,17 @@ def get_phonetic_feature_vector(c,lang):
 
     return phonetic_vectors[offset]
 
+def get_phonetic_feature_vector_offset(offset,lang):
 
+    if not in_coordinated_range_offset(offset): 
+        return invalid_vector()
+
+    phonetic_data, phonetic_vectors= get_phonetic_info(lang)
+
+    if phonetic_data.ix[offset,'Valid Vector Representation']==0: 
+        return invalid_vector()
+
+    return phonetic_vectors[offset]
 
 ### Unary operations on vectors 
 def is_valid(v): 

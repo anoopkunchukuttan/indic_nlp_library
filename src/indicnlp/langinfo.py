@@ -103,6 +103,140 @@ def is_indiclang_char(c,lang):
     o=get_offset(c,lang)
     return (o>=0 and o<=0x7f) or ord(c)==DANDA or ord(c)==DOUBLE_DANDA
 
+# def is_vowel(c,lang): 
+#     """
+#     Is the character a vowel
+#     """
+#     o=get_offset(c,lang)
+#     return (o>=0x04 and o<=0x14) 
+
+# def is_vowel_sign(c,lang): 
+#     """
+#     Is the character a vowel sign (maatraa)
+#     """
+#     o=get_offset(c,lang)
+#     return (o>=0x3e and o<=0x4c) 
+
+# def is_halanta(c,lang): 
+#     """
+#     Is the character the halanta character
+#     """
+#     o=get_offset(c,lang)
+#     return (o==HALANTA_OFFSET) 
+
+# def is_nukta(c,lang): 
+#     """
+#     Is the character the halanta character
+#     """
+#     o=get_offset(c,lang)
+#     return (o==NUKTA_OFFSET) 
+
+# def is_aum(c,lang): 
+#     """
+#     Is the character a vowel sign (maatraa)
+#     """
+#     o=get_offset(c,lang)
+#     return (o==AUM_OFFSET)
+
+# def is_consonant(c,lang): 
+#     """
+#     Is the character a consonant
+#     """
+#     o=get_offset(c,lang)
+#     return (o>=0x15 and o<=0x39) 
+
+# def is_velar(c,lang): 
+#     """
+#     Is the character a velar
+#     """
+#     o=get_offset(c,lang)
+#     return (o>=VELAR_RANGE[0] and o<=VELAR_RANGE[1]) 
+
+# def is_palatal(c,lang): 
+#     """
+#     Is the character a palatal
+#     """
+#     o=get_offset(c,lang)
+#     return (o>=PALATAL_RANGE[0] and o<=PALATAL_RANGE[1]) 
+
+# def is_retroflex(c,lang): 
+#     """
+#     Is the character a retroflex
+#     """
+#     o=get_offset(c,lang)
+#     return (o>=RETROFLEX_RANGE[0] and o<=RETROFLEX_RANGE[1]) 
+
+# def is_dental(c,lang): 
+#     """
+#     Is the character a dental
+#     """
+#     o=get_offset(c,lang)
+#     return (o>=DENTAL_RANGE[0] and o<=DENTAL_RANGE[1]) 
+
+# def is_labial(c,lang): 
+#     """
+#     Is the character a labial
+#     """
+#     o=get_offset(c,lang)
+#     return (o>=LABIAL_RANGE[0] and o<=LABIAL_RANGE[1]) 
+
+# def is_voiced(c,lang): 
+#     """
+#     Is the character a voiced consonant
+#     """
+#     o=get_offset(c,lang)
+#     return o in VOICED_LIST
+
+# def is_unvoiced(c,lang): 
+#     """
+#     Is the character a unvoiced consonant
+#     """
+#     o=get_offset(c,lang)
+#     return o in UNVOICED_LIST
+
+# def is_aspirated(c,lang): 
+#     """
+#     Is the character a aspirated consonant
+#     """
+#     o=get_offset(c,lang)
+#     return o in ASPIRATED_LIST
+
+# def is_unaspirated(c,lang): 
+#     """
+#     Is the character a unaspirated consonant
+#     """
+#     o=get_offset(c,lang)
+#     return o in UNASPIRATED_LIST
+
+# def is_nasal(c,lang): 
+#     """
+#     Is the character a nasal consonant
+#     """
+#     o=get_offset(c,lang)
+#     return o in NASAL_LIST
+
+# def is_fricative(c,lang): 
+#     """
+#     Is the character a fricative consonant
+#     """
+#     o=get_offset(c,lang)
+#     return o in FRICATIVE_LIST
+
+# def is_approximant(c,lang): 
+#     """
+#     Is the character an approximant consonant
+#     """
+#     o=get_offset(c,lang)
+#     return o in APPROXIMANT_LIST
+
+# def is_number(c,lang): 
+#     """
+#     Is the character a number
+#     """
+#     o=get_offset(c,lang)
+#     return (o>=0x66 and o<=0x6f) 
+
+
 def is_vowel(c,lang): 
     """
     Is the character a vowel
@@ -236,3 +370,119 @@ def is_number(c,lang):
     o=get_offset(c,lang)
     return (o>=0x66 and o<=0x6f) 
 
+
+##################################################
+
+def is_vowel_offset(c_offset):
+    """
+    Is the offset a vowel
+    """
+    return (c_offset>=0x04 and c_offset<=0x14) 
+
+def is_vowel_sign_offset(c_offset):
+    """
+    Is the offset a vowel sign (maatraa)
+    """
+    return (c_offset>=0x3e and c_offset<=0x4c) 
+
+def is_halanta_offset(c_offset):
+    """
+    Is the offset the halanta offset
+    """
+    return (c_offset==HALANTA_OFFSET) 
+
+def is_nukta_offset(c_offset):
+    """
+    Is the offset the halanta offset
+    """
+    return (c_offset==NUKTA_OFFSET) 
+
+def is_aum_offset(c_offset):
+    """
+    Is the offset a vowel sign (maatraa)
+    """
+    return (c_offset==AUM_OFFSET)
+
+def is_consonant_offset(c_offset):
+    """
+    Is the offset a consonant
+    """
+    return (c_offset>=0x15 and c_offset<=0x39) 
+
+def is_velar_offset(c_offset):
+    """
+    Is the offset a velar
+    """
+    return (c_offset>=VELAR_RANGE[0] and c_offset<=VELAR_RANGE[1]) 
+
+def is_palatal_offset(c_offset):
+    """
+    Is the offset a palatal
+    """
+    return (c_offset>=PALATAL_RANGE[0] and c_offset<=PALATAL_RANGE[1]) 
+
+def is_retroflex_offset(c_offset):
+    """
+    Is the offset a retroflex
+    """
+    return (c_offset>=RETROFLEX_RANGE[0] and c_offset<=RETROFLEX_RANGE[1]) 
+
+def is_dental_offset(c_offset):
+    """
+    Is the offset a dental
+    """
+    return (c_offset>=DENTAL_RANGE[0] and c_offset<=DENTAL_RANGE[1]) 
+
+def is_labial_offset(c_offset):
+    """
+    Is the offset a labial
+    """
+    return (c_offset>=LABIAL_RANGE[0] and c_offset<=LABIAL_RANGE[1]) 
+
+def is_voiced_offset(c_offset):
+    """
+    Is the offset a voiced consonant
+    """
+    return c_offset in VOICED_LIST
+
+def is_unvoiced_offset(c_offset):
+    """
+    Is the offset a unvoiced consonant
+    """
+    return c_offset in UNVOICED_LIST
+
+def is_aspirated_offset(c_offset):
+    """
+    Is the offset a aspirated consonant
+    """
+    return c_offset in ASPIRATED_LIST
+
+def is_unaspirated_offset(c_offset):
+    """
+    Is the offset a unaspirated consonant
+    """
+    return c_offset in UNASPIRATED_LIST
+
+def is_nasal_offset(c_offset):
+    """
+    Is the offset a nasal consonant
+    """
+    return c_offset in NASAL_LIST
+
+def is_fricative_offset(c_offset):
+    """
+    Is the offset a fricative consonant
+    """
+    return c_offset in FRICATIVE_LIST
+
+def is_approximant_offset(c_offset):
+    """
+    Is the offset an approximant consonant
+    """
+    return c_offset in APPROXIMANT_LIST
+
+def is_number_offset(c_offset):
+    """
+    Is the offset a number
+    """
+    return (c_offset>=0x66 and c_offset<=0x6f) 

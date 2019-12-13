@@ -18,6 +18,7 @@
 from indicnlp import common
 from indicnlp.script import indic_scripts
 from indicnlp.script import english_script
+from indicnlp.transliterate import unicode_transliterate
 
 def load():
     """
@@ -36,5 +37,8 @@ def load():
 
     ## Initialization of English scripts module 
     english_script.init()
+
+    ## Initialization of unicode_transliterate module 
+    unicode_transliterate.init()
 
 
