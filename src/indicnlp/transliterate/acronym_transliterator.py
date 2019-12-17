@@ -1,21 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright Anoop Kunchukuttan 2013 - present
-#
-# This file is part of Indic NLP Library.
 # 
-# Indic NLP Library is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+#  Copyright (c) 2013-present, Anoop Kunchukuttan
+#  All rights reserved.
+#  
+#  This source code is licensed under the MIT license found in the
+#  LICENSE file in the root directory of this source tree.
 # 
-# Indic NLP Library is distributed in the hope that it will be useful,
-#        but WITHOUT ANY WARRANTY; without even the implied warranty of
-#        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#        GNU General Public License for more details.
-# 
-#        You should have received a copy of the GNU General Public License
-#        along with Indic NLP Library.  If not, see <http://www.gnu.org/licenses/>.
-#
 
 #Program to transliterate acronyms from one Latin script to Indic languages 
 #

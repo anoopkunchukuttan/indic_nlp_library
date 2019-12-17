@@ -47,9 +47,17 @@ The data resources required by the Indic NLP Library are hosted in a different r
 ## Author
 Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
-## Version: 0.5
+## Version: 0.6
 
 ## Revision Log
+
+0.6 : 16 Dec 2019:
+
+    - New romanizer and indicizer
+    - Script Unifiers
+    - Improved script normalizers
+    - Added contrib directory for sample uses
+    - changed to MIT license 
 
 0.5 : 03 Jun 2019: 
 
@@ -68,18 +76,6 @@ Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
 
 ## LICENSE
 
-Copyright Anoop Kunchukuttan 2013 - present
- 
-Indic NLP Library is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+Indic NLP Library is released under the MIT license
 
-Indic NLP Library is distributed in the hope that it will be useful, 
-but WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-GNU General Public License for more details. 
-
-You should have received a copy of the GNU General Public License 
-along with Indic NLP Library.  If not, see <http://www.gnu.org/licenses/>.
 
