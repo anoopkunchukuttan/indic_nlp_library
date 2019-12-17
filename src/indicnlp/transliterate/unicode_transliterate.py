@@ -21,8 +21,10 @@
 # @author Anoop Kunchukuttan 
 #
 
-import sys, codecs, string, itertools, re
+import sys, codecs, string, itertools, re, os
+from collections import defaultdict
 
+from indicnlp import common
 from indicnlp import langinfo 
 from indicnlp.script import indic_scripts as isc
 from indicnlp.transliterate import itrans_transliterator  ## to be removed 
@@ -30,7 +32,9 @@ from indicnlp.transliterate.sinhala_transliterator import SinhalaDevanagariTrans
 import pandas as pd
 
 OFFSET_TO_ITRANS={}
-ITRANS_TO_OFFSET={}
+ITRANS_TO_OFFSET=defaultdict(list)
+
+DUPLICATE_ITRANS_REPRESENTATIONS={}
 
 
 def init():
@@ -55,14 +59,39 @@ def init():
     #itrans_map_fname=r'D:\src\python_sandbox\src\offset_itrans_map.csv'
     itrans_df=pd.read_csv(itrans_map_fname,encoding='utf-8')        
 
-    global OFFSET_TO_ITRANS, ITRANS_TO_OFFSET
+    global OFFSET_TO_ITRANS, ITRANS_TO_OFFSET, DUPLICATE_ITRANS_REPRESENTATIONS
 
     for r in itrans_df.iterrows():
         itrans=r[1]['itrans']
         o=int(r[1]['offset_hex'],base=16)
-        OFFSET_TO_ITRANS[o]=itrans
-        ITRANS_TO_OFFSET[itrans]=o
 
+        OFFSET_TO_ITRANS[o]=itrans
+        
+        if langinfo.is_consonant_offset(o):
+            ### for consonants, strip the schwa - add halant offset 
+            ITRANS_TO_OFFSET[itrans[:-1]].extend([o,0x4d])
+        else:
+            ### the append assumes that the maatra always comes after independent vowel in the df
+            ITRANS_TO_OFFSET[itrans].append(o)
+
+
+        DUPLICATE_ITRANS_REPRESENTATIONS =  {
+                'A': 'aa',
+                'I': 'ii',
+                'U': 'uu',
+                'RRi': 'R^i',
+                'RRI': 'R^I',
+                'LLi': 'L^i',
+                'LLI': 'L^I',
+                'L': 'ld',
+                'w': 'v',
+                'x': 'kSh',    
+                'gj': 'j~n',    
+                'dny': 'j~n',    
+                '.n': '.m',        
+                'M': '.m',
+                'OM': 'AUM'
+            }
 
 class UnicodeIndicTransliterator(object):
     """
@@ -216,6 +245,8 @@ class ItransTransliterator(object):
     Transliterator between Indian scripts and ITRANS
     """
 
+
+
     @staticmethod
     def to_itrans(text,lang_code):
         if lang_code in langinfo.SCRIPT_RANGES:
@@ -248,17 +279,103 @@ class ItransTransliterator(object):
         else:
             return text
 
-#     @staticmethod
-#     def from_itrans(text,lang_code):
-#         if lang_code in langinfo.SCRIPT_RANGES: 
-#             devnag_text=itrans_transliterator.transliterate(text.encode('utf-8'), 'itrans', 'devanagari',
-#                                  {'outputASCIIEncoded' : False, 'handleUnrecognised': itrans_transliterator.UNRECOGNISED_ECHO})
+    @staticmethod
+    def from_itrans(text,lang):
+        """
+        TODO: Document this method properly
+        TODO: A little hack is used to handle schwa: needs to be documented
+        TODO: check for robustness
+        """
 
-#             lang_text=UnicodeIndicTransliterator.transliterate(devnag_text.decode('utf-8'),'hi',lang_code)
+        MAXCODE=4  ### TODO: Needs to be fixed
+        
+        ##  handle_duplicate_itrans_representations
+        for k, v in DUPLICATE_ITRANS_REPRESENTATIONS.items():
+            if k in text:
+                text=text.replace(k,v)
+        
+        start=0
+        match=None
+        solution=[]
+
+        i=start+1  
+        while i<=len(text):
+
+            itrans=text[start:i]
             
-#             return lang_text
-#         else:
-#             return text
+    #         print('===')
+    #         print('i: {}'.format(i))
+    #         if i<len(text):
+    #             print('c: {}'.format(text[i-1]))
+    #         print('start: {}'.format(start))
+    #         print('itrans: {}'.format(itrans))
+            
+            if itrans in ITRANS_TO_OFFSET:
+                offs=ITRANS_TO_OFFSET[itrans]
+                
+                ## single element list - no problem 
+                ## except when it is 'a'
+                
+                ## 2 element list of 2 kinds: 
+                ### 1. alternate char for independent/dependent vowel
+                ### 2. consonant + halant
+                
+                if len(offs)==2 and \
+                    langinfo.is_vowel_offset(offs[0]):
+                        ### 1. alternate char for independent/dependent vowel
+                        ## if previous is a consonant, then use the dependent vowel 
+                    if len(solution)>0 and langinfo.is_halanta(solution[-1],lang):
+                        offs=[offs[1]]  ## dependent vowel
+                    else:
+                        offs=[offs[0]]  ## independent vowel
+
+                c=''.join([ langinfo.offset_to_char(x,lang) for x in offs ])
+                match=(i,c)
+                
+            elif len(itrans)==1: ## unknown character 
+                match=(i,itrans)
+            elif i<len(text) and (i-start)<MAXCODE+1: ## continue matching till MAXCODE length substring
+                i=i+1
+                continue
+            else: 
+                solution.extend(match[1])
+    #             start=i-1
+                start=match[0]
+                i=start
+                match=None
+    #             print('match done')
+                
+                
+    #         print('match: {}'.format(match))
+            
+            i=i+1
+
+        ### flush matches 
+        if match is not None:
+            solution.extend(match[1])
+
+        #### post-processing 
+        ## delete unecessary halants 
+    #     print(''.join(solution))
+        temp_out=list(''.join(solution))
+        rem_indices=[]
+        for i in range(len(temp_out)-1):
+            if langinfo.is_halanta(temp_out[i],lang) and \
+                (langinfo.is_vowel_sign(temp_out[i+1],lang) \
+                or langinfo.is_nukta(temp_out[i+1],lang)  \
+                or temp_out[i+1]==langinfo.offset_to_char(0x7f,lang)):
+                rem_indices.append(i)
+    #         if temp_out[i]==langinfo.offset_to_char(0x7f,lang):
+    #             rem_indices.append(i)
+        for i in reversed(rem_indices):
+            temp_out.pop(i)
+
+        out=''.join(temp_out)    
+        
+        ## delete schwa placeholder
+        out=out.replace(langinfo.offset_to_char(0x7f,lang),'')
+
+        return out 
 
 if __name__ == '__main__': 
 
