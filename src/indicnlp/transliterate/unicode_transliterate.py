@@ -27,7 +27,6 @@ from collections import defaultdict
 from indicnlp import common
 from indicnlp import langinfo 
 from indicnlp.script import indic_scripts as isc
-from indicnlp.transliterate import itrans_transliterator  ## to be removed 
 from indicnlp.transliterate.sinhala_transliterator import SinhalaDevanagariTransliterator  as sdt
 import pandas as pd
 
@@ -166,86 +165,10 @@ class UnicodeIndicTransliterator(object):
         else:
             return text
 
-class ItransTransliterator_old(object):
-    """
-    Transliterator between Indian scripts and ITRANS
-    """
-
-    @staticmethod
-    def to_itrans(text,lang_code):
-        if lang_code in langinfo.SCRIPT_RANGES:
-            if lang_code=='ml': 
-                # Change from chillus characters to corresponding consonant+halant
-                text=text.replace('\u0d7a','\u0d23\u0d4d')
-                text=text.replace('\u0d7b','\u0d28\u0d4d')
-                text=text.replace('\u0d7c','\u0d30\u0d4d')
-                text=text.replace('\u0d7d','\u0d32\u0d4d')
-                text=text.replace('\u0d7e','\u0d33\u0d4d')
-                text=text.replace('\u0d7f','\u0d15\u0d4d')
-
-            devnag=UnicodeIndicTransliterator.transliterate(text,lang_code,'hi')
-            
-            itrans=itrans_transliterator.transliterate(devnag.encode('utf-8'), 'devanagari','itrans',
-                                 {'outputASCIIEncoded' : False, 'handleUnrecognised': itrans_transliterator.UNRECOGNISED_ECHO})
-            return itrans.decode('utf-8') 
-        else:
-            return text
-
-    @staticmethod
-    def from_itrans(text,lang_code):
-        if lang_code in langinfo.SCRIPT_RANGES: 
-            devnag_text=itrans_transliterator.transliterate(text.encode('utf-8'), 'itrans', 'devanagari',
-                                 {'outputASCIIEncoded' : False, 'handleUnrecognised': itrans_transliterator.UNRECOGNISED_ECHO})
-
-            lang_text=UnicodeIndicTransliterator.transliterate(devnag_text.decode('utf-8'),'hi',lang_code)
-            
-            return lang_text
-        else:
-            return text
-
-class ItransTransliterator_old(object):
-    """
-    Transliterator between Indian scripts and ITRANS
-    """
-
-    @staticmethod
-    def to_itrans(text,lang_code):
-        if lang_code in langinfo.SCRIPT_RANGES:
-            if lang_code=='ml': 
-                # Change from chillus characters to corresponding consonant+halant
-                text=text.replace('\u0d7a','\u0d23\u0d4d')
-                text=text.replace('\u0d7b','\u0d28\u0d4d')
-                text=text.replace('\u0d7c','\u0d30\u0d4d')
-                text=text.replace('\u0d7d','\u0d32\u0d4d')
-                text=text.replace('\u0d7e','\u0d33\u0d4d')
-                text=text.replace('\u0d7f','\u0d15\u0d4d')
-
-            devnag=UnicodeIndicTransliterator.transliterate(text,lang_code,'hi')
-            
-            itrans=itrans_transliterator.transliterate(devnag.encode('utf-8'), 'devanagari','itrans',
-                                 {'outputASCIIEncoded' : False, 'handleUnrecognised': itrans_transliterator.UNRECOGNISED_ECHO})
-            return itrans.decode('utf-8') 
-        else:
-            return text
-
-    @staticmethod
-    def from_itrans(text,lang_code):
-        if lang_code in langinfo.SCRIPT_RANGES: 
-            devnag_text=itrans_transliterator.transliterate(text.encode('utf-8'), 'itrans', 'devanagari',
-                                 {'outputASCIIEncoded' : False, 'handleUnrecognised': itrans_transliterator.UNRECOGNISED_ECHO})
-
-            lang_text=UnicodeIndicTransliterator.transliterate(devnag_text.decode('utf-8'),'hi',lang_code)
-            
-            return lang_text
-        else:
-            return text            
-
 class ItransTransliterator(object):
     """
     Transliterator between Indian scripts and ITRANS
     """
-
-
 
     @staticmethod
     def to_itrans(text,lang_code):
