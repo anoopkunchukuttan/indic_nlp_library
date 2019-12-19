@@ -8,7 +8,6 @@
 
 import pandas as pd
 import numpy as np
-import codecs
 
 from indicnlp import common
 from indicnlp.common import IndicNlpException
@@ -107,7 +106,7 @@ def init():
     ### Load mapping from ARPABET representation of phoneme to internal ID
     global ARPABET_ID_MAP, ID_ARPABET_MAP
 
-    with codecs.open(common.get_resources_path()+'/script/english_arpabet_list.csv','r','utf-8') as infile: 
+    with open(common.get_resources_path()+'/script/english_arpabet_list.csv','r',encoding='utf-8') as infile: 
         for ph_id, name in enumerate(iter(infile)): 
             name=name.strip()
             ARPABET_ID_MAP[name]=ph_id

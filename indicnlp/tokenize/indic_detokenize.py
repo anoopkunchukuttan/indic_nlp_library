@@ -11,8 +11,7 @@
 # @author Anoop Kunchukuttan 
 #
 
-import string, re, sys, codecs
-
+import string, re, sys
 from indicnlp.common import IndicNlpException
 
 ## detokenizer patterns 
@@ -102,8 +101,8 @@ if __name__ == '__main__':
         print("Usage: python indic_detokenize.py <infile> <outfile> <language>")
         sys.exit(1)
 
-    with codecs.open(sys.argv[1],'r','utf-8') as ifile:
-        with codecs.open(sys.argv[2],'w','utf-8') as ofile:
+    with open(sys.argv[1],'r', encoding='utf-8') as ifile:
+        with open(sys.argv[2],'w', encoding='utf-8') as ofile:
             for line in ifile:
                 detokenized_line=trivial_detokenize(line,sys.argv[3])
                 ofile.write(detokenized_line)

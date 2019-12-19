@@ -11,7 +11,7 @@
 # @author Anoop Kunchukuttan 
 #
 
-import sys, codecs, string, itertools, re, os
+import sys, string, itertools, re, os
 from collections import defaultdict
 
 from indicnlp import common
@@ -301,8 +301,8 @@ if __name__ == '__main__':
         src_language=sys.argv[4]
         tgt_language=sys.argv[5]
 
-        with codecs.open(sys.argv[2],'r','utf-8') as ifile:
-            with codecs.open(sys.argv[3],'w','utf-8') as ofile:
+        with open(sys.argv[2],'r', encoding='utf-8') as ifile:
+            with open(sys.argv[3],'w', encoding='utf-8') as ofile:
                 for line in ifile.readlines():
                     transliterated_line=UnicodeIndicTransliterator.transliterate(line,src_language,tgt_language)
                     ofile.write(transliterated_line)
@@ -318,8 +318,8 @@ if __name__ == '__main__':
         #r4_nasal=re.compile(ur'\u0902([\u0924-\u0927])')
         #r5_nasal=re.compile(ur'\u0902([\u092a-\u092d])')
 
-        with codecs.open(sys.argv[2],'r','utf-8') as ifile:
-            with codecs.open(sys.argv[3],'w','utf-8') as ofile:
+        with open(sys.argv[2],'r', encoding='utf-8') as ifile:
+            with open(sys.argv[3],'w', encoding='utf-8') as ofile:
                 for line in ifile.readlines():
                     ### temp fix to replace anusvara with corresponding nasal
                     #line=r1_nasal.sub(u'\u0919\u094D\\1',line)
@@ -339,8 +339,8 @@ if __name__ == '__main__':
 
         language=sys.argv[4]
 
-        with codecs.open(sys.argv[2],'r','utf-8') as ifile:
-            with codecs.open(sys.argv[3],'w','utf-8') as ofile:
+        with open(sys.argv[2],'r', encoding='utf-8') as ifile:
+            with open(sys.argv[3],'w', encoding='utf-8') as ofile:
                 for line in ifile.readlines():
                     transliterated_line=ItransTransliterator.from_itrans(line,language)
                     ofile.write(transliterated_line)

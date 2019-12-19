@@ -12,7 +12,7 @@ from indicnlp.script.indic_scripts import *
 import numpy as np
 import gzip
 import pandas as pd
-import codecs,sys 
+import sys 
 
 def equal(v1,v2): 
     return 0.0 if  np.sum( xor_vectors(v1, v2)) > 0  else 1.0
