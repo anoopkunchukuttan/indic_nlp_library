@@ -4,12 +4,12 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="indicnlp-anoopk", # Replace with your own username
+    name="indic_nlp_library", # Replace with your own username
     version="0.6",
     author="Anoop Kunchukuttan",
     author_email="anoop.kunchukuttan@gmail.com",
-    description="The goal of the Indic NLP Library is to build Python based libraries for common"\,
-        ' text processing and Natural Language Processing in Indian languages.'
+    description="The goal of the Indic NLP Library is to build Python based libraries for common"\
+        ' text processing and Natural Language Processing in Indian languages.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/anoopkunchukuttan/indic_nlp_library",

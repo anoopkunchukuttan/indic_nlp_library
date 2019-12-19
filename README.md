@@ -22,15 +22,21 @@ The data resources required by the Indic NLP Library are hosted in a different r
 ## Pre-requisites
 
 - Python 3.x (For Python 2.x version check the tag `PYTHON_2.7_FINAL_JAN_2019`. Not actively supporting Python 2.x anymore, but will try to maintain as much compatibility as possible)
-- [Morfessor 2.0 Python Library](http://www.cis.hut.fi/projects/morpho/morfessor2.shtml)
 - [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources)
+- other dependencies are listed in setup.py
+
 
 ## Configuration
-- Add the project to the Python Path: 
+
+- Installation from pip:
+
+    pip install indic-nlp-library
+
+- If you want to use the project from the github repo, add the project to the Python Path: 
 
     export PYTHONPATH=$PYTHONPATH:\<project base directory\>/src
 
-- Export the path to the _Indic NLP Resources_ directory
+- In either case, export the path to the _Indic NLP Resources_ directory
 
     export INDIC_RESOURCES_PATH=\<path to Indic NLP resources\> 
 
