@@ -1,48 +1,79 @@
 import argparse 
+import sys
+from indicnlp.tokenize import indic_tokenize
+from indicnlp.tokenize import indic_detokenize
+from indicnlp.normalize import indic_normalize
 
-def run_tokenize(args):
-    print('hello tokenize')
-    print('Sub-command: {}'.format(args.subcommand))
-    args.outfile.write(args.infile.read())
+DEFAULT_ENCODING='utf-8'
+
+def run_detokenize(args):
+    for line in args.infile:
+        args.outfile.write(indic_tokenize.trivial_detokenize(line,lang))
+
+def run_detokenize(args):
+    for line in args.infile:
+        args.outfile.write(' '.join(
+            indic_tokenize.trivial_tokenize(line,lang)))
+
 
 def run_normalize(args):
-    print('hello normalize')
-    print('Sub-command: {}'.format(args.subcommand))
+
+    # TODO: add more options to cli
+    remove_nuktas=False
+    normalize_nasals='do_nothing'
+
+    # create normalizer
+    factory=indic_normalize.IndicNormalizerFactory()
+    normalizer=factory.get_normalizer(args.lang,
+            remove_nuktas=remove_nuktas,
+            nasals_mode=normalize_nasals)
+
+    # DO normalization 
+    for line in args.infile:
+        normalized_line=normalizer.normalize(line)
+        args.outfile.write(normalized_line)
+
+
+
+def add_common_monolingual_args(taskparser):
+    task_parser.add_argument('infile', 
+                type=argparse.FileType('r',encoding=DEFAULT_ENCODING),
+                nargs='?',
+                default=sys.stdin,
+                help='Input File path',
+            )
+    task_parser.add_argument('outfile', 
+                type=argparse.FileType('w',encoding=DEFAULT_ENCODING),
+                nargs='?',
+                default=sys.stdout,                
+                help='Output File path',
+            )
+    task_parser.add_argument('-l', '--lang', 
+                help='Language',
+            )
 
 def add_tokenize_parser(subparsers):
     task_parser=subparsers.add_parser('tokenize', 
                     help='tokenizer help')
-
-    task_parser.add_argument('infile', 
-                type=argparse.FileType('r',encoding='utf-8'),
-                help='Input File path',
-            )
-    task_parser.add_argument('outfile', 
-                type=argparse.FileType('w',encoding='utf-8'),
-                help='Output File path',
-            )
-    task_parser.add_argument('lang', 
-                help='Language',
-            )
+    add_common_monolingual_args(task_parser)
     task_parser.set_defaults(func=run_tokenize)
 
+def add_detokenize_parser(subparsers):
+    task_parser=subparsers.add_parser('detokenize', 
+                    help='de-tokenizer help')
+    add_common_monolingual_args(task_parser)
+    task_parser.set_defaults(func=run_detokenize)
+
+# def add_morph_parser(subparsers):
+#     task_parser=subparsers.add_parser('morph', 
+#                     help='morph help')
+#     add_common_monolingual_args(task_parser)
+#     task_parser.set_defaults(func=run_morph)
 
 def add_normalize_parser(subparsers):
     task_parser=subparsers.add_parser('normalize', help='tokenizer help')
-
-    task_parser.add_argument('infile', 
-                type=argparse.FileType('r',encoding='utf-8'),
-                help='Input File path',
-            )
-    task_parser.add_argument('outfile', 
-                type=argparse.FileType('w',encoding='utf-8'),
-                help='Output File path',
-            )
-    task_parser.add_argument('lang', 
-                help='Language',
-            )
+    add_common_monolingual_args(task_parser)
     task_parser.set_defaults(func=run_normalize)
-
 
 def get_parser():
     parser = argparse.ArgumentParser(prog='indicnlp')
