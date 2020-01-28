@@ -8,6 +8,7 @@ from indicnlp.normalize import indic_normalize
 from indicnlp.morph import unsupervised_morph
 from indicnlp.tokenize import sentence_tokenize
 from indicnlp.syllable import  syllabifier
+from indicnlp.transliterate import unicode_transliterate
 
 DEFAULT_ENCODING='utf-8'
 
@@ -60,6 +61,24 @@ def run_syllabify(args):
                     )
         args.outfile.write(new_line+'\n')
 
+def run_indic2roman(args):
+    for line in args.infile:
+        transliterated_line=unicode_transliterate.ItransTransliterator.to_itrans(
+            line,args.lang)
+        args.outfile.write(transliterated_line)      
+
+def run_roman2indic(args):
+    for line in args.infile:
+        transliterated_line=unicode_transliterate.ItransTransliterator.from_itrans(
+            line,args.lang)
+        args.outfile.write(transliterated_line)      
+
+def run_script_convert(args):
+    for line in args.infile:
+        transliterated_line=unicode_transliterate.UnicodeIndicTransliterator.transliterate(
+            line,args.srclang,args.tgtlang)
+        args.outfile.write(transliterated_line)    
+
 def add_common_monolingual_args(task_parser):
     task_parser.add_argument('infile', 
                 type=argparse.FileType('r',encoding=DEFAULT_ENCODING),
@@ -75,6 +94,27 @@ def add_common_monolingual_args(task_parser):
             )
     task_parser.add_argument('-l', '--lang', 
                 help='Language',
+            )
+
+def add_common_bilingual_args(task_parser):
+    task_parser.add_argument('infile', 
+                type=argparse.FileType('r',encoding=DEFAULT_ENCODING),
+                nargs='?',
+                default=sys.stdin,
+                help='Input File path',
+            )
+    task_parser.add_argument('outfile', 
+                type=argparse.FileType('w',encoding=DEFAULT_ENCODING),
+                nargs='?',
+                default=sys.stdout,                
+                help='Output File path',
+            )
+    task_parser.add_argument('-sl', '--srclang', 
+                help='Source Language',
+            )
+
+    task_parser.add_argument('-tl', '--tgtlang', 
+                help='Target Language',
             )
 
 def add_tokenize_parser(subparsers):
@@ -109,16 +149,37 @@ def add_syllabify_parser(subparsers):
     add_common_monolingual_args(task_parser)
     task_parser.set_defaults(func=run_syllabify)
 
+def add_indic2roman_parser(subparsers):
+    task_parser=subparsers.add_parser('indic2roman', help='indic2roman help')
+    add_common_monolingual_args(task_parser)
+    task_parser.set_defaults(func=run_indic2roman)
+
+def add_roman2indic_parser(subparsers):
+    task_parser=subparsers.add_parser('roman2indic', help='roman2inidc help')
+    add_common_monolingual_args(task_parser)
+    task_parser.set_defaults(func=run_indic2roman)
+
+def add_script_convert_parser(subparsers):
+    task_parser=subparsers.add_parser('script_convert', help='script convert help')
+    add_common_bilingual_args(task_parser)
+    task_parser.set_defaults(func=run_script_convert)
 
 def get_parser():
     parser = argparse.ArgumentParser(prog='indicnlp')
     subparsers = parser.add_subparsers(help='sub-command help', dest='subcommand')
+
     add_tokenize_parser(subparsers)
     add_detokenize_parser(subparsers)
     add_sentence_split_parser(subparsers)
     add_normalize_parser(subparsers)
+
     add_morph_parser(subparsers)
     add_syllabify_parser(subparsers)
+
+    add_indic2roman_parser(subparsers)
+    add_roman2indic_parser(subparsers)
+
+    add_script_convert_parser(subparsers)
     return parser
 
 def main():
