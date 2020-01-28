@@ -1,20 +1,30 @@
 import argparse 
 import sys
+
+from indicnlp import loader
 from indicnlp.tokenize import indic_tokenize
 from indicnlp.tokenize import indic_detokenize
 from indicnlp.normalize import indic_normalize
+from indicnlp.morph import unsupervised_morph
+from indicnlp.tokenize import sentence_tokenize
+from indicnlp.syllable import  syllabifier
 
 DEFAULT_ENCODING='utf-8'
 
 def run_detokenize(args):
     for line in args.infile:
-        args.outfile.write(indic_tokenize.trivial_detokenize(line,lang))
+        args.outfile.write(indic_detokenize.trivial_detokenize(line,args.lang))
 
-def run_detokenize(args):
+def run_tokenize(args):
     for line in args.infile:
         args.outfile.write(' '.join(
-            indic_tokenize.trivial_tokenize(line,lang)))
+            indic_tokenize.trivial_tokenize(line,args.lang)))
 
+def run_sentence_split(args):            
+    text=' '.join([  l.replace('\n','').replace('\r','') for l in args.infile])
+    outlines=sentence_tokenize.sentence_split(text,args.lang)
+    for line in outlines:
+        args.outfile.write(line+'\n')
 
 def run_normalize(args):
 
@@ -33,9 +43,24 @@ def run_normalize(args):
         normalized_line=normalizer.normalize(line)
         args.outfile.write(normalized_line)
 
+def run_morph(args):
 
+    add_marker=False
+    analyzer=unsupervised_morph.UnsupervisedMorphAnalyzer(args.lang,add_marker)
+    for line in args.infile:
+        morph_tokens=analyzer.morph_analyze_document(line.strip().split(' '))
+        args.outfile.write(' '.join(morph_tokens) + '\n')
 
-def add_common_monolingual_args(taskparser):
+def run_syllabify(args):
+    for line in args.infile:
+        add_marker=False
+        new_line = ' '.join(
+                        [ ' '.join(syllabifier.orthographic_syllabify(w,args.lang)) 
+                                for w in line.strip().split(' ')  ]
+                    )
+        args.outfile.write(new_line+'\n')
+
+def add_common_monolingual_args(task_parser):
     task_parser.add_argument('infile', 
                 type=argparse.FileType('r',encoding=DEFAULT_ENCODING),
                 nargs='?',
@@ -64,32 +89,46 @@ def add_detokenize_parser(subparsers):
     add_common_monolingual_args(task_parser)
     task_parser.set_defaults(func=run_detokenize)
 
-# def add_morph_parser(subparsers):
-#     task_parser=subparsers.add_parser('morph', 
-#                     help='morph help')
-#     add_common_monolingual_args(task_parser)
-#     task_parser.set_defaults(func=run_morph)
+def add_sentence_split_parser(subparsers):
+    task_parser=subparsers.add_parser('sentence_split', help='sentence split help')
+    add_common_monolingual_args(task_parser)
+    task_parser.set_defaults(func=run_sentence_split)
 
 def add_normalize_parser(subparsers):
-    task_parser=subparsers.add_parser('normalize', help='tokenizer help')
+    task_parser=subparsers.add_parser('normalize', help='normalizer help')
     add_common_monolingual_args(task_parser)
     task_parser.set_defaults(func=run_normalize)
+
+def add_morph_parser(subparsers):
+    task_parser=subparsers.add_parser('morph', help='morph help')
+    add_common_monolingual_args(task_parser)
+    task_parser.set_defaults(func=run_morph)
+
+def add_syllabify_parser(subparsers):
+    task_parser=subparsers.add_parser('syllabify', help='syllabify help')
+    add_common_monolingual_args(task_parser)
+    task_parser.set_defaults(func=run_syllabify)
+
 
 def get_parser():
     parser = argparse.ArgumentParser(prog='indicnlp')
     subparsers = parser.add_subparsers(help='sub-command help', dest='subcommand')
     add_tokenize_parser(subparsers)
+    add_detokenize_parser(subparsers)
+    add_sentence_split_parser(subparsers)
     add_normalize_parser(subparsers)
+    add_morph_parser(subparsers)
+    add_syllabify_parser(subparsers)
     return parser
 
 def main():
     parser=get_parser()
     args=parser.parse_args()
-    print(args)
-
+    # print(args)
     args.func(args)
 
 if __name__ == '__main__':
+    loader.load()
     main()
 
     # # fmt: off

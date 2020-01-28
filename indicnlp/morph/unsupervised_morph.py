@@ -8,6 +8,9 @@
 
 import codecs, sys, itertools,re,os
 import morfessor 
+
+from functools import lru_cache
+
 from indicnlp import langinfo
 from indicnlp import common
 from indicnlp.tokenize import indic_tokenize
@@ -54,6 +57,7 @@ class UnsupervisedMorphAnalyzer(MorphAnalyzerI):
     def _morphanalysis_needed(self,word):
         return self._script_check_re.match(word) and not self._contains_number(word)
 
+    @lru_cache(maxsize=16384)
     def morph_analyze(self,word):
         """
         Morphanalyzes a single word and returns a list of component morphemes
