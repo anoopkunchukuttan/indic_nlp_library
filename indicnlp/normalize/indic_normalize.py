@@ -784,40 +784,6 @@ class IndicNormalizerFactory(object):
 
     """
 
-    #def get_normalizer(self,language,remove_nuktas=False,nasals_mode='do_nothing'):
-    #    """
-    #        Call the get_normalizer function to get the language specific normalizer
-
-    #        Paramters: 
-    #        |language: language code
-    #        |remove_nuktas: boolean, should the normalizer remove nukta characters 
-    #    """
-    #    normalizer=None
-    #    if language in ['hi','mr','sa','kK','ne','sd']:
-    #        normalizer=DevanagariNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    elif language in ['pa']:
-    #        normalizer=GurmukhiNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    elif language in ['gu']:
-    #        normalizer=GujaratiNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    elif language in ['bn']:
-    #        normalizer=BengaliNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    elif language in ['as']:
-    #        normalizer=BengaliNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    elif language in ['or']:
-    #        normalizer=OriyaNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    elif language in ['ml']:
-    #        normalizer=MalayalamNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    elif language in ['kn']:
-    #        normalizer=KannadaNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    elif language in ['ta']:
-    #        normalizer=TamilNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    elif language in ['te']:
-    #        normalizer=TeluguNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-    #    else:    
-    #        normalizer=BaseNormalizer(lang=language, remove_nuktas=remove_nuktas, nasals_mode=nasals_mode)
-
-    #    return normalizer    
-
     def get_normalizer(self,language,**kwargs):
         """
             Call the get_normalizer function to get the language specific normalizer
@@ -856,7 +822,7 @@ class IndicNormalizerFactory(object):
         """
         Is the language supported?
         """
-        if language in ['hi','mr','sa','kK','ne',
+        if language in ['hi','mr','sa','kK','ne','sd',
                         'pa',
                         'gu',
                         'bn','as',
