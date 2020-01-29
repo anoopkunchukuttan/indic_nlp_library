@@ -51,12 +51,40 @@ class NormalizerI(object):
 
 class BaseNormalizer(NormalizerI):
 
-    def __init__(self,lang,remove_nuktas=False,nasals_mode='do_nothing'):
+    def __init__(self,lang,
+            remove_nuktas=False,
+            nasals_mode='do_nothing',
+            do_normalize_chandras=False):
         self.lang=lang
         self.remove_nuktas=remove_nuktas
         self.nasals_mode=nasals_mode
 
+        self._init_normalize_chandras()
         self._init_normalize_nasals()
+        
+
+    def _init_normalize_chandras(self):
+
+        substitution_offsets =\
+            [
+                [0x0d , 0x0f], # chandra e, independent
+                [0x11 , 0x13], # chandra o, independent
+                [0x45 , 0x47], # chandra e , 0xde],pendent
+                [0x49 , 0x4b], # chandra o , 0xde],pendent
+                # [0x72 , 0x0f], # mr: chandra e, independent
+
+                [0x00 , 0x02], # chandrabindu
+                [0x01 , 0x02], # chandrabindu
+            ]
+
+        self.chandra_substitutions =  [ 
+                (langinfo.offset_to_char(x[0],self.lang), langinfo.offset_to_char(x[1],self.lang)) 
+                    for x in substitution_offsets ]
+
+    def _normalize_chandras(self,text):
+        for match, repl in self.chandra_substitutions:
+            text=text.replace(match,repl)
+        return text
 
     def _init_to_anusvaara_strict(self):
         """
@@ -176,7 +204,7 @@ class BaseNormalizer(NormalizerI):
         elif self.nasals_mode == 'to_nasal_consonants':
             self._init_to_nasal_consonants()
 
-    def normalize_nasals(self,text): 
+    def _normalize_nasals(self,text): 
         if self.nasals_mode == 'to_anusvaara_strict':
             return self._to_anusvaara_strict(text)
         elif self.nasals_mode == 'to_anusvaara_relaxed':
@@ -201,8 +229,9 @@ class BaseNormalizer(NormalizerI):
         text=text.replace(NormalizerI.ZERO_WIDTH_NON_JOINER, '')
         text=text.replace(NormalizerI.ZERO_WIDTH_JOINER,'')
 
-
-        text=self.normalize_nasals(text)
+        text=self._normalize_chandras(text)
+        text=self._normalize_nasals(text)
+        
         return text
 
 
@@ -239,13 +268,16 @@ class DevanagariNormalizer(BaseNormalizer):
 
     NUKTA='\u093C' 
 
-    def __init__(self,lang='hi',remove_nuktas=False,nasals_mode='do_nothing'):
-        super(DevanagariNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+    def __init__(self,lang='hi',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
+        super(DevanagariNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
 
     def normalize(self,text): 
 
         # common normalization for Indic scripts 
         text=super(DevanagariNormalizer,self).normalize(text)
+
+        # chandra a replacement for Marathi
+        text=text.replace('\u0972','\u090f')
 
         # decomposing Nukta based composite characters
         text=text.replace('\u0929','\u0928'+DevanagariNormalizer.NUKTA)
@@ -324,11 +356,11 @@ class GurmukhiNormalizer(BaseNormalizer):
         '\u0a05\u0a4c': '\u0a14',            
     }
 
-    def __init__(self,lang='pa',remove_nuktas=False,nasals_mode='do_nothing',
+    def __init__(self,lang='pa',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False,
                 do_canonicalize_addak=False, 
                 do_canonicalize_tippi=False, 
                 do_replace_vowel_bases=False):
-        super(GurmukhiNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+        super(GurmukhiNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
         self.do_canonicalize_addak=do_canonicalize_addak
         self.do_canonicalize_tippi=do_canonicalize_tippi
         self.do_replace_vowel_bases=do_replace_vowel_bases
@@ -413,8 +445,8 @@ class GujaratiNormalizer(BaseNormalizer):
 
     NUKTA='\u0ABC' 
 
-    def __init__(self,lang='gu',remove_nuktas=False,nasals_mode='do_nothing'):
-        super(GujaratiNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+    def __init__(self,lang='gu',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
+        super(GujaratiNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
 
     def normalize(self,text): 
 
@@ -459,8 +491,9 @@ class OriyaNormalizer(BaseNormalizer):
     }
 
 
-    def __init__(self,lang='or',remove_nuktas=False,nasals_mode='do_nothing',do_remap_wa=False):
-        super(OriyaNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+    def __init__(self,lang='or',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False,
+                do_remap_wa=False):
+        super(OriyaNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
         self.do_remap_wa=do_remap_wa
 
     def normalize(self,text): 
@@ -527,9 +560,9 @@ class BengaliNormalizer(BaseNormalizer):
 
     NUKTA='\u09BC' 
 
-    def __init__(self,lang='bn',remove_nuktas=False,nasals_mode='do_nothing',
+    def __init__(self,lang='bn',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False,
                     do_remap_assamese_chars=False):
-        super(BengaliNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+        super(BengaliNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
         self.do_remap_assamese_chars=do_remap_assamese_chars
 
     def normalize(self,text):
@@ -578,8 +611,8 @@ class TamilNormalizer(BaseNormalizer):
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
-    def __init__(self,lang='ta',remove_nuktas=False,nasals_mode='do_nothing'):
-        super(TamilNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+    def __init__(self,lang='ta',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
+        super(TamilNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
 
     def normalize(self,text): 
 
@@ -612,8 +645,8 @@ class TeluguNormalizer(BaseNormalizer):
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
-    def __init__(self,lang='te',remove_nuktas=False,nasals_mode='do_nothing'):
-        super(TeluguNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+    def __init__(self,lang='te',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
+        super(TeluguNormalizer,self).__init__(lang,remove_nuktas,nasals_mode),do_normalize_chandras)
 
     def normalize(self,text): 
 
@@ -645,8 +678,8 @@ class KannadaNormalizer(BaseNormalizer):
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
-    def __init__(self,lang='kn',remove_nuktas=False,nasals_mode='do_nothing'):
-        super(KannadaNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+    def __init__(self,lang='kn',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
+        super(KannadaNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
 
 
     def normalize(self,text): 
@@ -696,10 +729,14 @@ class MalayalamNormalizer(BaseNormalizer):
             text=text.replace(chillu,'{}\u0d4d'.format(char)) 
         return text
 
-    def __init__(self,lang='ml',remove_nuktas=False,nasals_mode='do_nothing',
-                do_canonicalize_chillus=False):
-        super(MalayalamNormalizer,self).__init__(lang,remove_nuktas,nasals_mode)
+    def _correct_geminated_T(self,text):
+        return text.replace('\u0d31\u0d4d\u0d31','\u0d1f\u0d4d\u0d1f')
+
+    def __init__(self,lang='ml',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False,
+                do_canonicalize_chillus=False, do_correct_geminated_T=False):
+        super(MalayalamNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
         self.do_canonicalize_chillus=do_canonicalize_chillus
+        self.do_correct_geminated_T=do_correct_geminated_T
 
     def normalize(self,text): 
 
@@ -713,7 +750,7 @@ class MalayalamNormalizer(BaseNormalizer):
 
         # Normalize chillus
         if self.do_canonicalize_chillus:
-            self._canonicalize_chillus(text) 
+            text=self._canonicalize_chillus(text)
 
         # common normalization for Indic scripts 
         text=super(MalayalamNormalizer,self).normalize(text)
@@ -730,6 +767,10 @@ class MalayalamNormalizer(BaseNormalizer):
         # au forms
         text=text.replace('\u0d46\u0d57','\u0d57')
         text=text.replace('\u0d57','\u0d4c')
+
+        # correct geminated T
+        if self.do_correct_geminated_T:
+            text=self._correct_geminated_T(text)
 
         # correct visarga 
         text=re.sub(r'([\u0d00-\u0d7f]):','\\1\u0d03',text)

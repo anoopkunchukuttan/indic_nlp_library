@@ -18,36 +18,47 @@ from indicnlp import loader
 
 class AggressiveScriptUnifier():
 
-    def __init__(self,common_lang='hi',nasals_mode='to_nasal_consonants'):
+    def __init__(self,common_lang='hi',nasals_mode='to_anusvaara_relaxed'):
         self.common_lang=common_lang
         self.nasals_mode=nasals_mode
+        self.do_normalize_chandras=True
+        self.remove_nuktas=True
         self.normalizer_map={}
         self._init_normalizers()
 
     def _init_normalizers(self):
         normalizer_factory=indic_normalize.IndicNormalizerFactory()
 
-        self.normalizer_map['hi']=normalizer_factory.get_normalizer('hi', nasals_mode=self.nasals_mode)
-        self.normalizer_map['bn']=normalizer_factory.get_normalizer('bn', nasals_mode=self.nasals_mode)
-        self.normalizer_map['pa']=normalizer_factory.get_normalizer('pa', nasals_mode=self.nasals_mode,
-                                    do_canonicalize_addak=True, do_canonicalize_tippi=True,
-                                    do_replace_vowel_bases=True)
-        self.normalizer_map['gu']=normalizer_factory.get_normalizer('gu', nasals_mode=self.nasals_mode)
-        self.normalizer_map['or']=normalizer_factory.get_normalizer('or', nasals_mode=self.nasals_mode,
-                                    do_remap_wa=True)
+        self.normalizer_map['hi']=normalizer_factory.get_normalizer('hi', nasals_mode=self.nasals_mode, 
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,)
+        self.normalizer_map['bn']=normalizer_factory.get_normalizer('bn', nasals_mode=self.nasals_mode, 
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,)
+        self.normalizer_map['pa']=normalizer_factory.get_normalizer('pa', nasals_mode=self.nasals_mode, 
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,
+                    do_canonicalize_addak=True, do_canonicalize_tippi=True,
+                    do_replace_vowel_bases=True)
+        self.normalizer_map['gu']=normalizer_factory.get_normalizer('gu', nasals_mode=self.nasals_mode, 
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,)
+        self.normalizer_map['or']=normalizer_factory.get_normalizer('or', nasals_mode=self.nasals_mode, 
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,
+                    do_remap_wa=True)
         self.normalizer_map['as']=normalizer_factory.get_normalizer('as', nasals_mode=self.nasals_mode,
-                                    do_remap_assamese_chars=True)
-        self.normalizer_map['mr']=normalizer_factory.get_normalizer('mr', nasals_mode=self.nasals_mode)
-        self.normalizer_map['ta']=normalizer_factory.get_normalizer('ta', nasals_mode=self.nasals_mode)
-        self.normalizer_map['te']=normalizer_factory.get_normalizer('te', nasals_mode=self.nasals_mode)
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,
+                    do_remap_assamese_chars=True)
+        self.normalizer_map['mr']=normalizer_factory.get_normalizer('mr', nasals_mode=self.nasals_mode, 
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,)
+        self.normalizer_map['ta']=normalizer_factory.get_normalizer('ta', nasals_mode=self.nasals_mode, 
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,)
+        self.normalizer_map['te']=normalizer_factory.get_normalizer('te', nasals_mode=self.nasals_mode, 
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,)
         self.normalizer_map['ml']=normalizer_factory.get_normalizer('ml', nasals_mode=self.nasals_mode,
-                                                do_canonicalize_chillus=True)
-        self.normalizer_map['kn']=normalizer_factory.get_normalizer('kn', nasals_mode=self.nasals_mode)
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,
+                    do_canonicalize_chillus=True, do_correct_geminated_T=True)
+        self.normalizer_map['kn']=normalizer_factory.get_normalizer('kn', nasals_mode=self.nasals_mode, 
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,)
 
     def transform(self,text,lang):
-
         text=self.normalizer_map[lang].normalize(text)
-
         text=unicode_transliterate.UnicodeIndicTransliterator.transliterate(text, lang, self.common_lang)
         return text
 
