@@ -71,7 +71,7 @@ class BasicScriptUnifier():
 
     def transform(self,text,lang):
 
-        if lang in self.normalizer_map[lang]:
+        if lang in self.normalizer_map:
             text=self.normalizer_map[lang].normalize(text)
 
         text=unicode_transliterate.UnicodeIndicTransliterator.transliterate(text, lang, self.common_lang)
