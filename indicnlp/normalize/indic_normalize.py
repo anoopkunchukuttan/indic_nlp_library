@@ -54,14 +54,27 @@ class BaseNormalizer(NormalizerI):
     def __init__(self,lang,
             remove_nuktas=False,
             nasals_mode='do_nothing',
-            do_normalize_chandras=False):
+            do_normalize_chandras=False,
+            do_normalize_vowel_ending=False):
+
         self.lang=lang
         self.remove_nuktas=remove_nuktas
         self.nasals_mode=nasals_mode
+        self.do_normalize_chandras=do_normalize_chandras
+        self.do_normalize_vowel_ending=do_normalize_vowel_ending
 
         self._init_normalize_chandras()
         self._init_normalize_nasals()
+        self._init_normalize_vowel_ending()
         
+    def _init_normalize_vowel_ending(self):
+
+        if self.lang in langinfo.IE_LANGUAGES:
+            self.fn_vowel_ending=self._normalize_word_vowel_ending_ie
+        elif self.lang in langinfo.DRAVIDIAN_LANGUAGES:
+            self.fn_vowel_ending=self._normalize_word_vowel_ending_dravidian
+        else:
+            self.fn_vowel_ending=lambda x: x
 
     def _init_normalize_chandras(self):
 
@@ -214,6 +227,30 @@ class BaseNormalizer(NormalizerI):
         else:
             return text
 
+    
+    def _normalize_word_vowel_ending_dravidian(self,word):
+        """
+        for Dravidian
+        - consonant ending: add 'a' ki maatra
+        - halant ending: no change
+        - 'a' ki maatra: no change
+        """
+        if langinfo.is_consonant(word[-1],self.lang):
+            return word+langinfo.offset_to_char(0x3e,self.lang)
+
+    def _normalize_word_vowel_ending_ie(self,word):
+        """
+        for IE
+        - consonant ending: add halant
+        - halant ending: no change
+        - 'a' ki maatra: no change
+        """
+        if langinfo.is_consonant(word[-1],self.lang):
+            return word+langinfo.offset_to_char(langinfo.HALANTA_OFFSET,self.lang)
+
+    def _normalize_vowel_ending(self,text):
+        return ' '.join([ self.fn_vowel_ending(w) for w in text.split(' ') ])
+
     def normalize(self,text):
         """
         Method to be implemented for normalization for each script 
@@ -228,9 +265,12 @@ class BaseNormalizer(NormalizerI):
 
         text=text.replace(NormalizerI.ZERO_WIDTH_NON_JOINER, '')
         text=text.replace(NormalizerI.ZERO_WIDTH_JOINER,'')
-
-        text=self._normalize_chandras(text)
+        
+        if self.do_normalize_chandras:
+            text=self._normalize_chandras(text)
         text=self._normalize_nasals(text)
+        if self.do_normalize_vowel_ending:
+            text=self._normalize_vowel_ending(text)
         
         return text
 
@@ -268,8 +308,9 @@ class DevanagariNormalizer(BaseNormalizer):
 
     NUKTA='\u093C' 
 
-    def __init__(self,lang='hi',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
-        super(DevanagariNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
+    def __init__(self,lang='hi',remove_nuktas=False,nasals_mode='do_nothing',
+            do_normalize_chandras=False,do_normalize_vowel_ending=False):
+        super(DevanagariNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras,do_normalize_vowel_ending)
 
     def normalize(self,text): 
 
@@ -357,10 +398,11 @@ class GurmukhiNormalizer(BaseNormalizer):
     }
 
     def __init__(self,lang='pa',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False,
+                do_normalize_vowel_ending=False,
                 do_canonicalize_addak=False, 
                 do_canonicalize_tippi=False, 
                 do_replace_vowel_bases=False):
-        super(GurmukhiNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
+        super(GurmukhiNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras,do_normalize_vowel_ending)
         self.do_canonicalize_addak=do_canonicalize_addak
         self.do_canonicalize_tippi=do_canonicalize_tippi
         self.do_replace_vowel_bases=do_replace_vowel_bases
@@ -445,8 +487,9 @@ class GujaratiNormalizer(BaseNormalizer):
 
     NUKTA='\u0ABC' 
 
-    def __init__(self,lang='gu',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
-        super(GujaratiNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
+    def __init__(self,lang='gu',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False,
+                    do_normalize_vowel_ending=False):
+        super(GujaratiNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras,do_normalize_vowel_ending)
 
     def normalize(self,text): 
 
@@ -492,8 +535,9 @@ class OriyaNormalizer(BaseNormalizer):
 
 
     def __init__(self,lang='or',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False,
+                do_normalize_vowel_ending=False,
                 do_remap_wa=False):
-        super(OriyaNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
+        super(OriyaNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras,do_normalize_vowel_ending)
         self.do_remap_wa=do_remap_wa
 
     def normalize(self,text): 
@@ -561,8 +605,9 @@ class BengaliNormalizer(BaseNormalizer):
     NUKTA='\u09BC' 
 
     def __init__(self,lang='bn',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False,
+                    do_normalize_vowel_ending=False,
                     do_remap_assamese_chars=False):
-        super(BengaliNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
+        super(BengaliNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras,do_normalize_vowel_ending)
         self.do_remap_assamese_chars=do_remap_assamese_chars
 
     def normalize(self,text):
@@ -611,8 +656,9 @@ class TamilNormalizer(BaseNormalizer):
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
-    def __init__(self,lang='ta',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
-        super(TamilNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
+    def __init__(self,lang='ta',remove_nuktas=False,nasals_mode='do_nothing',
+            do_normalize_chandras=False,do_normalize_vowel_ending=False):
+        super(TamilNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras,do_normalize_vowel_ending)
 
     def normalize(self,text): 
 
@@ -645,8 +691,9 @@ class TeluguNormalizer(BaseNormalizer):
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
-    def __init__(self,lang='te',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
-        super(TeluguNormalizer,self).__init__(lang,remove_nuktas,nasals_mode),do_normalize_chandras)
+    def __init__(self,lang='te',remove_nuktas=False,nasals_mode='do_nothing',
+                do_normalize_chandras=False,do_normalize_vowel_ending=False):
+        super(TeluguNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras,do_normalize_vowel_ending)
 
     def normalize(self,text): 
 
@@ -678,8 +725,9 @@ class KannadaNormalizer(BaseNormalizer):
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
 
-    def __init__(self,lang='kn',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False):
-        super(KannadaNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
+    def __init__(self,lang='kn',remove_nuktas=False,nasals_mode='do_nothing',
+            do_normalize_chandras=False,do_normalize_vowel_ending=False):
+        super(KannadaNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras,do_normalize_vowel_ending)
 
 
     def normalize(self,text): 
@@ -733,8 +781,9 @@ class MalayalamNormalizer(BaseNormalizer):
         return text.replace('\u0d31\u0d4d\u0d31','\u0d1f\u0d4d\u0d1f')
 
     def __init__(self,lang='ml',remove_nuktas=False,nasals_mode='do_nothing',do_normalize_chandras=False,
+                do_normalize_vowel_ending=False,
                 do_canonicalize_chillus=False, do_correct_geminated_T=False):
-        super(MalayalamNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras)
+        super(MalayalamNormalizer,self).__init__(lang,remove_nuktas,nasals_mode,do_normalize_chandras,do_normalize_vowel_ending)
         self.do_canonicalize_chillus=do_canonicalize_chillus
         self.do_correct_geminated_T=do_correct_geminated_T
 

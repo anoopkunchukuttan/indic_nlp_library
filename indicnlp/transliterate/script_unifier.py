@@ -22,6 +22,7 @@ class AggressiveScriptUnifier():
         self.common_lang=common_lang
         self.nasals_mode=nasals_mode
         self.do_normalize_chandras=True
+        self.do_normalize_vowel_ending=True
         self.remove_nuktas=True
         self.normalizer_map={}
         self._init_normalizers()
@@ -32,23 +33,27 @@ class AggressiveScriptUnifier():
         ## for languages with common parameters
         for lang in ['hi','mr','sa','kK','ne','sd','bn','gu','ta','te','kn']:
             self.normalizer_map[lang]=normalizer_factory.get_normalizer(lang, nasals_mode=self.nasals_mode, 
-                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,)
+                    do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,
+                    do_normalize_vowel_ending=self.do_normalize_vowel_ending)
 
         ## for languages with language specific parameters
         self.normalizer_map['pa']=normalizer_factory.get_normalizer('pa', nasals_mode=self.nasals_mode, 
                     do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,
+                    do_normalize_vowel_ending=self.do_normalize_vowel_ending,
                     do_canonicalize_addak=True, do_canonicalize_tippi=True,
                     do_replace_vowel_bases=True)
         self.normalizer_map['or']=normalizer_factory.get_normalizer('or', nasals_mode=self.nasals_mode, 
                     do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,
+                    do_normalize_vowel_ending=self.do_normalize_vowel_ending,
                     do_remap_wa=True)
         self.normalizer_map['as']=normalizer_factory.get_normalizer('as', nasals_mode=self.nasals_mode,
                     do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,
+                    do_normalize_vowel_ending=self.do_normalize_vowel_ending,
                     do_remap_assamese_chars=True)
         self.normalizer_map['ml']=normalizer_factory.get_normalizer('ml', nasals_mode=self.nasals_mode,
                     do_normalize_chandras=self.do_normalize_chandras, remove_nuktas=self.remove_nuktas,
+                    do_normalize_vowel_ending=self.do_normalize_vowel_ending,
                     do_canonicalize_chillus=True, do_correct_geminated_T=True)
-
 
     def transform(self,text,lang):
         text=self.normalizer_map[lang].normalize(text)

@@ -28,6 +28,9 @@ SCRIPT_RANGES={
                  'as':[0x0980,0x09ff] ,  
               }
 
+DRAVIDIAN_LANGUAGES=['ta', 'te', 'kn', 'ml',]
+IE_LANGUAGES=['hi', 'mr', 'kK', 'sa', 'ne', 'sd', 'bn', 'as', 'pa', 'gu', 'or', 'si', ]
+
 URDU_RANGES=[
                 [0x0600,0x06ff], 
                 [0x0750,0x077f], 

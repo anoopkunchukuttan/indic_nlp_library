@@ -54,12 +54,26 @@ def run_morph(args):
 
 def run_syllabify(args):
     for line in args.infile:
-        add_marker=False
         new_line = ' '.join(
                         [ ' '.join(syllabifier.orthographic_syllabify(w,args.lang)) 
                                 for w in line.strip().split(' ')  ]
                     )
         args.outfile.write(new_line+'\n')
+
+def run_wc(args):
+    # if args.l==False and args.w==False and args.c==False:
+    #     args.l, args.w, args.c= True, True, True 
+    
+    nl=0
+    nw=0
+    nc=0
+
+    for line in args.infile:
+        nl+=1
+        nw+=len(line.strip(' ').split(' '))
+        nc+=len(line)
+
+    print('{} {} {}'.format(nl,nw,nc))
 
 def run_indic2roman(args):
     for line in args.infile:
@@ -149,6 +163,24 @@ def add_syllabify_parser(subparsers):
     add_common_monolingual_args(task_parser)
     task_parser.set_defaults(func=run_syllabify)
 
+def add_wc_parser(subparsers):
+    task_parser=subparsers.add_parser('wc', help='wc help')
+
+    task_parser.add_argument('infile', 
+                type=argparse.FileType('r',encoding=DEFAULT_ENCODING),
+                nargs='?',
+                default=sys.stdin,
+                help='Input File path',
+            )
+    # task_parser.add_argument('-l', action='store_true')
+    # task_parser.add_argument('-w', action='store_true')
+    # task_parser.add_argument('-c', action='store_true')
+    # task_parser.set_defaults(l=False)
+    # task_parser.set_defaults(w=False)
+    # task_parser.set_defaults(c=False)
+
+    task_parser.set_defaults(func=run_wc)    
+
 def add_indic2roman_parser(subparsers):
     task_parser=subparsers.add_parser('indic2roman', help='indic2roman help')
     add_common_monolingual_args(task_parser)
@@ -176,10 +208,13 @@ def get_parser():
     add_morph_parser(subparsers)
     add_syllabify_parser(subparsers)
 
+    add_wc_parser(subparsers)
+
     add_indic2roman_parser(subparsers)
     add_roman2indic_parser(subparsers)
 
     add_script_convert_parser(subparsers)
+
     return parser
 
 def main():
