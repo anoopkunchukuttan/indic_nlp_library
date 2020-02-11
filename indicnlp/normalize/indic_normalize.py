@@ -237,6 +237,8 @@ class BaseNormalizer(NormalizerI):
         """
         if langinfo.is_consonant(word[-1],self.lang):
             return word+langinfo.offset_to_char(0x3e,self.lang)
+        else:
+            return word
 
     def _normalize_word_vowel_ending_ie(self,word):
         """
@@ -247,6 +249,8 @@ class BaseNormalizer(NormalizerI):
         """
         if langinfo.is_consonant(word[-1],self.lang):
             return word+langinfo.offset_to_char(langinfo.HALANTA_OFFSET,self.lang)
+        else:
+            return word 
 
     def _normalize_vowel_ending(self,text):
         return ' '.join([ self.fn_vowel_ending(w) for w in text.split(' ') ])
