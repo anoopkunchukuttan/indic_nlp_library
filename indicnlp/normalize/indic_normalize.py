@@ -235,7 +235,7 @@ class BaseNormalizer(NormalizerI):
         - halant ending: no change
         - 'a' ki maatra: no change
         """
-        if langinfo.is_consonant(word[-1],self.lang):
+        if len(word)>0 and langinfo.is_consonant(word[-1],self.lang):
             return word+langinfo.offset_to_char(0x3e,self.lang)
         else:
             return word
@@ -247,7 +247,7 @@ class BaseNormalizer(NormalizerI):
         - halant ending: no change
         - 'a' ki maatra: no change
         """
-        if langinfo.is_consonant(word[-1],self.lang):
+        if len(word)>0 and langinfo.is_consonant(word[-1],self.lang):
             return word+langinfo.offset_to_char(langinfo.HALANTA_OFFSET,self.lang)
         else:
             return word 

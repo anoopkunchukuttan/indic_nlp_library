@@ -82,6 +82,16 @@ class BasicScriptUnifier():
         text=unicode_transliterate.UnicodeIndicTransliterator.transliterate(text, lang, self.common_lang)
         return text
 
+class NaiveScriptUnifier():
+
+    def __init__(self,common_lang='hi'):
+        self.common_lang=common_lang
+
+    def transform(self,text,lang):
+
+        text=unicode_transliterate.UnicodeIndicTransliterator.transliterate(text, lang, self.common_lang)
+        return text
+
 if __name__ == '__main__': 
 
     loader.load()
@@ -123,6 +133,20 @@ if __name__ == '__main__':
         language=sys.argv[4]
 
         unifier=BasicScriptUnifier()
+
+        with open(sys.argv[2],'r',encoding='utf-8') as ifile:
+            with open(sys.argv[3],'w',encoding='utf-8') as ofile:
+                for i, line in enumerate(ifile.readlines()):
+
+                    line=line.strip()
+                    transliterated_line=unifier.transform(line,language)
+                    ofile.write(transliterated_line+'\n')
+
+    elif sys.argv[1]=='naive':
+
+        language=sys.argv[4]
+
+        unifier=NaiveScriptUnifier()
 
         with open(sys.argv[2],'r',encoding='utf-8') as ifile:
             with open(sys.argv[3],'w',encoding='utf-8') as ofile:
