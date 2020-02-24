@@ -9,6 +9,7 @@ from indicnlp.morph import unsupervised_morph
 from indicnlp.tokenize import sentence_tokenize
 from indicnlp.syllable import  syllabifier
 from indicnlp.transliterate import unicode_transliterate
+from indicnlp.transliterate import script_unifier
 
 DEFAULT_ENCODING='utf-8'
 
@@ -85,7 +86,27 @@ def run_roman2indic(args):
     for line in args.infile:
         transliterated_line=unicode_transliterate.ItransTransliterator.from_itrans(
             line,args.lang)
-        args.outfile.write(transliterated_line)      
+        args.outfile.write(transliterated_line)    
+
+def run_script_unify(args):
+
+    unifier=None
+
+    if args.mode=='aggressive':
+        unifier=script_unifier.AggressiveScriptUnifier(nasals_mode='to_anusvaara_relaxed', common_lang=args.common_lang)
+
+    elif args.mode=='basic':
+        unifier=script_unifier.BasicScriptUnifier(nasals_mode='do_nothing',
+                                common_lang=args.common_lang)
+
+    elif args.mode=='naive':
+        unifier=script_unifier.NaiveScriptUnifier(common_lang=args.common_lang)
+
+    assert(unifier is not None)
+
+    for line in args.infile:
+        transliterated_line=unifier.transform(line,args.lang)
+        args.outfile.write(transliterated_line)     
 
 def run_script_convert(args):
     for line in args.infile:
@@ -123,11 +144,11 @@ def add_common_bilingual_args(task_parser):
                 default=sys.stdout,                
                 help='Output File path',
             )
-    task_parser.add_argument('-sl', '--srclang', 
+    task_parser.add_argument('-s', '--srclang', 
                 help='Source Language',
             )
 
-    task_parser.add_argument('-tl', '--tgtlang', 
+    task_parser.add_argument('-t', '--tgtlang', 
                 help='Target Language',
             )
 
@@ -187,9 +208,24 @@ def add_indic2roman_parser(subparsers):
     task_parser.set_defaults(func=run_indic2roman)
 
 def add_roman2indic_parser(subparsers):
-    task_parser=subparsers.add_parser('roman2indic', help='roman2inidc help')
+    task_parser=subparsers.add_parser('roman2indic', help='roman2indic help')
     add_common_monolingual_args(task_parser)
     task_parser.set_defaults(func=run_indic2roman)
+
+def add_script_unify_parser(subparsers):
+    task_parser=subparsers.add_parser('script_unify', help='script_unify help')
+    add_common_monolingual_args(task_parser)
+    task_parser.add_argument('-m','--mode', 
+                default='basic',               
+                choices=['naive', 'basic', 'aggressive'] ,
+                help='Script unification mode',
+            )   
+    task_parser.add_argument('-c','--common_lang', 
+                default='hi',                
+                help='Common language in which all languages are represented',
+            )  
+
+    task_parser.set_defaults(func=run_script_unify)    
 
 def add_script_convert_parser(subparsers):
     task_parser=subparsers.add_parser('script_convert', help='script convert help')
@@ -212,6 +248,7 @@ def get_parser():
 
     add_indic2roman_parser(subparsers)
     add_roman2indic_parser(subparsers)
+    add_script_unify_parser(subparsers)
 
     add_script_convert_parser(subparsers)
 

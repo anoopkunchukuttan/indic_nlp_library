@@ -73,6 +73,3 @@ class LatinToIndicAcronymTransliterator(object):
         
         return [ sample_acronym(strategy) for i in range(num_acronyms) ]
         
-
-
-    
