@@ -103,8 +103,8 @@ def init():
     ALL_PHONETIC_DATA=pd.read_csv(os.path.join(common.get_resources_path(),'script','all_script_phonetic_data.csv'),encoding='utf-8')    
     TAMIL_PHONETIC_DATA=pd.read_csv(os.path.join(common.get_resources_path(),'script','tamil_script_phonetic_data.csv'),encoding='utf-8')    
 
-    ALL_PHONETIC_VECTORS= ALL_PHONETIC_DATA.ix[:,PHONETIC_VECTOR_START_OFFSET:].as_matrix()
-    TAMIL_PHONETIC_VECTORS=TAMIL_PHONETIC_DATA.ix[:,PHONETIC_VECTOR_START_OFFSET:].as_matrix()
+    ALL_PHONETIC_VECTORS= ALL_PHONETIC_DATA.iloc[:,PHONETIC_VECTOR_START_OFFSET:].values
+    TAMIL_PHONETIC_VECTORS=TAMIL_PHONETIC_DATA.iloc[:,PHONETIC_VECTOR_START_OFFSET:].values
 
     PHONETIC_VECTOR_LENGTH=ALL_PHONETIC_VECTORS.shape[1]
 

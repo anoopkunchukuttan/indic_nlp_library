@@ -99,7 +99,7 @@ def init():
 
     ENGLISH_PHONETIC_DATA=pd.read_csv(common.get_resources_path()+'/script/english_script_phonetic_data.csv',encoding='utf-8')    
 
-    ENGLISH_PHONETIC_VECTORS=ENGLISH_PHONETIC_DATA.ix[:,PHONETIC_VECTOR_START_OFFSET:].as_matrix()
+    ENGLISH_PHONETIC_VECTORS=ENGLISH_PHONETIC_DATA.iloc[:,PHONETIC_VECTOR_START_OFFSET:].values
 
     PHONETIC_VECTOR_LENGTH=ENGLISH_PHONETIC_VECTORS.shape[1]
 
