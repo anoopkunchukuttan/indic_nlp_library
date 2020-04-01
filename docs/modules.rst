@@ -1,7 +1,7 @@
-src
+indicnlp
 ===
 
 .. toctree::
    :maxdepth: 4
 
-   src
+   indicnlp
