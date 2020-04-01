@@ -1,14 +1,6 @@
 transliterate Package
 =====================
 
-:mod:`itrans_transliterator` Module
------------------------------------
-
-.. automodule:: indicnlp.transliterate.itrans_transliterator
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`sinhala_transliterator` Module
 ------------------------------------
 
@@ -25,3 +17,18 @@ transliterate Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`acronym_transliterator` Module
+-----------------------------------
+
+.. automodule:: indicnlp.transliterate.acronym_transliterator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`script_unifier` Module
+-----------------------------------
+
+.. automodule:: indicnlp.transliterate.script_unifier
+    :members:
+    :undoc-members:
+    :show-inheritance:

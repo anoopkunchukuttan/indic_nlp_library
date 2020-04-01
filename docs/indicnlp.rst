@@ -30,9 +30,11 @@ Subpackages
 
 .. toctree::
 
+    indicnlp.cli
     indicnlp.morph
     indicnlp.normalize
     indicnlp.script
+    indicnlp.syllable
     indicnlp.tokenize
     indicnlp.transliterate
 
