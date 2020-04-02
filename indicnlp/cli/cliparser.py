@@ -234,7 +234,7 @@ def add_script_convert_parser(subparsers):
 
 def get_parser():
     parser = argparse.ArgumentParser(prog='indicnlp')
-    subparsers = parser.add_subparsers(help='sub-command help', dest='subcommand')
+    subparsers = parser.add_subparsers(help='Invoke each operation with one of the subcommands', dest='subcommand')
 
     add_tokenize_parser(subparsers)
     add_detokenize_parser(subparsers)

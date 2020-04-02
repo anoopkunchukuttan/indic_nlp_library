@@ -38,3 +38,10 @@ Subpackages
     indicnlp.tokenize
     indicnlp.transliterate
 
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
