@@ -9,6 +9,7 @@ The library provides the following functionalities:
 - Word Tokenization and Detokenization
 - Sentence Splitting 
 - Word Segmentation
+- Syllabification
 - Script Conversion
 - Romanization
 - Indicization
@@ -21,20 +22,23 @@ The data resources required by the Indic NLP Library are hosted in a different r
 
 ## Pre-requisites
 
-- Python 3.x (For Python 2.x version check the tag `PYTHON_2.7_FINAL_JAN_2019`. Not actively supporting Python 2.x anymore, but will try to maintain as much compatibility as possible)
+- Python 3.x 
+   - (For Python 2.x version check the tag `PYTHON_2.7_FINAL_JAN_2019`. Not actively supporting Python 2.x anymore, but will try to maintain as much compatibility as possible)
 - [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources)
-- other dependencies are listed in setup.py
+- Other dependencies are listed in setup.py
 
 
 ## Configuration
 
 - Installation from pip:
 
-    pip install indic-nlp-library
+    `pip install indic-nlp-library`
 
 - If you want to use the project from the github repo, add the project to the Python Path: 
 
-    export PYTHONPATH=$PYTHONPATH:\<project base directory\>/src
+    - Clone this repository
+    - Install dependencies: `pip install -r requirements.txt`
+    - `export PYTHONPATH=$PYTHONPATH:\<project base directory\>/src`
 
 - In either case, export the path to the _Indic NLP Resources_ directory
 
@@ -42,20 +46,45 @@ The data resources required by the Indic NLP Library are hosted in a different r
 
 ## Usage 
 
-- Python API: Check [this IPython Notebook](http://nbviewer.ipython.org/url/anoopkunchukuttan.github.io/indic_nlp_library/doc/indic_nlp_examples.ipynb) for examples.
+You can use the Python API to access all the features of the library. Many of the most common operations are also accessible via a unified commandline API. 
+
+### Getting Started
+
+Check [this IPython Notebook](http://nbviewer.ipython.org/url/anoopkunchukuttan.github.io/indic_nlp_library/doc/indic_nlp_examples.ipynb) for examples to use the Python API.
   - You can find the Python 2.x Notebook [here](http://nbviewer.ipython.org/url/anoopkunchukuttan.github.io/indic_nlp_library/doc/indic_nlp_examples_2_7.ipynb) 
-- Commandline Interface: The commandline interface is documented on the [project website](http://anoopkunchukuttan.github.io/indic_nlp_library)
+
+### Documentation
+
+You can find detailed documentation  [HERE](https://indic-nlp-library.readthedocs.io/en/latest)
+
+This documents the Python API as well as the commandline reference. 
+
+## Citing
+
+@unpublished{kunchukuttan2020indicnlp,
+author = "Anoop Kunchukuttan",
+title = "The IndicNLP Library",
+year = "2020",
+}
+
+You can find the document [HERE](docs/indicnlp.pdf)
 
 ## Website
 
 `http://anoopkunchukuttan.github.io/indic_nlp_library`
 
 ## Author
-Anoop Kunchukuttan ( anoop.kunchukuttan@gmail.com )
+Anoop Kunchukuttan ([anoop.kunchukuttan@gmail.com](anoop.kunchukuttan@gmail.com))
 
-## Version: 0.6
+## Version: 0.7
 
 ## Revision Log
+
+0.7 : 02 Apr 2020:
+
+    - Unified commandline 
+    - Improved documentation
+    - Added setup.py
 
 0.6 : 16 Dec 2019:
 
