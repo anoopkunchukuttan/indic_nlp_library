@@ -38,11 +38,11 @@ The data resources required by the Indic NLP Library are hosted in a different r
 
     - Clone this repository
     - Install dependencies: `pip install -r requirements.txt`
-    - `export PYTHONPATH=$PYTHONPATH:\<project base directory\>/src`
+    - Run: `export PYTHONPATH=$PYTHONPATH:<project base directory>`
 
 - In either case, export the path to the _Indic NLP Resources_ directory
 
-    export INDIC_RESOURCES_PATH=\<path to Indic NLP resources\> 
+    Run: `export INDIC_RESOURCES_PATH=<path to Indic NLP resources>` 
 
 ## Usage 
 
@@ -61,12 +61,15 @@ This documents the Python API as well as the commandline reference.
 
 ## Citing
 
+If you use this library, please include the following citation: 
+
+```
 @unpublished{kunchukuttan2020indicnlp,
 author = "Anoop Kunchukuttan",
 title = "The IndicNLP Library",
 year = "2020",
 }
-
+```
 You can find the document [HERE](docs/indicnlp.pdf)
 
 ## Website
