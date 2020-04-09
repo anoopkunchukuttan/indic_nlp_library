@@ -66,6 +66,7 @@ class BaseNormalizer(NormalizerI):
         self._init_normalize_chandras()
         self._init_normalize_nasals()
         self._init_normalize_vowel_ending()
+        #self._init_visarga_correction()
         
     def _init_normalize_vowel_ending(self):
 
@@ -643,7 +644,7 @@ class BengaliNormalizer(BaseNormalizer):
 
         # two part dependent vowels
         text=text.replace('\u09c7\u09be','\u09cb')
-        text=text.replace('\u09c7\u0bd7','\u0bcc')
+        text=text.replace('\u09c7\u09d7','\u09cc')
 
         # correct visarge 
         text=re.sub(r'([\u0980-\u09ff]):','\\1\u0983',text)
