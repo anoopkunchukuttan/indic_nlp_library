@@ -36,21 +36,23 @@ pat_num_seq=re.compile(r'([0-9]+ [,.:/] )+[0-9]+')
 ### e-mail address
 #pat_num=re.compile(ur'[a-zA-Z]+[ ]? 
 
-def trivial_detokenize_indic(s): 
+def trivial_detokenize_indic(text): 
     """detokenize string for Indian language scripts using Brahmi-derived scripts
 
-    A trivial detokenizer which
+    A trivial detokenizer which:
+
         - decides whether punctuation attaches to left/right or both
         - handles number sequences
         - handles quotes smartly (deciding left or right attachment)
 
     Args:
-        s (str): tokenized text to process 
+        text (str): tokenized text to process 
 
     Returns:
         str: detokenized string
     """
 
+    s=text
     ### some normalizations 
 
     #numbers and dates
@@ -96,16 +98,17 @@ def trivial_detokenize_indic(s):
 
     return s
 
-def trivial_detokenize(s,lang='hi'): 
+def trivial_detokenize(text,lang='hi'): 
     """detokenize string for languages of the Indian subcontinent 
 
-    A trivial detokenizer which
+    A trivial detokenizer which:
+
         - decides whether punctuation attaches to left/right or both
         - handles number sequences
         - handles quotes smartly (deciding left or right attachment)
 
     Args:
-        s (str): tokenized text to process 
+        text (str): tokenized text to process 
 
     Returns:
         str: detokenized string
@@ -116,7 +119,7 @@ def trivial_detokenize(s,lang='hi'):
     if lang=='ur':
         raise IndicNlpException('No detokenizer available for Urdu')
     else:
-        return trivial_detokenize_indic(s)
+        return trivial_detokenize_indic(text)
 
 # if __name__ == '__main__': 
 
