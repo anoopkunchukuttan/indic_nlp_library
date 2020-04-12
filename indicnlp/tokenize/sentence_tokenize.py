@@ -10,7 +10,11 @@
 #
 # @author Anoop Kunchukuttan 
 #
-
+"""
+Sentence splitter for Indian languages. Contains a rule-based 
+sentence splitter that can understand common non-breaking phrases
+in many Indian languages.
+"""
 
 import re
 
@@ -20,6 +24,16 @@ DELIM_PAT=re.compile(r'[\.\?!\u0964\u0965]')
 
 
 def is_acronym_abbvr(text,lang):
+    """Is the text a non-breaking phrase
+
+    Args
+        text (str): text to check for non-breaking phrase
+        lang (str): ISO 639-2 language code
+
+    Returns
+        boolean: true if `text` is a non-breaking phrase
+    """
+
     ack_chars =  {
      ## acronym for latin characters
       'ए', 'ऎ',
@@ -138,6 +152,25 @@ def is_acronym_abbvr(text,lang):
     return unicode_transliterate.UnicodeIndicTransliterator.transliterate(text,lang,'hi') in ack_chars
 
 def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
+    """split the text into sentences
+
+    A rule-based sentence splitter for Indian languages written in 
+    Brahmi-derived scripts. The text is split at sentence delimiter 
+    boundaries. The delimiters can be configured by passing appropriate
+    parameters. 
+
+    The sentence splitter can identify non-breaking phrases like 
+    single letter, common abbreviations/honorofics for some Indian 
+    languages.
+
+    Args
+        text (str): text to split into sentence
+        lang (str): ISO 639-2 language code
+        delim_pat (str): regular expression to identify sentence delimiter characters
+
+    Returns
+        list: list of sentences identified from the input text 
+    """
     line = text
     
     ### Phase 1: break on sentence delimiters.
