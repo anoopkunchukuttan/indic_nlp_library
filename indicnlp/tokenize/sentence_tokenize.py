@@ -26,11 +26,11 @@ DELIM_PAT=re.compile(r'[\.\?!\u0964\u0965]')
 def is_acronym_abbvr(text,lang):
     """Is the text a non-breaking phrase
 
-    Args
+    Args:
         text (str): text to check for non-breaking phrase
         lang (str): ISO 639-2 language code
 
-    Returns
+    Returns:
         boolean: true if `text` is a non-breaking phrase
     """
 
@@ -163,12 +163,12 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     single letter, common abbreviations/honorofics for some Indian 
     languages.
 
-    Args
+    Args:
         text (str): text to split into sentence
         lang (str): ISO 639-2 language code
         delim_pat (str): regular expression to identify sentence delimiter characters
 
-    Returns
+    Returns:
         list: list of sentences identified from the input text 
     """
     line = text
