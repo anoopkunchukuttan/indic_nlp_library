@@ -10,6 +10,9 @@
 #
 # @author Anoop Kunchukuttan 
 #
+"""
+De-tokenizer for Indian languages.
+"""
 
 import string, re, sys
 from indicnlp.common import IndicNlpException
@@ -27,18 +30,25 @@ pat_lra=re.compile(r'[ ](['+lr_attach+r'])[ ]')
 #donknow=u'&*+=^_|~'
 
 ## date, numbers, section/article numbering
+## TODO: handle indic numbers
 pat_num_seq=re.compile(r'([0-9]+ [,.:/] )+[0-9]+')
 
 ### e-mail address
 #pat_num=re.compile(ur'[a-zA-Z]+[ ]? 
 
 def trivial_detokenize_indic(s): 
-    """
-    A trivial detokenizer
+    """detokenize string for Indian language scripts using Brahmi-derived scripts
+
+    A trivial detokenizer which
         - decides whether punctuation attaches to left/right or both
         - handles number sequences
-        - smart handling of quotes
-    returns a detokenized string
+        - handles quotes smartly (deciding left or right attachment)
+
+    Args:
+        s (str): tokenized text to process 
+
+    Returns:
+        str: detokenized string
     """
 
     ### some normalizations 
@@ -87,22 +97,35 @@ def trivial_detokenize_indic(s):
     return s
 
 def trivial_detokenize(s,lang='hi'): 
-    """
-    Trivial tokenizer for languages in the Indian sub-continent
+    """detokenize string for languages of the Indian subcontinent 
+
+    A trivial detokenizer which
+        - decides whether punctuation attaches to left/right or both
+        - handles number sequences
+        - handles quotes smartly (deciding left or right attachment)
+
+    Args:
+        s (str): tokenized text to process 
+
+    Returns:
+        str: detokenized string
+
+    Raises:
+        IndicNlpException: If language is not supported        
     """
     if lang=='ur':
         raise IndicNlpException('No detokenizer available for Urdu')
     else:
         return trivial_detokenize_indic(s)
 
-if __name__ == '__main__': 
+# if __name__ == '__main__': 
 
-    if len(sys.argv)<4:
-        print("Usage: python indic_detokenize.py <infile> <outfile> <language>")
-        sys.exit(1)
+#     if len(sys.argv)<4:
+#         print("Usage: python indic_detokenize.py <infile> <outfile> <language>")
+#         sys.exit(1)
 
-    with open(sys.argv[1],'r', encoding='utf-8') as ifile:
-        with open(sys.argv[2],'w', encoding='utf-8') as ofile:
-            for line in ifile:
-                detokenized_line=trivial_detokenize(line,sys.argv[3])
-                ofile.write(detokenized_line)
+#     with open(sys.argv[1],'r', encoding='utf-8') as ifile:
+#         with open(sys.argv[2],'w', encoding='utf-8') as ofile:
+#             for line in ifile:
+#                 detokenized_line=trivial_detokenize(line,sys.argv[3])
+#                 ofile.write(detokenized_line)
