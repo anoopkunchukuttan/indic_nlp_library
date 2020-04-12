@@ -10,7 +10,11 @@
 #
 # @author Anoop Kunchukuttan 
 #
-
+"""
+Tokenizer for Indian languages. Currently, simple punctuation-based tokenizers
+are supported (see `trivial_tokenize`). Major Indian language punctuations are
+handled. 
+"""
 import string, re, sys
 
 from indicnlp.common import IndicNlpException
@@ -22,13 +26,22 @@ triv_tokenizer_urdu_pat=re.compile(r'(['+string.punctuation+r'\u0609\u060A\u060C
 ## date, numbers, section/article numbering
 pat_num_seq=re.compile(r'([0-9]+ [,.:/] )+[0-9]+')
 
-def trivial_tokenize_indic(s): 
+def trivial_tokenize_indic(text): 
+    """tokenize string for Indian language scripts using Brahmi-derived scripts
+
+    A trivial tokenizer which just tokenizes on the punctuation boundaries. 
+    This also includes punctuations for the Indian language scripts (the 
+    purna virama and the deergha virama). This is a language independent 
+    tokenizer
+
+    Args:
+        text (str): text to tokenize
+
+    Returns:
+        list: list of tokens
+
     """
-    A trivial tokenizer which just tokenizes on the punctuation boundaries. This also includes punctuations for the Indian language scripts
-      - the purna virama and the deergha virama
-    returns a list of tokens   
-    """
-    tok_str=triv_tokenizer_indic_pat.sub(r' \1 ',s.replace('\t',' '))
+    tok_str=triv_tokenizer_indic_pat.sub(r' \1 ',text.replace('\t',' '))
 #     return re.sub(r'[ ]+',' ',tok_str).strip(' ').split(' ')
 
     s=re.sub(r'[ ]+',' ',tok_str).strip(' ')
@@ -49,32 +62,50 @@ def trivial_tokenize_indic(s):
     
     return s.split(' ')
 
-def trivial_tokenize_urdu(s): 
+def trivial_tokenize_urdu(text): 
+    """tokenize Urdu string 
+
+    A trivial tokenizer which just tokenizes on the punctuation boundaries. 
+    This also includes punctuations for the Urdu script.
+    These punctuations characters were identified from the Unicode database 
+    for Arabic script by looking for punctuation symbols.
+
+    Args:
+        text (str): text to tokenize
+
+    Returns:
+        list: list of tokens
     """
-    A trivial tokenizer which just tokenizes on the punctuation boundaries. This also includes punctuations for the Urdu script.
-    These punctuations characters were identified from the Unicode database for Arabic script by looking for punctuation symbols.
-    returns a list of tokens   
-    """
-    tok_str=triv_tokenizer_urdu_pat.sub(r' \1 ',s.replace('\t',' '))
+    tok_str=triv_tokenizer_urdu_pat.sub(r' \1 ',text.replace('\t',' '))
     return re.sub(r'[ ]+',' ',tok_str).strip(' ').split(' ')
 
 def trivial_tokenize(s,lang='hi'): 
-    """
-    Trivial tokenizer for languages in the Indian sub-continent
+    """trivial tokenizer for Indian languages using Brahmi for Arabic scripts
+
+    A trivial tokenizer which just tokenizes on the punctuation boundaries. 
+    Major punctuations specific to Indian langauges are handled. 
+    These punctuations characters were identified from the Unicode database. 
+
+    Args:
+        text (str): text to tokenize
+        lang (str): ISO 639-2 language code
+
+    Returns:
+        list: list of tokens
     """
     if lang=='ur':
         return trivial_tokenize_urdu(s)
     else:
         return trivial_tokenize_indic(s)
 
-if __name__ == '__main__': 
+# if __name__ == '__main__': 
 
-    if len(sys.argv)<4:
-        print("Usage: python indic_tokenize.py <infile> <outfile> <language>")
-        sys.exit(1)
+#     if len(sys.argv)<4:
+#         print("Usage: python indic_tokenize.py <infile> <outfile> <language>")
+#         sys.exit(1)
 
-    with open(sys.argv[1],'r', encoding='utf-8') as ifile:
-        with open(sys.argv[2],'w', encoding='utf-8') as ofile:
-            for line in ifile:
-                tokenized_line=' '.join(trivial_tokenize(line,sys.argv[3]))
-                ofile.write(tokenized_line)
+#     with open(sys.argv[1],'r', encoding='utf-8') as ifile:
+#         with open(sys.argv[2],'w', encoding='utf-8') as ofile:
+#             for line in ifile:
+#                 tokenized_line=' '.join(trivial_tokenize(line,sys.argv[3]))
+#                 ofile.write(tokenized_line)
