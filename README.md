@@ -64,10 +64,11 @@ This documents the Python API as well as the commandline reference.
 If you use this library, please include the following citation: 
 
 ```
-@unpublished{kunchukuttan2020indicnlp,
+@misc{kunchukuttan2020indicnlp,
 author = "Anoop Kunchukuttan",
-title = "The IndicNLP Library",
+title = "{The IndicNLP Library}",
 year = "2020",
+howpublished={\url{https://github.com/anoopkunchukuttan/indic_nlp_library/blob/master/docs/indicnlp.pdf}}
 }
 ```
 You can find the document [HERE](docs/indicnlp.pdf)
