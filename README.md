@@ -80,6 +80,11 @@ You can find the document [HERE](docs/indicnlp.pdf)
 ## Author
 Anoop Kunchukuttan ([anoop.kunchukuttan@gmail.com](anoop.kunchukuttan@gmail.com))
 
+## Companies, Organizations, Projects using IndicNLP Library
+
+- [Microsoft NLP Recipes](https://github.com/microsoft/nlp-recipes)
+- [AI4Bharat-IndicNLP dataset](https://github.com/ai4bharat-indicnlp/indicnlp_corpus)
+
 ## Version: 0.7
 
 ## Revision Log
