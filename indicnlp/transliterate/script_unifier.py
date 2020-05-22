@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
         language=sys.argv[4]
 
-        unifier=AggressiveScriptUnifier(nasals_mode='to_anusvaara_relaxed')
+        unifier=AggressiveScriptUnifier(nasals_mode='to_nasal_consonants')
 
         with open(sys.argv[2],'r',encoding='utf-8') as ifile:
             with open(sys.argv[3],'w',encoding='utf-8') as ofile:
