@@ -18,7 +18,7 @@ from indicnlp import loader
 
 class AggressiveScriptUnifier():
 
-    def __init__(self,common_lang='hi',nasals_mode='to_anusvaara_relaxed'):
+    def __init__(self,common_lang='hi',nasals_mode='to_nasal_consonants'):
         self.common_lang=common_lang
         self.nasals_mode=nasals_mode
         self.do_normalize_chandras=True
