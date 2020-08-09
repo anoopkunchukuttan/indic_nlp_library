@@ -79,7 +79,7 @@ def trivial_tokenize_urdu(text):
     tok_str=triv_tokenizer_urdu_pat.sub(r' \1 ',text.replace('\t',' '))
     return re.sub(r'[ ]+',' ',tok_str).strip(' ').split(' ')
 
-def trivial_tokenize(s,lang='hi'): 
+def trivial_tokenize(text,lang='hi'): 
     """trivial tokenizer for Indian languages using Brahmi for Arabic scripts
 
     A trivial tokenizer which just tokenizes on the punctuation boundaries. 
@@ -94,9 +94,9 @@ def trivial_tokenize(s,lang='hi'):
         list: list of tokens
     """
     if lang=='ur':
-        return trivial_tokenize_urdu(s)
+        return trivial_tokenize_urdu(text)
     else:
-        return trivial_tokenize_indic(s)
+        return trivial_tokenize_indic(text)
 
 # if __name__ == '__main__': 
 

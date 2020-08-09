@@ -819,7 +819,7 @@ class MalayalamNormalizer(BaseNormalizer):
         text=text.replace('\u0d47\u0d3e','\u0d4b')
 
         # au forms
-        text=text.replace('\u0d46\u0d57','\u0d57')
+        text=text.replace('\u0d46\u0d57','\u0d4c')
         text=text.replace('\u0d57','\u0d4c')
 
         # correct geminated T
