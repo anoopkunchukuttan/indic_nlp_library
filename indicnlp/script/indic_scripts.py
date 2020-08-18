@@ -167,7 +167,7 @@ def get_phonetic_feature_vector(c,lang):
 
     phonetic_data, phonetic_vectors= get_phonetic_info(lang)
 
-    if phonetic_data.ix[offset,'Valid Vector Representation']==0: 
+    if phonetic_data.loc[offset,'Valid Vector Representation']==0: 
         return invalid_vector()
 
     return phonetic_vectors[offset]
@@ -179,7 +179,7 @@ def get_phonetic_feature_vector_offset(offset,lang):
 
     phonetic_data, phonetic_vectors= get_phonetic_info(lang)
 
-    if phonetic_data.ix[offset,'Valid Vector Representation']==0: 
+    if phonetic_data.loc[offset,'Valid Vector Representation']==0: 
         return invalid_vector()
 
     return phonetic_vectors[offset]
