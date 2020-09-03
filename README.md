@@ -18,7 +18,7 @@ The library provides the following functionalities:
 
 The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some modules. You can download from the [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources) project. 
 
-**If you are interested in Indian language NLP resources, you should check the [Indic NLP Catalog](https://github.com/anoopkunchukuttan/indic_nlp_library) for pointers.**
+**If you are interested in Indian language NLP resources, you should check the [Indic NLP Catalog](https://github.com/indicnlpweb/indicnlp_catalog) for pointers.**
 
 ## Pre-requisites
 
@@ -84,10 +84,14 @@ Anoop Kunchukuttan ([anoop.kunchukuttan@gmail.com](anoop.kunchukuttan@gmail.com)
 
 - [Microsoft NLP Recipes](https://github.com/microsoft/nlp-recipes)
 - [AI4Bharat-IndicNLP dataset](https://github.com/ai4bharat-indicnlp/indicnlp_corpus)
-
-## Version: 0.7
+- [Classical Language Toolkit](http://cltk.org)
 
 ## Revision Log
+
+0.71 : 03 Sep 2020 
+
+    - Improved documentation
+    - Bug fixes
 
 0.7 : 02 Apr 2020:
 
