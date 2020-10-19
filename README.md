@@ -82,9 +82,10 @@ Anoop Kunchukuttan ([anoop.kunchukuttan@gmail.com](anoop.kunchukuttan@gmail.com)
 
 ## Companies, Organizations, Projects using IndicNLP Library
 
+- [AI4Bharat-IndicNLPSuite](https://indicnlp.ai4bharat.org)
+- [The Classical Language Toolkit](http://cltk.org)
 - [Microsoft NLP Recipes](https://github.com/microsoft/nlp-recipes)
-- [AI4Bharat-IndicNLP dataset](https://github.com/ai4bharat-indicnlp/indicnlp_corpus)
-- [Classical Language Toolkit](http://cltk.org)
+- [Facebook M2M-100](https://github.com/pytorch/fairseq/tree/master/examples/m2m_100)
 
 ## Revision Log
 
