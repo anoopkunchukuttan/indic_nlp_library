@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # 
 #  Copyright (c) 2013-present, Anoop Kunchukuttan
 #  All rights reserved.
@@ -256,6 +258,28 @@ class BaseNormalizer(NormalizerI):
     def _normalize_vowel_ending(self,text):
         return ' '.join([ self.fn_vowel_ending(w) for w in text.split(' ') ])
 
+    def _normalize_puncutations(self,text):
+        """
+        Normalize punctuations. 
+        Applied many of the punctuation normalizations that are part of MosesNormalizer 
+        from sacremoses
+        """
+        text=text.replace(NormalizerI.BYTE_ORDER_MARK,'')
+        text=text.replace('„', r'"')
+        text=text.replace('“', r'"')
+        text=text.replace('”', r'"')
+        text=text.replace('–', r'-')
+        text=text.replace('—', r' - ')
+        text=text.replace('´', r"'")
+        text=text.replace('‘', r"'")
+        text=text.replace('‚', r"'")
+        text=text.replace('’', r"'")
+        text=text.replace("''", r'"')
+        text=text.replace('´´', r'"')
+        text=text.replace('…', r'...')
+
+        return text 
+
     def normalize(self,text):
         """
         Method to be implemented for normalization for each script 
@@ -271,6 +295,8 @@ class BaseNormalizer(NormalizerI):
         text=text.replace(NormalizerI.ZERO_WIDTH_NON_JOINER, '')
         text=text.replace(NormalizerI.ZERO_WIDTH_JOINER,'')
         
+        text=self._normalize_puncutations(text)
+
         if self.do_normalize_chandras:
             text=self._normalize_chandras(text)
         text=self._normalize_nasals(text)
