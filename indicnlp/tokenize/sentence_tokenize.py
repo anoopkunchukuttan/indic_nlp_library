@@ -34,6 +34,9 @@ def is_acronym_abbvr(text,lang):
     Returns:
         boolean: true if `text` is a non-breaking phrase
     """
+    
+    if lang == 'en':
+        return is_en_acronym_abbvr(text)
 
     ack_chars =  {
      ## acronym for latin characters
@@ -151,6 +154,35 @@ def is_acronym_abbvr(text,lang):
     }
 
     return unicode_transliterate.UnicodeIndicTransliterator.transliterate(text,lang,'hi') in ack_chars
+
+def is_en_acronym_abbvr(text):
+    """Is the English text a non-breaking phrase
+
+    Args:
+        text (str): English text to check for non-breaking phrase
+
+    Returns:
+        boolean: true if `text` is a non-breaking phrase
+    """
+    
+    en_acr_chars = {
+        
+        # Latin letters used in acronyms
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+        
+        # Abbrevations (American styled)
+        # TODO: Add more
+        'Mr', 'Ms', 'Mrs', 'Dr', 'Jr',
+        'Hon', 'Prof', 'Capt' 'St',
+        
+        # Latin Abbrevations
+        'No',
+        # 'viz', 'etc', 'cf
+        
+    }
+    
+    return text in en_acr_chars
 
 def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     """split the text into sentences
