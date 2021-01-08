@@ -16,6 +16,7 @@ sentence splitter that can understand common non-breaking phrases
 in many Indian languages.
 """
 
+import sys
 import re
 
 from indicnlp.transliterate import unicode_transliterate
@@ -177,14 +178,31 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     cand_sentences=[]
     begin=0
     text = text.strip()
+    
+    double_quotes_indices = []
+    for i, c in enumerate(text):
+        if c == '"':
+            double_quotes_indices.append(i)
+    
+    if len(double_quotes_indices) % 2 == 1:
+        print("WARNING: Unbalanced double quotes", file=sys.stderr)
+    
+    check_for_double_quotes = double_quotes_indices and len(double_quotes_indices) % 2 == 0
+    
     for mo in delim_pat.finditer(text):
         p1=mo.start()
-        p2=mo.end()
+        # p2=mo.end()
         
-        ## NEW
-        if p1>0 and text[p1-1].isnumeric():
+        ## Check if it's a numeric decimal point
+        if text[p1] == '.' and (p1>0 and text[p1-1].isnumeric()) and (p1+1 < len(text) and text[p1+1].isnumeric()):
             continue
-
+        
+        ## Leave sentences inside double quotes as it is
+        if check_for_double_quotes:
+            is_quotes_open = sum([1 for i in double_quotes_indices if i < p1]) % 2
+            if is_quotes_open:
+                continue
+        
         end=p1+1
         s= text[begin:end].strip()
         if len(s)>0:
@@ -203,6 +221,10 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     ### Phase 2: Address the fact that '.' may not always be a sentence delimiter
     ### Method: If there is a run of lines containing only a word (optionally) and '.',
     ### merge these lines as well one sentence preceding and succeeding this run of lines.
+    
+    # TODO: For scripts which use Danda (Purna Viram) for full stop,
+    # it might be better to ignore '.' in DELIM_PAT to avoid these confusions
+    
     final_sentences=[]
     sen_buffer=''        
     bad_state=False
