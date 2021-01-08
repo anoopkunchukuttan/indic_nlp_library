@@ -174,10 +174,10 @@ def is_en_acronym_abbvr(text):
         # Abbrevations (American styled)
         # TODO: Add more
         'Mr', 'Ms', 'Mrs', 'Dr', 'Jr',
-        'Hon', 'Prof', 'Capt' 'St',
+        'Hon', 'Prof', 'Capt', 'St',
         
         # Latin Abbrevations
-        'No',
+        'No', # Short-form for number
         # 'viz', 'etc', 'cf
         
     }
@@ -264,7 +264,7 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     for i, sentence in enumerate(cand_sentences): 
         words=sentence.split(' ')
         #if len(words)<=2 and words[-1]=='.':
-        if len(words)==1 and sentence[-1]=='.':
+        if len(words)==1 and sentence[-1]=='.' and (lang != 'en' or len(words[0][:-1]) == 1):
             bad_state=True
             sen_buffer = sen_buffer + ' ' + sentence
         ## NEW condition    
