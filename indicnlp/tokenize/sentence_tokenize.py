@@ -197,7 +197,7 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     languages.
 
     Args:
-        text (str): text to split into sentence
+        text (str): text to split into sentence. (Ensure it is normalized for better results)
         lang (str): ISO 639-2 language code
         delim_pat (str): regular expression to identify sentence delimiter characters
 
@@ -216,10 +216,12 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
         if c == '"':
             double_quotes_indices.append(i)
     
-    if len(double_quotes_indices) % 2 == 1:
-        print("WARNING: Unbalanced double quotes", file=sys.stderr)
-    
-    check_for_double_quotes = double_quotes_indices and len(double_quotes_indices) % 2 == 0
+    check_for_double_quotes = False # Double-quotes aware sentence splitting
+    if double_quotes_indices:
+        if len(double_quotes_indices) % 2 == 0:
+            check_for_double_quotes = True
+        # else:
+        #     print("WARNING: Unbalanced double quotes", file=sys.stderr)
     
     for mo in delim_pat.finditer(text):
         p1=mo.start()
@@ -242,7 +244,7 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
         begin=p1+1
 
     s= text[begin:].strip()
-    if len(s)>0:
+    if len(s)>0: # Remaining chunk as new sentence
         cand_sentences.append(s)
 
 #     print(cand_sentences)
@@ -253,9 +255,11 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     ### Phase 2: Address the fact that '.' may not always be a sentence delimiter
     ### Method: If there is a run of lines containing only a word (optionally) and '.',
     ### merge these lines as well one sentence preceding and succeeding this run of lines.
-    
-    # TODO: For scripts which use Danda (Purna Viram) for full stop,
-    # it might be better to ignore '.' in DELIM_PAT to avoid these confusions
+
+    if not delim_pat.match('.'):
+        # For scripts which do not use dot symbol for full stop (like Hindi or Urdu),
+        # no need to run phase-2
+        return cand_sentences
     
     final_sentences=[]
     sen_buffer=''        
@@ -264,7 +268,7 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     for i, sentence in enumerate(cand_sentences): 
         words=sentence.split(' ')
         #if len(words)<=2 and words[-1]=='.':
-        if len(words)==1 and sentence[-1]=='.' and (lang != 'en' or len(words[0][:-1]) == 1):
+        if len(words)==1 and sentence[-1]=='.':
             bad_state=True
             sen_buffer = sen_buffer + ' ' + sentence
         ## NEW condition    
