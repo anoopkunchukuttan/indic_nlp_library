@@ -1,4 +1,6 @@
 import setuptools
+from pkg_resources import parse_requirements
+import pathlib
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -28,8 +30,7 @@ setuptools.setup(
     python_requires='>=3.5',
     download_url='https://github.com/anoopkunchukuttan/indic_nlp_library/archive/master.zip',
     install_requires=[
-        'morfessor',
-        'pandas',
-        'numpy',
+        str(requirement) for requirement
+            in parse_requirements(pathlib.Path('requirements.txt').open())
     ]
 )
