@@ -139,7 +139,7 @@ class UnicodeIndicTransliterator(object):
             for c in text: 
                 newc=c
                 offset=ord(c)-langinfo.SCRIPT_RANGES[lang1_code][0]
-                if offset >=langinfo.COORDINATED_RANGE_START_INCLUSIVE and offset <= langinfo.COORDINATED_RANGE_END_INCLUSIVE:
+                if offset >=langinfo.COORDINATED_RANGE_START_INCLUSIVE and offset <= langinfo.COORDINATED_RANGE_END_INCLUSIVE and c!='\u0964' and c!='\u0965':
                     if lang2_code=='ta': 
                         # tamil exceptions 
                         offset=UnicodeIndicTransliterator._correct_tamil_mapping(offset)
