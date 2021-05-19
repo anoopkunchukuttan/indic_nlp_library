@@ -861,22 +861,23 @@ class UrduNormalizer(NormalizerI):
     '''Uses UrduHack library.
     https://docs.urduhack.com/en/stable/_modules/urduhack/normalization/character.html#normalize
     '''
-    from urduhack.normalization import (
-        remove_diacritics,
-        normalize_characters,
-        normalize_combine_characters
-    ) # TODO: Use only required normalizers
-    from urduhack.preprocessing import (
-        normalize_whitespace,
-        digits_space,
-        all_punctuations_space,
-        english_characters_space
-    )
 
     def __init__(self, lang, remove_nuktas=True):
         self.lang = lang
         self.remove_nuktas = remove_nuktas
     
+        from urduhack.normalization import (
+            remove_diacritics,
+            normalize_characters,
+            normalize_combine_characters
+        ) # TODO: Use only required normalizers
+        from urduhack.preprocessing import (
+            normalize_whitespace,
+            digits_space,
+            all_punctuations_space,
+            english_characters_space
+        )
+
     def normalize(self, text):
         text = self._normalize_punctuations(text)
         text = UrduNormalizer.normalize_whitespace(text)
