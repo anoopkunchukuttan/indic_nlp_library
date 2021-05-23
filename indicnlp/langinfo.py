@@ -30,6 +30,7 @@ SCRIPT_RANGES={
 
 DRAVIDIAN_LANGUAGES=['ta', 'te', 'kn', 'ml',]
 IE_LANGUAGES=['hi', 'mr', 'kK', 'sa', 'ne', 'sd', 'bn', 'as', 'pa', 'gu', 'or', 'si', ]
+DANDA_DELIM_LANGUAGES=['as','bn','hi','ne','or','pa','sa','sd']
 
 URDU_RANGES=[
                 [0x0600,0x06ff], 
@@ -70,6 +71,12 @@ FRICATIVE_LIST=[0x36,0x37,0x38]
 APPROXIMANT_LIST=[0x2f,0x30,0x31,0x32,0x33,0x34,0x35]
 
 #TODO: ha has to be properly categorized 
+
+def is_danda_delim(lang):
+    """
+    Returns True if danda/double danda is a possible delimiter for the language
+    """
+    return lang in DANDA_DELIM_LANGUAGES
 
 def get_offset(c,lang): 
     """
