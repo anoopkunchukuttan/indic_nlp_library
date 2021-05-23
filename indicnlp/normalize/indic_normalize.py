@@ -47,6 +47,28 @@ class NormalizerI(object):
     ZERO_WIDTH_NON_JOINER='\u200C'
     ZERO_WIDTH_JOINER='\u200D'
 
+    def _normalize_punctuations(self, text):
+        """
+        Normalize punctuations. 
+        Applied many of the punctuation normalizations that are part of MosesNormalizer 
+        from sacremoses
+        """
+        text=text.replace(NormalizerI.BYTE_ORDER_MARK,'')
+        text=text.replace('„', r'"')
+        text=text.replace('“', r'"')
+        text=text.replace('”', r'"')
+        text=text.replace('–', r'-')
+        text=text.replace('—', r' - ')
+        text=text.replace('´', r"'")
+        text=text.replace('‘', r"'")
+        text=text.replace('‚', r"'")
+        text=text.replace('’', r"'")
+        text=text.replace("''", r'"')
+        text=text.replace('´´', r'"')
+        text=text.replace('…', r'...')
+
+        return text
+
     def normalize(self,text):
         pass 
 
@@ -258,28 +280,6 @@ class BaseNormalizer(NormalizerI):
     def _normalize_vowel_ending(self,text):
         return ' '.join([ self.fn_vowel_ending(w) for w in text.split(' ') ])
 
-    def _normalize_puncutations(self,text):
-        """
-        Normalize punctuations. 
-        Applied many of the punctuation normalizations that are part of MosesNormalizer 
-        from sacremoses
-        """
-        text=text.replace(NormalizerI.BYTE_ORDER_MARK,'')
-        text=text.replace('„', r'"')
-        text=text.replace('“', r'"')
-        text=text.replace('”', r'"')
-        text=text.replace('–', r'-')
-        text=text.replace('—', r' - ')
-        text=text.replace('´', r"'")
-        text=text.replace('‘', r"'")
-        text=text.replace('‚', r"'")
-        text=text.replace('’', r"'")
-        text=text.replace("''", r'"')
-        text=text.replace('´´', r'"')
-        text=text.replace('…', r'...')
-
-        return text 
-
     def normalize(self,text):
         """
         Method to be implemented for normalization for each script 
@@ -295,7 +295,7 @@ class BaseNormalizer(NormalizerI):
         text=text.replace(NormalizerI.ZERO_WIDTH_NON_JOINER, '')
         text=text.replace(NormalizerI.ZERO_WIDTH_JOINER,'')
         
-        text=self._normalize_puncutations(text)
+        text=self._normalize_punctuations(text)
 
         if self.do_normalize_chandras:
             text=self._normalize_chandras(text)
@@ -857,6 +857,39 @@ class MalayalamNormalizer(BaseNormalizer):
 
         return text
 
+class UrduNormalizer(NormalizerI):
+    '''Uses UrduHack library.
+    https://docs.urduhack.com/en/stable/_modules/urduhack/normalization/character.html#normalize
+    '''
+
+    def __init__(self, lang, remove_nuktas=True):
+        self.lang = lang
+        self.remove_nuktas = remove_nuktas
+    
+        from urduhack.normalization import (
+            remove_diacritics,
+            normalize_characters,
+            normalize_combine_characters
+        ) # TODO: Use only required normalizers
+        from urduhack.preprocessing import (
+            normalize_whitespace,
+            digits_space,
+            all_punctuations_space,
+            english_characters_space
+        )
+
+    def normalize(self, text):
+        text = self._normalize_punctuations(text)
+        text = UrduNormalizer.normalize_whitespace(text)
+        if self.remove_nuktas:
+            text = UrduNormalizer.remove_diacritics(text)
+        text = UrduNormalizer.normalize_characters(text)
+        text = UrduNormalizer.normalize_combine_characters(text)
+        text = UrduNormalizer.digits_space(text)
+        text = UrduNormalizer.all_punctuations_space(text)
+        text = UrduNormalizer.english_characters_space(text)
+        return text
+
 
 class IndicNormalizerFactory(object):
     """
@@ -875,6 +908,8 @@ class IndicNormalizerFactory(object):
         normalizer=None
         if language in ['hi','mr','sa','kK','ne','sd']:
             normalizer=DevanagariNormalizer(lang=language, **kwargs)
+        elif language in ['ur']:
+            normalizer = UrduNormalizer(lang=language, **kwargs)
         elif language in ['pa']:
             normalizer=GurmukhiNormalizer(lang=language, **kwargs)
         elif language in ['gu']:
@@ -903,6 +938,7 @@ class IndicNormalizerFactory(object):
         Is the language supported?
         """
         if language in ['hi','mr','sa','kK','ne','sd',
+                        'ur',
                         'pa',
                         'gu',
                         'bn','as',

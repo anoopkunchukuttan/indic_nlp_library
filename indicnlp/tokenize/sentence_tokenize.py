@@ -19,9 +19,18 @@ in many Indian languages.
 import re
 
 from indicnlp.transliterate import unicode_transliterate
+from indicnlp import langinfo
 
-DELIM_PAT=re.compile(r'[\.\?!\u0964\u0965]')
 
+## for language which have danda as delimiter
+## period is not part of the sentence delimiters
+DELIM_PAT_DANDA=re.compile(r'[\?!\u0964\u0965]')
+
+## for languages which don't have danda as delimiter
+DELIM_PAT_NO_DANDA=re.compile(r'[\.\?!\u0964\u0965]')
+
+## pattern to check for presence of danda in text 
+CONTAINS_DANDA=re.compile(r'[\u0964\u0965]')
 
 def is_acronym_abbvr(text,lang):
     """Is the text a non-breaking phrase
@@ -151,7 +160,7 @@ def is_acronym_abbvr(text,lang):
 
     return unicode_transliterate.UnicodeIndicTransliterator.transliterate(text,lang,'hi') in ack_chars
 
-def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
+def sentence_split(text,lang,delim_pat='auto'): ## New signature
     """split the text into sentences
 
     A rule-based sentence splitter for Indian languages written in 
@@ -166,12 +175,30 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     Args:
         text (str): text to split into sentence
         lang (str): ISO 639-2 language code
-        delim_pat (str): regular expression to identify sentence delimiter characters
+        delim_pat (str): regular expression to identify sentence delimiter characters. If set to 'auto', the delimiter pattern is chosen automatically based on the language and text. 
+
 
     Returns:
         list: list of sentences identified from the input text 
     """
-    line = text
+    
+    #print('Input: {}'.format(delim_pat))
+    if delim_pat=='auto':
+        if langinfo.is_danda_delim(lang):
+            # in modern texts it is possible that period is used as delimeter
+            # instead of DANDA. Hence, a check. Use danda delimiter pattern
+            # only if text contains at least one danda
+            if CONTAINS_DANDA.search(text) is None:
+                delim_pat=DELIM_PAT_NO_DANDA
+                #print('LANG has danda delim. TEXT_CONTAINS_DANDA: FALSE --> DELIM_PAT_NO_DANDA')
+            else:
+                delim_pat=DELIM_PAT_DANDA
+                #print('LANG has danda delim. TEXT_CONTAINS_DANDA: TRUE --> DELIM_PAT_DANDA')
+        else:
+            delim_pat=DELIM_PAT_NO_DANDA
+            #print('LANG has no danda delim --> DELIM_PAT_NO_DANDA')
+
+    ## otherwise, assume the caller set the delimiter pattern
     
     ### Phase 1: break on sentence delimiters.
     cand_sentences=[]
@@ -195,6 +222,10 @@ def sentence_split(text,lang,delim_pat=DELIM_PAT): ## New signature
     if len(s)>0:
         cand_sentences.append(s)
 
+    if not delim_pat.search('.'):
+        ## run phase 2 only if delimiter pattern contains period
+        #print('No need to run phase2')
+        return cand_sentences
 #     print(cand_sentences)
 #     print('====')
         
