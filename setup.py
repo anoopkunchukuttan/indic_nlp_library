@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="indic_nlp_library", # Replace with your own username
-    version="0.71",
+    version="0.8",
     author="Anoop Kunchukuttan",
     author_email="anoop.kunchukuttan@gmail.com",
     description="The goal of the Indic NLP Library is to build Python based libraries for common"\

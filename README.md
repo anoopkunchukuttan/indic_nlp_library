@@ -90,6 +90,12 @@ Anoop Kunchukuttan ([anoop.kunchukuttan@gmail.com](anoop.kunchukuttan@gmail.com)
 
 ## Revision Log
 
+0.8 : 24 May 2021 
+
+    - Improved sentence splitting
+    - Bug fixes
+    - Support for Urdu Normalizer
+
 0.71 : 03 Sep 2020 
 
     - Improved documentation
