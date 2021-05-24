@@ -90,7 +90,7 @@ Anoop Kunchukuttan ([anoop.kunchukuttan@gmail.com](anoop.kunchukuttan@gmail.com)
 
 ## Revision Log
 
-0.8 : 24 May 2021 
+0.80 : 24 May 2021 
 
     - Improved sentence splitting
     - Bug fixes
