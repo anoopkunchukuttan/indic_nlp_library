@@ -25,7 +25,7 @@ The data resources required by the Indic NLP Library are hosted in a different r
 - Python 3.x 
    - (For Python 2.x version check the tag `PYTHON_2.7_FINAL_JAN_2019`. Not actively supporting Python 2.x anymore, but will try to maintain as much compatibility as possible)
 - [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources)
-- [Urduhack](https://github.com/urduhack/urduhack): Needs only if Urdu normalization is required. It has other dependencies like Tensorflow.
+- [Urduhack](https://github.com/urduhack/urduhack): Needed only if Urdu normalization is required. It has other dependencies like Tensorflow.
 - Other dependencies are listed in setup.py
 
 
