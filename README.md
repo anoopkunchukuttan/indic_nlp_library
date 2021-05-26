@@ -90,6 +90,11 @@ Anoop Kunchukuttan ([anoop.kunchukuttan@gmail.com](anoop.kunchukuttan@gmail.com)
 
 ## Revision Log
 
+
+0.81 : 26 May 2021 
+    
+    - Bug fix in version number extraction
+
 0.80 : 24 May 2021 
 
     - Improved sentence splitting

@@ -1,13 +1,25 @@
 import setuptools
 from pkg_resources import parse_requirements
 import pathlib
+import os
+
+def write_version_py():
+    with open(os.path.join("indicnlp", "version.txt")) as f:
+        version = f.read().strip()
+
+    # write version info to fairseq/version.py
+    with open(os.path.join("indicnlp", "version.py"), "w") as f:
+        f.write('__version__ = "{}"\n'.format(version))
+    return version
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+version=write_version_py()
+
 setuptools.setup(
     name="indic_nlp_library", # Replace with your own username
-    version="0.80",
+    version=version,
     author="Anoop Kunchukuttan",
     author_email="anoop.kunchukuttan@gmail.com",
     description="The goal of the Indic NLP Library is to build Python based libraries for common"\
