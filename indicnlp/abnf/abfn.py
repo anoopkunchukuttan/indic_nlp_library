@@ -1,9 +1,10 @@
 import itertools
 import logging
 
-from util import get_character_set_for_lang, is_ABFN_rule_defined_for_lang
-from util import  detect_language
-class ABFN :
+from indicnlp.abnf.util import detect_language, get_character_set_for_lang
+
+
+class ABFN:
 	"""
 	ref :  https://www.unicode.org/L2/L2016/16161-indic-text-seg.pdf
 	"""
@@ -16,7 +17,7 @@ class ABFN :
 			logging.debug("text length is zero")
 			return False
 		
-		state =0
+		state = 0
 		valid = True
 		
 		lang = detect_language(text)
@@ -36,7 +37,7 @@ class ABFN :
 			
 			if not (ch in list(itertools.chain.from_iterable(character_sets))):
 				# return false if char not defined in character_set
-				logging.debug("character :{} not defined in character set".format(ch) )
+				logging.debug("character :{} not defined in character set".format(ch))
 				return False
 			
 			if ch in symbols:
@@ -115,8 +116,7 @@ class ABFN :
 		
 		if not valid:
 			logging.debug("not a valid text label")
-			raise("invalid text label:{}".format(text))
-		
+			raise ("invalid text label:{}".format(text))
 		
 		lang = detect_language(text)
 		character_sets = get_character_set_for_lang(lang)
@@ -126,7 +126,7 @@ class ABFN :
 		
 		if character_sets is None:
 			logging.debug("characters set is not defined for the language of text. will not tokenize the text")
-			raise("characters set is not defined for the language of text:{}".format(text))
+			raise ("characters set is not defined for the language of text:{}".format(text))
 		
 		m, v, V, C, symbols, H = character_sets
 		
@@ -134,7 +134,7 @@ class ABFN :
 		for k in range(len(text)):
 			
 			ch = text[k]
-		
+			
 			if state != 0 and state != 4 and (ch in C or ch in V or ch in symbols):
 				state = 0
 			
@@ -149,7 +149,7 @@ class ABFN :
 				if ch in C:
 					state = 2
 					continue
-			
+				
 				if ch in V:
 					state = 1
 					continue
@@ -189,13 +189,12 @@ class ABFN :
 		
 		if current_str != "":
 			tokens.append(current_str)
-			
+		
 		logging.debug("tokens : {}".format(tokens))
 		return tokens
 
 
 if __name__ == "__main__":
-	s="स्मृतिचिन्ह"
-	a= ABFN()
+	s = "स्मृतिचिन्ह"
+	a = ABFN()
 	print(a.tokenize(s))
-	

@@ -1,7 +1,8 @@
-from character_set import symbols
 import logging
 
-import character_set
+from indicnlp.abnf import character_set
+from indicnlp.abnf.character_set import symbols
+
 
 def detect_language(text):
 	"""
@@ -11,7 +12,7 @@ def detect_language(text):
 	symbol_present = False
 	for c in list(text):
 		if c in symbols:
-			symbol_present=True
+			symbol_present = True
 			continue
 		else:
 			if "ऀ" <= c <= "ॿ":
@@ -51,18 +52,19 @@ def detect_language(text):
 		logging.debug("only symbols present in text:{}. returning language type as english".format(text))
 		return "EN"
 	
-	if len(text) ==0 :
+	if len(text) == 0:
 		logging.debug("text length is zero will return None value")
 		return None
 	
 	logging.debug("Language not defined for text:{}".format(text))
 	return None
 
+
 def is_ABFN_rule_defined_for_lang(lang):
 	return get_character_set_for_lang(lang) is not None
 
-def get_character_set_for_lang(lang):
 
+def get_character_set_for_lang(lang):
 	if lang == "HI":
 		return (character_set.HI_m, character_set.HI_v, character_set.HI_V, character_set.HI_C, \
 		        character_set.HI_symbols, character_set.HI_H)
@@ -102,8 +104,7 @@ def get_character_set_for_lang(lang):
 	return None
 
 
-
-#Next 3 functions are used to convert character range to character set.
+# Next 3 functions are used to convert character range to character set.
 def print_unicode_characters_in_range(a, b):
 	s = ""
 	ch = a
@@ -114,8 +115,12 @@ def print_unicode_characters_in_range(a, b):
 		ch = chr(ord(ch) + 1)
 	
 	return s
+
+
 def get_unicode_value(ch):
 	return ord(ch)
+
+
 def print_in_range(xx):
 	str = ""
 	for x in xx:
@@ -133,11 +138,12 @@ def print_in_range(xx):
 	print("")
 	print(str)
 
+
 # print charcters not defined in abfn character set. e.g : unicode values for which character is not defined.
-def print_unused_char(a, b , lang):
-	m , v, V, C, symbols , H = get_character_set_for_lang(lang)
+def print_unused_char(a, b, lang):
+	m, v, V, C, symbols, H = get_character_set_for_lang(lang)
 	ch = a
 	while (ch <= b):
-		if ch not in (m + v+ V+ C+ symbols + H):
+		if ch not in (m + v + V + C + symbols + H):
 			print(ch, end=" ")
 		ch = chr(ord(ch) + 1)
