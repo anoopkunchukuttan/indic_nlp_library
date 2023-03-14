@@ -20,20 +20,15 @@ from indicnlp import langinfo
 class NormalizerI(object):
     """
     The normalizer classes do the following: 
-
     * Some characters have multiple Unicode codepoints. The normalizer chooses a single standard representation
     * Some control characters are deleted
     * While typing using the Latin keyboard, certain typical mistakes occur which are corrected by the module
-
     Base class for normalizer. Performs some common normalization, which includes: 
-
     * Byte order mark, word joiner, etc. removal 
     * ZERO_WIDTH_NON_JOINER and ZERO_WIDTH_JOINER removal 
     * ZERO_WIDTH_SPACE and NO_BREAK_SPACE replaced by spaces 
-
     Script specific normalizers should derive from this class and override the normalize() method. 
     They can call the super class 'normalize() method to avail of the common normalization 
-
     """
 
     BYTE_ORDER_MARK='\uFEFF'
@@ -330,7 +325,6 @@ class BaseNormalizer(NormalizerI):
 class DevanagariNormalizer(BaseNormalizer): 
     """
     Normalizer for the Devanagari script. In addition to basic normalization by the super class, 
-
     * Replaces the composite characters containing nuktas by their decomposed form 
     * replace pipe character '|' by poorna virama character
     * replace colon ':' by visarga if the colon follows a charcter in this script 
@@ -405,7 +399,6 @@ class DevanagariNormalizer(BaseNormalizer):
 class GurmukhiNormalizer(BaseNormalizer): 
     """
     Normalizer for the Gurmukhi script. In addition to basic normalization by the super class, 
-
     * Replaces the composite characters containing nuktas by their decomposed form 
     * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
     * replace pipe character '|' by poorna virama character
@@ -441,7 +434,6 @@ class GurmukhiNormalizer(BaseNormalizer):
 
     def _normalize_vowels(self,text):
         """
-
         """
 
         ## standard vowel replacements as per suggestions in 
@@ -511,7 +503,6 @@ class GurmukhiNormalizer(BaseNormalizer):
 class GujaratiNormalizer(BaseNormalizer): 
     """
     Normalizer for the Gujarati script. In addition to basic normalization by the super class, 
-
     * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
     * replace colon ':' by visarga if the colon follows a charcter in this script 
     """
@@ -546,7 +537,6 @@ class GujaratiNormalizer(BaseNormalizer):
 class OriyaNormalizer(BaseNormalizer): 
     """
     Normalizer for the Oriya script. In addition to basic normalization by the super class, 
-
     * Replaces the composite characters containing nuktas by their decomposed form 
     * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
     * Canonicalize two part dependent vowels
@@ -624,13 +614,11 @@ class OriyaNormalizer(BaseNormalizer):
 class BengaliNormalizer(BaseNormalizer): 
     """
     Normalizer for the Bengali script. In addition to basic normalization by the super class, 
-
     * Replaces the composite characters containing nuktas by their decomposed form 
     * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
     * Canonicalize two part dependent vowels
     * replace pipe character '|' by poorna virama character
     * replace colon ':' by visarga if the colon follows a charcter in this script 
-
     """
 
     NUKTA='\u09BC' 
@@ -681,7 +669,6 @@ class BengaliNormalizer(BaseNormalizer):
 class TamilNormalizer(BaseNormalizer): 
     """
     Normalizer for the Tamil script. In addition to basic normalization by the super class, 
-
     * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
     * canonicalize two-part dependent vowel signs
     * replace colon ':' by visarga if the colon follows a charcter in this script 
@@ -716,7 +703,6 @@ class TamilNormalizer(BaseNormalizer):
 class TeluguNormalizer(BaseNormalizer): 
     """
     Normalizer for the Teluguscript. In addition to basic normalization by the super class, 
-
     * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
     * canonicalize two-part dependent vowel signs
     * replace colon ':' by visarga if the colon follows a charcter in this script 
@@ -750,7 +736,6 @@ class TeluguNormalizer(BaseNormalizer):
 class KannadaNormalizer(BaseNormalizer): 
     """
     Normalizer for the Kannada script. In addition to basic normalization by the super class, 
-
     * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
     * canonicalize two-part dependent vowel signs
     * replace colon ':' by visarga if the colon follows a charcter in this script 
@@ -787,7 +772,6 @@ class KannadaNormalizer(BaseNormalizer):
 class MalayalamNormalizer(BaseNormalizer): 
     """
     Normalizer for the Malayalam script. In addition to basic normalization by the super class, 
-
     * Replace the reserved character for poorna virama (if used) with the recommended generic Indic scripts poorna virama 
     * canonicalize two-part dependent vowel signs
     * Change from old encoding of chillus (till Unicode 5.0) to new encoding
@@ -902,13 +886,11 @@ class UrduNormalizer(NormalizerI):
 class IndicNormalizerFactory(object):
     """
     Factory class to create language specific normalizers. 
-
     """
 
     def get_normalizer(self,language,**kwargs):
         """
             Call the get_normalizer function to get the language specific normalizer
-
             Paramters: 
             |language: language code
             |remove_nuktas: boolean, should the normalizer remove nukta characters 
