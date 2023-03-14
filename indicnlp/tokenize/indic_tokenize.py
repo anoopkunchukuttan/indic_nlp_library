@@ -79,7 +79,7 @@ def trivial_tokenize_urdu(text):
     # tok_str=triv_tokenizer_urdu_pat.sub(r' \1 ',text.replace('\t',' '))
     # return re.sub(r'[ ]+',' ',tok_str).strip(' ').split(' ')
     from urduhack.tokenization import word_tokenizer
-    return word_tokenizer(sent)
+    return word_tokenizer(text)
 
 def trivial_tokenize(text,lang='hi'): 
     """trivial tokenizer for Indian languages using Brahmi for Arabic scripts
