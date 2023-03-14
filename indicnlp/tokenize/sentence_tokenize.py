@@ -27,7 +27,7 @@ from indicnlp import langinfo
 DELIM_PAT_DANDA=re.compile(r'[\?!\u0964\u0965]')
 
 ## for languages which don't have danda as delimiter
-DELIM_PAT_NO_DANDA=re.compile(r'[\.\?!\u0964\u0965]')
+DELIM_PAT_NO_DANDA=re.compile(r'[\.\?!\u0964\u0965\uAAF1\uAAF0\uABEB\uABEC\uABED\uABEE\uABEF\u1C7E\u1C7F]')
 
 ## pattern to check for presence of danda in text 
 CONTAINS_DANDA=re.compile(r'[\u0964\u0965]')
@@ -181,6 +181,11 @@ def sentence_split(text,lang,delim_pat='auto'): ## New signature
     Returns:
         list: list of sentences identified from the input text 
     """
+    
+    if lang == "ur":
+        from urduhack.tokenization import sentence_tokenizer
+        sentences = sentence_tokenizer(text)
+        return sentences
     
     #print('Input: {}'.format(delim_pat))
     if delim_pat=='auto':

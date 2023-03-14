@@ -20,7 +20,7 @@ import string, re, sys
 from indicnlp.common import IndicNlpException
 
 ### tokenizer patterns 
-triv_tokenizer_indic_pat=re.compile(r'(['+string.punctuation+r'\u0964\u0965'+r'])')
+triv_tokenizer_indic_pat=re.compile(r'(['+string.punctuation+r'\u0964\u0965\uAAF1\uAAF0\uABEB\uABEC\uABED\uABEE\uABEF\u1C7E\u1C7F'+r'])')
 triv_tokenizer_urdu_pat=re.compile(r'(['+string.punctuation+r'\u0609\u060A\u060C\u061E\u066A\u066B\u066C\u066D\u06D4'+r'])')
 
 ## date, numbers, section/article numbering
@@ -76,8 +76,10 @@ def trivial_tokenize_urdu(text):
     Returns:
         list: list of tokens
     """
-    tok_str=triv_tokenizer_urdu_pat.sub(r' \1 ',text.replace('\t',' '))
-    return re.sub(r'[ ]+',' ',tok_str).strip(' ').split(' ')
+    # tok_str=triv_tokenizer_urdu_pat.sub(r' \1 ',text.replace('\t',' '))
+    # return re.sub(r'[ ]+',' ',tok_str).strip(' ').split(' ')
+    from urduhack.tokenization import word_tokenizer
+    return word_tokenizer(sent)
 
 def trivial_tokenize(text,lang='hi'): 
     """trivial tokenizer for Indian languages using Brahmi for Arabic scripts

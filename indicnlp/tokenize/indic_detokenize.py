@@ -116,10 +116,7 @@ def trivial_detokenize(text,lang='hi'):
     Raises:
         IndicNlpException: If language is not supported        
     """
-    if lang=='ur':
-        raise IndicNlpException('No detokenizer available for Urdu')
-    else:
-        return trivial_detokenize_indic(text)
+    return trivial_detokenize_indic(text)
 
 # if __name__ == '__main__': 
 
