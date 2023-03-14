@@ -877,17 +877,25 @@ class UrduNormalizer(NormalizerI):
             all_punctuations_space,
             english_characters_space
         )
+        self.normalize_whitespace = normalize_whitespace
+        self.digits_space = digits_space
+        self.all_punctuations_space = all_punctuations_space
+        self.english_characters_space = english_characters_space
+
+        self.remove_diacritics = remove_diacritics
+        self.normalize_characters = normalize_characters
+        self.normalize_combine_characters = normalize_combine_characters
 
     def normalize(self, text):
         text = self._normalize_punctuations(text)
-        text = UrduNormalizer.normalize_whitespace(text)
+        text = self.normalize_whitespace(text)
         if self.remove_nuktas:
-            text = UrduNormalizer.remove_diacritics(text)
-        text = UrduNormalizer.normalize_characters(text)
-        text = UrduNormalizer.normalize_combine_characters(text)
-        text = UrduNormalizer.digits_space(text)
-        text = UrduNormalizer.all_punctuations_space(text)
-        text = UrduNormalizer.english_characters_space(text)
+            text = self.remove_diacritics(text)
+        text = self.normalize_characters(text)
+        text = self.normalize_combine_characters(text)
+        text = self.digits_space(text)
+        text = self.all_punctuations_space(text)
+        text = self.english_characters_space(text)
         return text
 
 
