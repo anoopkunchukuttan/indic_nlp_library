@@ -13,8 +13,8 @@ The library provides the following functionalities:
 - Script Conversion
 - Romanization
 - Indicization
-- Transliteration
-- Translation
+
+**Note**: _Shatanuvadak_ translation and _BrahmiNet_ transliteration APIs are no longer supported. You can use newer [IndicTrans](https://github.com/AI4Bharat/indicTrans) translation and [IndicXlit](https://github.com/AI4Bharat/IndicXlit) transliteration models we developed at [AI4Bharat](https://ai4bharat.iitm.ac.in). In fact, you can find many state-of-the-art datasets and models on the AI4Bharat homepage.   
 
 The data resources required by the Indic NLP Library are hosted in a different repository. These resources are required for some modules. You can download from the [Indic NLP Resources](https://github.com/anoopkunchukuttan/indic_nlp_resources) project. 
 
