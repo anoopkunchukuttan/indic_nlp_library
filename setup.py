@@ -33,6 +33,7 @@ setuptools.setup(
     #     "Source Code": "https://code.example.com/HelloWorld/",
     # },    
     packages=setuptools.find_packages(),
+    package_data={'indicnlp': ['version.txt']},
     license='MIT',
     classifiers=[
         "Programming Language :: Python :: 3",
