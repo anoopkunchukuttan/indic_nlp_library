@@ -17,7 +17,6 @@ in many Indian languages.
 """
 
 import re
-
 from indicnlp.transliterate import unicode_transliterate
 from indicnlp import langinfo
 
@@ -31,6 +30,19 @@ DELIM_PAT_NO_DANDA=re.compile(r'[\.\?!\u0964\u0965\uAAF1\uAAF0\uABEB\uABEC\uABED
 
 ## pattern to check for presence of danda in text 
 CONTAINS_DANDA=re.compile(r'[\u0964\u0965]')
+
+def is_latin_or_numeric(character):
+    """
+    Check if a character is a Latin character (uppercase or lowercase) or a number.
+
+    Parameters:
+        character (str): The character to be checked.
+
+    Returns:
+        bool: True if the character is a Latin character or a number, False otherwise.
+    """
+    pattern = r'^[A-Za-z0-9]$'
+    return re.match(pattern, character) is not None
 
 def is_acronym_abbvr(text,lang):
     """Is the text a non-breaking phrase
@@ -216,6 +228,12 @@ def sentence_split(text,lang,delim_pat='auto'): ## New signature
         ## NEW
         if p1>0 and text[p1-1].isnumeric():
             continue
+        
+        ## Prevents splitting on "." in URLs/emails in indic texts.
+        if lang != "en":
+            if is_latin_or_numeric(text[p1-1]):
+                if p1+1< len(text) and is_latin_or_numeric(text[p1+1]):
+                    continue
 
         end=p1+1
         s= text[begin:end].strip()
@@ -251,10 +269,12 @@ def sentence_split(text,lang,delim_pat='auto'): ## New signature
             sen_buffer = sen_buffer + ' ' + sentence
         ## NEW condition    
         elif sentence[-1]=='.' and is_acronym_abbvr(words[-1][:-1],lang):
-            if len(sen_buffer)>0 and  not bad_state:
+            if len(sen_buffer)>0 and not bad_state:
                 final_sentences.append(sen_buffer)
+                sen_buffer = sentence
+            else:
+                sen_buffer = sen_buffer + ' ' + sentence
             bad_state=True
-            sen_buffer = sentence
         elif bad_state:
             sen_buffer = sen_buffer + ' ' + sentence
             if len(sen_buffer)>0:
@@ -269,5 +289,8 @@ def sentence_split(text,lang,delim_pat='auto'): ## New signature
 
     if len(sen_buffer)>0:
         final_sentences.append(sen_buffer)
+        
+    for i in range(0, len(final_sentences)):
+        final_sentences[i] = re.sub(' +', ' ', final_sentences[i].strip())
     
     return final_sentences
