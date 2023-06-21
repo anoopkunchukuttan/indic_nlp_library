@@ -31,6 +31,9 @@ DELIM_PAT_NO_DANDA=re.compile(r'[\.\?!\u0964\u0965\uAAF1\uAAF0\uABEB\uABEC\uABED
 ## pattern to check for presence of danda in text 
 CONTAINS_DANDA=re.compile(r'[\u0964\u0965]')
 
+## pattern to check for presence of valid domain characters in text 
+CONTAINS_VALID_DOMAIN_CHAR=re.compile(r'^[a-zA-Z0-9_-]$')
+
 def is_latin_or_numeric(character):
     """
     Check if a character is a Latin character (uppercase or lowercase) or a number.
@@ -41,8 +44,7 @@ def is_latin_or_numeric(character):
     Returns:
         bool: True if the character is a Latin character or a number, False otherwise.
     """
-    pattern = r'^[a-zA-Z0-9_-]$'
-    return re.match(pattern, character) is not None
+    return re.match(CONTAINS_VALID_DOMAIN_CHAR, character) is not None
 
 def is_acronym_abbvr(text,lang):
     """Is the text a non-breaking phrase
