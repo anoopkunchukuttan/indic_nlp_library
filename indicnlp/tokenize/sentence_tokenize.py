@@ -41,7 +41,7 @@ def is_latin_or_numeric(character):
     Returns:
         bool: True if the character is a Latin character or a number, False otherwise.
     """
-    pattern = r'^[A-Za-z0-9]$'
+    pattern = r'^[a-zA-Z0-9_-]$'
     return re.match(pattern, character) is not None
 
 def is_acronym_abbvr(text,lang):
