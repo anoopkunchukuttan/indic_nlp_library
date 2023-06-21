@@ -232,7 +232,7 @@ def sentence_split(text,lang,delim_pat='auto'): ## New signature
         ## Prevents splitting on "." in URLs/emails in indic texts.
         if lang != "en":
             if is_latin_or_numeric(text[p1-1]):
-                if p1+1< len(text) and is_latin_or_numeric(text[p1+1]):
+                if p1+1 < len(text) and is_latin_or_numeric(text[p1+1]):
                     continue
 
         end=p1+1
