@@ -34,6 +34,9 @@ CONTAINS_DANDA=re.compile(r'[\u0964\u0965]')
 ## pattern to check for presence of valid domain characters in text 
 CONTAINS_VALID_DOMAIN_CHAR=re.compile(r'^[a-zA-Z0-9_-]$')
 
+## pattern to check for presence of multiple consecutive spaces in text
+CONTAINS_MULTIPLE_SPACES = re.compile(' +')
+
 def is_latin_or_numeric(character):
     """
     Check if a character is a Latin character (uppercase or lowercase) or a number.
@@ -293,6 +296,6 @@ def sentence_split(text,lang,delim_pat='auto'): ## New signature
         final_sentences.append(sen_buffer)
         
     for i in range(0, len(final_sentences)):
-        final_sentences[i] = re.sub(' +', ' ', final_sentences[i].strip())
+        final_sentences[i] = CONTAINS_MULTIPLE_SPACES.sub(' ', final_sentences[i].strip())
     
     return final_sentences
