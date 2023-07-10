@@ -850,12 +850,12 @@ class UrduNormalizer(NormalizerI):
         self.lang = lang
         self.remove_nuktas = remove_nuktas
     
-        from urduhack.normalization import (
+        from indicnlp.urduhack.normalization import (
             remove_diacritics,
             normalize_characters,
             normalize_combine_characters
         ) # TODO: Use only required normalizers
-        from urduhack.preprocessing import (
+        from indicnlp.urduhack.preprocessing import (
             normalize_whitespace,
             digits_space,
             all_punctuations_space,
