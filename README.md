@@ -6,3 +6,6 @@ For any queries, please contact the original authors/maintainers of the respecti
 
 - `Indic NLP Library`: [anoopkunchukuttan](https://github.com/anoopkunchukuttan)
 - `UrduHack`: [UrduHack](https://github.com/urduhack) 
+
+Updates:
+- Renamed `master` branch as `main`
