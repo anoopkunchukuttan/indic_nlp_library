@@ -44,5 +44,8 @@ setuptools.setup(
     install_requires=[
         str(requirement) for requirement
             in parse_requirements(pathlib.Path('requirements.txt').open())
-    ]
+    ],
+    extras_require = {
+        "dev": ["sphinx-argparse", "sphinx_rtd_theme"],
+    }
 )
