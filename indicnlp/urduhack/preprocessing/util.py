@@ -8,64 +8,82 @@ import unicodedata
 
 import regex as re
 
-CURRENCIES = {'$': 'USD', 'zł': 'PLN', '£': 'GBP', '¥': 'JPY', '฿': 'THB',
-              '₡': 'CRC', '₦': 'NGN', '₩': 'KRW', '₪': 'ILS', '₫': 'VND',
-              '€': 'EUR', '₱': 'PHP', '₲': 'PYG', '₴': 'UAH', '₹': 'INR'}
+CURRENCIES = {
+    "$": "USD",
+    "zł": "PLN",
+    "£": "GBP",
+    "¥": "JPY",
+    "฿": "THB",
+    "₡": "CRC",
+    "₦": "NGN",
+    "₩": "KRW",
+    "₪": "ILS",
+    "₫": "VND",
+    "€": "EUR",
+    "₱": "PHP",
+    "₲": "PYG",
+    "₴": "UAH",
+    "₹": "INR",
+}
 
 _EMAIL_RE = re.compile(
     r"(?:^|(?<=[^\w@.)]))([\w+-](\.(?!\.))?)*?[\w+-]@(?:\w-?)*?\w+(\.([a-z]{2,})){1,3}(?:$|(?=\b))",
-    flags=re.IGNORECASE | re.UNICODE)
-_PHONE_RE = re.compile(r'(?:^|(?<=[^\w)]))(\+?1[ .-]?)?(\(?\d{3}\)?[ .-]?)?(\d{3}[ .-]?\d{4})(\s?(?:ext\.?'
-                       r'|[#x-])\s?\d{2,6})?(?:$|(?=\W))')
-_NUMBERS_RE = re.compile(r'(?:^|(?<=[^\w,.]))[+–-]?(([1-9]\d{0,2}(,\d{3})+(\.\d*)?)|([1-9]\d{0,2}([ .]\d{3})+(,\d*)?)'
-                         r'|(\d*?[.,]\d+)|\d+)(?:$|(?=\b))')
-_CURRENCY_RE = re.compile('({})+'.format('|'.join(re.escape(c) for c in CURRENCIES)))
-_LINEBREAK_RE = re.compile(r'((\r\n)|[\n\v])+')
-_NONBREAKING_SPACE_RE = re.compile(r'(?!\n)\s+')
-_URL_RE = re.compile(r"(?:^|(?<![\w/.]))"
-                     # protocol identifier
-                     # r"(?:(?:https?|ftp)://)"  <-- alt?
-                     r"(?:(?:https?://|ftp://|www\d{0,3}\.))"
-                     # user:pass authentication
-                     r"(?:\S+(?::\S*)?@)?"
-                     r"(?:"
-                     # IP address exclusion
-                     # private & local networks
-                     r"(?!(?:10|127)(?:\.\d{1,3}){3})"
-                     r"(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})"
-                     r"(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})"
-                     # IP address dotted notation octets
-                     # excludes loopback network 0.0.0.0
-                     # excludes reserved space >= 224.0.0.0
-                     # excludes network & broadcast addresses
-                     # (first & last IP address of each class)
-                     r"(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])"
-                     r"(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}"
-                     r"(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))"
-                     r"|"
-                     # host name
-                     r"(?:(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)"
-                     # domain name
-                     r"(?:\.(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)*"
-                     # TLD identifier
-                     r"(?:\.(?:[a-z\u00a1-\uffff]{2,}))"
-                     r")"
-                     # port number
-                     r"(?::\d{2,5})?"
-                     # resource path
-                     r"(?:/\S*)?"
-                     r"(?:$|(?![\w?!+&/]))",
-                     flags=re.UNICODE | re.IGNORECASE)  # source: https://gist.github.com/dperini/729294
-_SHORT_URL_RE = re.compile(r"(?:^|(?<![\w/.]))"
-                           # optional scheme
-                           r"(?:(?:https?://)?)"
-                           # domain
-                           r"(?:\w-?)*?\w+(?:\.[a-z]{2,12}){1,3}"
-                           r"/"
-                           # hash
-                           r"[^\s.,?!'\"|+]{2,12}"
-                           r"(?:$|(?![\w?!+&/]))",
-                           flags=re.IGNORECASE)
+    flags=re.IGNORECASE | re.UNICODE,
+)
+_PHONE_RE = re.compile(
+    r"(?:^|(?<=[^\w)]))(\+?1[ .-]?)?(\(?\d{3}\)?[ .-]?)?(\d{3}[ .-]?\d{4})(\s?(?:ext\.?"
+    r"|[#x-])\s?\d{2,6})?(?:$|(?=\W))"
+)
+_NUMBERS_RE = re.compile(
+    r"(?:^|(?<=[^\w,.]))[+–-]?(([1-9]\d{0,2}(,\d{3})+(\.\d*)?)|([1-9]\d{0,2}([ .]\d{3})+(,\d*)?)"
+    r"|(\d*?[.,]\d+)|\d+)(?:$|(?=\b))"
+)
+_CURRENCY_RE = re.compile("({})+".format("|".join(re.escape(c) for c in CURRENCIES)))
+_LINEBREAK_RE = re.compile(r"((\r\n)|[\n\v])+")
+_NONBREAKING_SPACE_RE = re.compile(r"(?!\n)\s+")
+_URL_RE = re.compile(
+    r"(?:^|(?<![\w/.]))"
+    # protocol identifier
+    # r"(?:(?:https?|ftp)://)"  <-- alt?
+    r"(?:(?:https?://|ftp://|www\d{0,3}\.))"
+    # user:pass authentication
+    r"(?:\S+(?::\S*)?@)?" r"(?:"
+    # IP address exclusion
+    # private & local networks
+    r"(?!(?:10|127)(?:\.\d{1,3}){3})"
+    r"(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})"
+    r"(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})"
+    # IP address dotted notation octets
+    # excludes loopback network 0.0.0.0
+    # excludes reserved space >= 224.0.0.0
+    # excludes network & broadcast addresses
+    # (first & last IP address of each class)
+    r"(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])"
+    r"(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}"
+    r"(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))"
+    r"|"
+    # host name
+    r"(?:(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)"
+    # domain name
+    r"(?:\.(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)*"
+    # TLD identifier
+    r"(?:\.(?:[a-z\u00a1-\uffff]{2,}))" r")"
+    # port number
+    r"(?::\d{2,5})?"
+    # resource path
+    r"(?:/\S*)?" r"(?:$|(?![\w?!+&/]))",
+    flags=re.UNICODE | re.IGNORECASE,
+)  # source: https://gist.github.com/dperini/729294
+_SHORT_URL_RE = re.compile(
+    r"(?:^|(?<![\w/.]))"
+    # optional scheme
+    r"(?:(?:https?://)?)"
+    # domain
+    r"(?:\w-?)*?\w+(?:\.[a-z]{2,12}){1,3}" r"/"
+    # hash
+    r"[^\s.,?!'\"|+]{2,12}" r"(?:$|(?![\w?!+&/]))",
+    flags=re.IGNORECASE,
+)
 
 
 def normalize_whitespace(text: str):
@@ -84,10 +102,10 @@ def normalize_whitespace(text: str):
         >>> normalized_text
         عراق اور شام اعلان کیا ہے دونوں جلد اپنے گے؟
     """
-    return _NONBREAKING_SPACE_RE.sub(' ', _LINEBREAK_RE.sub(r'\n', text)).strip()
+    return _NONBREAKING_SPACE_RE.sub(" ", _LINEBREAK_RE.sub(r"\n", text)).strip()
 
 
-def replace_urls(text: str, replace_with=''):
+def replace_urls(text: str, replace_with=""):
     """
     Replace all URLs in ``text`` str with ``replace_with`` str.
 
@@ -105,7 +123,7 @@ def replace_urls(text: str, replace_with=''):
     return _URL_RE.sub(replace_with, _SHORT_URL_RE.sub(replace_with, text))
 
 
-def replace_emails(text: str, replace_with=''):
+def replace_emails(text: str, replace_with=""):
     """
     Replace all emails in ``text`` str with ``replace_with`` str.
 
@@ -122,7 +140,7 @@ def replace_emails(text: str, replace_with=''):
     return _EMAIL_RE.sub(replace_with, text)
 
 
-def replace_phone_numbers(text: str, replace_with=''):
+def replace_phone_numbers(text: str, replace_with=""):
     """
     Replace all phone numbers in ``text`` str with ``replace_with`` str.
 
@@ -140,7 +158,7 @@ def replace_phone_numbers(text: str, replace_with=''):
     return _PHONE_RE.sub(replace_with, text)
 
 
-def replace_numbers(text: str, replace_with=''):
+def replace_numbers(text: str, replace_with=""):
     """
     Replace all numbers in ``text`` str with ``replace_with`` str.
 
@@ -184,8 +202,10 @@ def replace_currency_symbols(text: str, replace_with=None):
     return _CURRENCY_RE.sub(replace_with, text)
 
 
-PUNCTUATION_TRANSLATE_UNICODE = dict.fromkeys((i for i in range(sys.maxunicode)
-                                               if unicodedata.category(chr(i)).startswith('P')), '')
+PUNCTUATION_TRANSLATE_UNICODE = dict.fromkeys(
+    (i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("P")),
+    "",
+)
 
 
 def remove_punctuation(text: str, marks=None) -> str:
@@ -210,7 +230,7 @@ def remove_punctuation(text: str, marks=None) -> str:
 
     """
     if marks:
-        return re.sub('[{}]+'.format(re.escape(marks)), '', text, flags=re.UNICODE)
+        return re.sub("[{}]+".format(re.escape(marks)), "", text, flags=re.UNICODE)
 
     return text.translate(PUNCTUATION_TRANSLATE_UNICODE)
 
@@ -230,7 +250,7 @@ def remove_accents(text: str) -> str:
         >>> remove_accents(text)
     'دالت عظمی درخواست'
     """
-    return ''.join(c for c in text if not unicodedata.combining(c))
+    return "".join(c for c in text if not unicodedata.combining(c))
 
 
 def remove_english_alphabets(text: str):

@@ -23,8 +23,8 @@ def digits_space(text: str) -> str:
         >>> normalized_text
         20 فیصد
     """
-    text = _SPACE_BEFORE_DIGITS_RE.sub(' ', text)
-    text = _SPACE_AFTER_DIGITS_RE.sub(' ', text)
+    text = _SPACE_BEFORE_DIGITS_RE.sub(" ", text)
+    text = _SPACE_AFTER_DIGITS_RE.sub(" ", text)
 
     return text
 
@@ -48,8 +48,8 @@ def english_characters_space(text: str) -> str:
         >>> normalized_text
         خاتون Aliya نے بچوں Uzma and Aliya کے قتل کا اعتراف Confession کیا ہے۔
     """
-    text = _SPACE_BEFORE_ENG_CHAR_RE.sub(' ', text)
-    text = _SPACE_AFTER_ENG_CHAR_RE.sub(' ', text)
+    text = _SPACE_BEFORE_ENG_CHAR_RE.sub(" ", text)
+    text = _SPACE_AFTER_ENG_CHAR_RE.sub(" ", text)
 
     return text
 
@@ -63,8 +63,8 @@ def all_punctuations_space(text: str) -> str:
     Returns:
         str: Returns a ``str`` object containing normalized text.
     """
-    text = _SPACE_BEFORE_ALL_PUNCTUATIONS_RE.sub(' ', text)
-    text = _SPACE_AFTER_ALL_PUNCTUATIONS_RE.sub(' ', text)
+    text = _SPACE_BEFORE_ALL_PUNCTUATIONS_RE.sub(" ", text)
+    text = _SPACE_AFTER_ALL_PUNCTUATIONS_RE.sub(" ", text)
     return text
 
 

@@ -2,11 +2,44 @@
 """Rule based Sentence tokenization module"""
 
 # Global Variables
-_URDU_CONJUNCTIONS = ['جنہیں', 'جس', 'جن', 'جو', 'اور', 'اگر', 'اگرچہ', 'لیکن', 'مگر', 'پر', 'یا', 'تاہم', 'کہ', 'کر',
-                      'تو', 'گے', 'گی']
-_URDU_NEWLINE_WORDS = ['کیجیے', 'کیجئے', 'گئیں', 'تھیں', 'ہوں', 'خریدا', 'گے', 'ہونگے', 'گا', 'چاہیے', 'ہوئیں', 'گی',
-                       'تھا', 'تھی', 'تھے', 'ہیں', 'ہے',
-                       ]
+_URDU_CONJUNCTIONS = [
+    "جنہیں",
+    "جس",
+    "جن",
+    "جو",
+    "اور",
+    "اگر",
+    "اگرچہ",
+    "لیکن",
+    "مگر",
+    "پر",
+    "یا",
+    "تاہم",
+    "کہ",
+    "کر",
+    "تو",
+    "گے",
+    "گی",
+]
+_URDU_NEWLINE_WORDS = [
+    "کیجیے",
+    "کیجئے",
+    "گئیں",
+    "تھیں",
+    "ہوں",
+    "خریدا",
+    "گے",
+    "ہونگے",
+    "گا",
+    "چاہیے",
+    "ہوئیں",
+    "گی",
+    "تھا",
+    "تھی",
+    "تھے",
+    "ہیں",
+    "ہے",
+]
 
 
 def _split_and_keep(_str, separator):
@@ -29,12 +62,12 @@ def _generate_sentences(text: str) -> list:
         list
     """
     all_sentences = []
-    sentences = _split_and_keep(text, '۔')
+    sentences = _split_and_keep(text, "۔")
 
     for sentence in sentences:  # pylint: disable=too-many-nested-blocks
         if sentence and (len(sentence.split()) >= 2):
-            if '؟' in sentence:
-                q_sentences = _split_and_keep(sentence, '؟')
+            if "؟" in sentence:
+                q_sentences = _split_and_keep(sentence, "؟")
                 for _sen in q_sentences:
                     _sen = _sen.split()
                     new_sent = ""
@@ -45,9 +78,11 @@ def _generate_sentences(text: str) -> list:
                             is_cont = False
                             continue
 
-                        if word in _URDU_NEWLINE_WORDS and index + 1 < len(
-                                _sen) and _sen[index + 1] not in _URDU_CONJUNCTIONS:
-
+                        if (
+                            word in _URDU_NEWLINE_WORDS
+                            and index + 1 < len(_sen)
+                            and _sen[index + 1] not in _URDU_CONJUNCTIONS
+                        ):
                             if index + 1 < len(_sen) and _sen[index + 1] in ["۔", "،"]:
                                 new_sent += " " + word + " " + _sen[index + 1] + "\n"
                                 is_cont = True
@@ -71,10 +106,15 @@ def _generate_sentences(text: str) -> list:
                         is_cont = False
                         continue
 
-                    if word in _URDU_NEWLINE_WORDS and index + 1 < len(
-                            sentence) and sentence[index + 1] not in _URDU_CONJUNCTIONS:
-
-                        if index + 1 < len(sentence) and sentence[index + 1] in ["۔", "،"]:
+                    if (
+                        word in _URDU_NEWLINE_WORDS
+                        and index + 1 < len(sentence)
+                        and sentence[index + 1] not in _URDU_CONJUNCTIONS
+                    ):
+                        if index + 1 < len(sentence) and sentence[index + 1] in [
+                            "۔",
+                            "،",
+                        ]:
                             new_sent += " " + word + " " + sentence[index + 1] + "\n"
                             is_cont = True
                         else:
