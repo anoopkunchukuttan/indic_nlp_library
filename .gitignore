@@ -1,2 +1,6 @@
 **/__pycache__/
-indic_nlp_library.egg-info/
+*.egg-info/
+dist/
+build/
+contrib/
+docs/
