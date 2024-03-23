@@ -8,7 +8,8 @@ Source = https://github.com/urduhack/urdu-stopwords
 from typing import FrozenSet
 
 # Urdu Language Stop words list
-STOP_WORDS: FrozenSet[str] = frozenset("""
+STOP_WORDS: FrozenSet[str] = frozenset(
+    """
 
  آ آئی آئیں آئے آتا آتی آتے آس آمدید آنا آنسہ آنی آنے آپ آگے آہ آہا آیا اب ابھی ابے
  ارے اس اسکا اسکی اسکے اسی اسے اف افوہ البتہ الف ان اندر انکا انکی انکے انہوں انہی انہیں اوئے اور اوپر
@@ -31,7 +32,8 @@ STOP_WORDS: FrozenSet[str] = frozenset("""
  گو گویا گی گیا ہائیں ہائے ہاں ہر ہرچند ہرگز ہم ہمارا ہماری ہمارے ہمی ہمیں ہو ہوئی ہوئیں ہوئے ہوا
  ہوبہو ہوتا ہوتی ہوتیں ہوتے ہونا ہونگے ہونی ہونے ہوں ہی ہیلو ہیں ہے یا یات یعنی یک یہ یہاں یہی یہیں
 
-""".split())
+""".split()
+)
 
 
 def remove_stopwords(text: str) -> str:

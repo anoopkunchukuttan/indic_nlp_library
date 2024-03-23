@@ -30,7 +30,18 @@ This module provides the following functionality:
     - Removal of Diacritics from Urdu Text
     - Replace all digits with Urdu and vice versa English
 """
-from .character import normalize_characters, normalize_combine_characters, \
-    remove_diacritics, replace_digits, normalize
+from .character import (
+    normalize_characters,
+    normalize_combine_characters,
+    remove_diacritics,
+    replace_digits,
+    normalize,
+)
 
-__all__ = ["normalize", "normalize_characters", "normalize_combine_characters", "remove_diacritics", "replace_digits"]
+__all__ = [
+    "normalize",
+    "normalize_characters",
+    "normalize_combine_characters",
+    "remove_diacritics",
+    "replace_digits",
+]
