@@ -15,8 +15,6 @@ cd indic_nlp_library
 pip install --editable ./
 ```
 
-Alternately, you can also install it directly as `pip install indic-nlp-library-IT2`
-
 ## Updates:
 - Integrated `urduhack` directly into the repository.
 - Renamed `master` branch as `main`.
