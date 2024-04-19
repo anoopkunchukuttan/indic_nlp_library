@@ -23,13 +23,13 @@ from indicnlp import langinfo
 
 ## for language which have danda as delimiter
 ## period is not part of the sentence delimiters
-DELIM_PAT_DANDA=re.compile(r'[\?!\u0964\u0965]')
+DELIM_PAT_DANDA=re.compile(r'[\?!\u0964\u0965\u007C]')
 
 ## for languages which don't have danda as delimiter
 DELIM_PAT_NO_DANDA=re.compile(r'[\.\?!\u0964\u0965\uAAF1\uAAF0\uABEB\uABEC\uABED\uABEE\uABEF\u1C7E\u1C7F]')
 
 ## pattern to check for presence of danda in text 
-CONTAINS_DANDA=re.compile(r'[\u0964\u0965]')
+CONTAINS_DANDA=re.compile(r'[\u0964\u0965\u007C]')
 
 ## pattern to check for presence of valid domain characters in text 
 CONTAINS_VALID_DOMAIN_CHAR=re.compile(r'^[a-zA-Z0-9_-]$')
