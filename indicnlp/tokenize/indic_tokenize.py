@@ -24,7 +24,7 @@ triv_tokenizer_indic_pat=re.compile(r'(['+string.punctuation+r'\u0964\u0965\uAAF
 triv_tokenizer_urdu_pat=re.compile(r'(['+string.punctuation+r'\u0609\u060A\u060C\u061E\u066A\u066B\u066C\u066D\u06D4'+r'])')
 
 ## date, numbers, section/article numbering
-pat_num_seq=re.compile(r'([0-9]+ [,.:/] )+[0-9]+')
+pat_num_seq=re.compile(r'([0-9\u0966-\u096f\u0ae6-\u0aef]+ [-,.:/] )+[0-9\u0966-\u096f\u0ae6-\u0aef]+')
 
 def trivial_tokenize_indic(text): 
     """tokenize string for Indian language scripts using Brahmi-derived scripts
@@ -52,7 +52,7 @@ def trivial_tokenize_indic(text):
     for m in pat_num_seq.finditer(s):
         start=m.start()
         end=m.end()
-        if start>prev:
+        if start>=prev:
             new_s=new_s+s[prev:start]
             new_s=new_s+s[start:end].replace(' ','')
             prev=end
