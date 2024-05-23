@@ -1,0 +1,3 @@
+[submodule "indic_nlp_resources"]
+	path = indic_nlp_resources
+	url = https://github.com/anoopkunchukuttan/indic_nlp_resources
