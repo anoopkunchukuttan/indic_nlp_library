@@ -234,7 +234,7 @@ def sentence_split(text,lang,delim_pat='auto'): ## New signature
         p2=mo.end()
         
         ## NEW
-        if p1>0 and text[p1-1].isnumeric():
+        if (p1>0 and text[p1-1].isnumeric()) and (p1+1 < len(text) and text[p1+1].isnumeric()):
             continue
         
         ## Prevents splitting on "." in URLs/emails in indic texts.
