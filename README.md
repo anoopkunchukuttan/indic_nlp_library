@@ -38,8 +38,7 @@ The data resources required by the Indic NLP Library are hosted in a different r
 - If you want to use the project from the github repo, add the project to the Python Path: 
 
     - Clone this repository
-    - Install dependencies: `pip install -r requirements.txt`
-    - Run: `export PYTHONPATH=$PYTHONPATH:<project base directory>`
+    - Install `indicnlp` and its dependencies: `pip install -e '.[dev]'`
 
 - In either case, export the path to the _Indic NLP Resources_ directory
 

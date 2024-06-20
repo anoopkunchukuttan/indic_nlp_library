@@ -1,5 +1,3 @@
-sphinx-argparse
-sphinx_rtd_theme
 morfessor
 pandas
 numpy
