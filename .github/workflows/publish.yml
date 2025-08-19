@@ -1,0 +1,36 @@
+# This workflow will upload the package when a release is created
+
+name: Publish to Pypi
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/indic-nlp-library-itt
+    permissions:
+      id-token: write # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Remove any existing build
+        run: rm -rf dist
+      - name: Install Poetry
+        uses: snok/install-poetry@v1.3.4
+        with:
+          version: latest
+      - name: Build
+        run: poetry build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
