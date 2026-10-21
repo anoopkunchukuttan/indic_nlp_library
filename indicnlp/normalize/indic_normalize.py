@@ -318,8 +318,22 @@ class BaseNormalizer(NormalizerI):
         #print hex(ord(text[mobj.end():mobj.end()+1]))
 
     def correct_visarga(self,text,visarga_char,char_range):
-        text=re.sub(r'([\u0900-\u097f]):','\\1\u0903',text)
-        
+        """
+        replace colon ':' by visarga if the colon follows a vowel, consonant, nukta or 
+        vowel sign of this script. A colon after halanta, digits, danda etc. is not 
+        replaced since that gives an invalid sequence (e.g. 'హైదరాబాద్:')
+        """
+        def replace_colon(mobj):
+            c_offset=ord(mobj.group(1))-ord(char_range[0])
+            if langinfo.is_vowel_offset(c_offset) or langinfo.is_consonant_offset(c_offset) or \
+                    langinfo.is_nukta_offset(c_offset) or langinfo.is_vowel_sign_offset(c_offset) or \
+                    (c_offset>=0x58 and c_offset<=0x63):
+                return mobj.group(1)+visarga_char
+            else:
+                return mobj.group(0)
+
+        return re.sub('([{}-{}]):'.format(char_range[0],char_range[1]),replace_colon,text)
+
 
 
 class DevanagariNormalizer(BaseNormalizer): 
@@ -365,7 +379,7 @@ class DevanagariNormalizer(BaseNormalizer):
         text=text.replace('\u007c','\u0964')
 
         # correct visarga 
-        text=re.sub(r'([\u0900-\u097f]):','\\1\u0903',text)
+        text=self.correct_visarga(text,'\u0903',('\u0900','\u097f'))
 
         return text
 
@@ -495,7 +509,7 @@ class GurmukhiNormalizer(BaseNormalizer):
         text=text.replace('\u007c','\u0964')
 
         # correct visarge 
-        text=re.sub(r'([\u0a00-\u0a7f]):','\\1\u0a03',text)
+        text=self.correct_visarga(text,'\u0a03',('\u0a00','\u0a7f'))
 
         return text
 
@@ -529,7 +543,7 @@ class GujaratiNormalizer(BaseNormalizer):
         text=text.replace('\u0ae5','\u0965')
 
         # correct visarge 
-        text=re.sub(r'([\u0a80-\u0aff]):','\\1\u0a83',text)
+        text=self.correct_visarga(text,'\u0a83',('\u0a80','\u0aff'))
 
         return text
 
@@ -606,7 +620,7 @@ class OriyaNormalizer(BaseNormalizer):
         # ignore
 
         # correct visarge 
-        text=re.sub(r'([\u0b00-\u0b7f]):','\\1\u0b03',text)
+        text=self.correct_visarga(text,'\u0b03',('\u0b00','\u0b7f'))
 
         return text
 
@@ -661,7 +675,7 @@ class BengaliNormalizer(BaseNormalizer):
         text=text.replace('\u09c7\u09d7','\u09cc')
 
         # correct visarge 
-        text=re.sub(r'([\u0980-\u09ff]):','\\1\u0983',text)
+        text=self.correct_visarga(text,'\u0983',('\u0980','\u09ff'))
 
         return text
 
@@ -695,7 +709,7 @@ class TamilNormalizer(BaseNormalizer):
         text=text.replace('\u0bc6\u0bd7','\u0bcc')
 
         # correct visarge 
-        text=re.sub(r'([\u0b80-\u0bff]):','\\1\u0b83',text)
+        text=self.correct_visarga(text,'\u0b83',('\u0b80','\u0bff'))
 
         return text
 
@@ -726,7 +740,7 @@ class TeluguNormalizer(BaseNormalizer):
         text=text.replace('\u0c46\u0c56','\u0c48')
 
         # correct visarge 
-        text=re.sub(r'([\u0c00-\u0c7f]):','\\1\u0c03',text)
+        text=self.correct_visarga(text,'\u0c03',('\u0c00','\u0c7f'))
 
         return text
 
@@ -764,7 +778,7 @@ class KannadaNormalizer(BaseNormalizer):
         text=text.replace('\u0cca\u0cd5','\u0ccb')
 
         # correct visarge 
-        text=re.sub(r'([\u0c80-\u0cff]):','\\1\u0c83',text)
+        text=self.correct_visarga(text,'\u0c83',('\u0c80','\u0cff'))
 
         return text
 
@@ -837,7 +851,7 @@ class MalayalamNormalizer(BaseNormalizer):
             text=self._correct_geminated_T(text)
 
         # correct visarga 
-        text=re.sub(r'([\u0d00-\u0d7f]):','\\1\u0d03',text)
+        text=self.correct_visarga(text,'\u0d03',('\u0d00','\u0d7f'))
 
         return text
 
