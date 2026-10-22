@@ -319,20 +319,26 @@ class BaseNormalizer(NormalizerI):
 
     def correct_visarga(self,text,visarga_char,char_range):
         """
-        replace colon ':' by visarga if the colon follows a vowel, consonant, nukta or 
-        vowel sign of this script. A colon after halanta, digits, danda etc. is not 
-        replaced since that gives an invalid sequence (e.g. 'హైదరాబాద్:')
+        replace colon ':' by visarga if the colon is inside a word i.e. it follows a vowel,
+        consonant, nukta or vowel sign and is followed by a vowel or consonant of this script
+        (e.g. 'ദു:ഖം'). Other colons are not replaced since they are mostly punctuation
+        (e.g. 'പറഞ്ഞു: ') or would give an invalid sequence (e.g. 'హైదరాబాద్:')
         """
+        def is_letter_offset(c_offset):
+            return langinfo.is_vowel_offset(c_offset) or langinfo.is_consonant_offset(c_offset) or \
+                    (c_offset>=0x58 and c_offset<=0x61)
+
         def replace_colon(mobj):
-            c_offset=ord(mobj.group(1))-ord(char_range[0])
-            if langinfo.is_vowel_offset(c_offset) or langinfo.is_consonant_offset(c_offset) or \
-                    langinfo.is_nukta_offset(c_offset) or langinfo.is_vowel_sign_offset(c_offset) or \
-                    (c_offset>=0x58 and c_offset<=0x63):
+            prev_offset=ord(mobj.group(1))-ord(char_range[0])
+            next_offset=ord(mobj.group(2))-ord(char_range[0])
+            if (is_letter_offset(prev_offset) or langinfo.is_nukta_offset(prev_offset) or \
+                    langinfo.is_vowel_sign_offset(prev_offset) or prev_offset in (0x62,0x63)) and \
+                    is_letter_offset(next_offset):
                 return mobj.group(1)+visarga_char
             else:
-                return mobj.group(0)
+                return mobj.group(1)+':'
 
-        return re.sub('([{}-{}]):'.format(char_range[0],char_range[1]),replace_colon,text)
+        return re.sub('([{0}-{1}]):(?=([{0}-{1}]))'.format(char_range[0],char_range[1]),replace_colon,text)
 
 
 
